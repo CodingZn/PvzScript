@@ -112,15 +112,6 @@ public class Quality {
         System.out.println(message.toString());
     }
     
-    private static void printBytes(byte[] bytes){
-        for (int i = 0; i < bytes.length; i++) {
-            if (i%16==0){
-                System.out.println();
-            }
-            System.out.printf("%02x ", bytes[i]);
-        }
-    }
-
     public static byte[] getQualityUpAmf(int plantId) throws IOException{
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         DataOutputStream doo = new DataOutputStream(ba);
