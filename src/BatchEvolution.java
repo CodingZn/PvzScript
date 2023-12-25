@@ -1,15 +1,13 @@
 package src;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class BatchEvolution {
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException{
-        File file = new File("evolution.txt");
+        File file = new File("src/evolution.txt");
         FileReader fr = new FileReader(file);
         BufferedReader bReader = new BufferedReader(fr);
         String line = bReader.readLine();
@@ -19,6 +17,6 @@ public class BatchEvolution {
             Evolution.main(ags);
             line = bReader.readLine();
         }
-        
+        bReader.close();
     }
 }

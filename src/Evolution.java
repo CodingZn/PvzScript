@@ -1,28 +1,12 @@
 package src;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.*;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpResponse.BodyHandler;
-import java.net.http.HttpResponse.BodySubscriber;
-import java.net.http.HttpResponse.ResponseInfo;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static src.Request.sendGetRequest;
 
 public class Evolution {
-    private static String host;
-    private static final String realhost = "pvz-s1.youkia.com";
-    private static final String testhost = "pvzol.org";
-    private static final String cookie;
 
     private static List<Integer[]> EVOLUTION_PATHS = new ArrayList<>();
 
@@ -33,16 +17,12 @@ public class Evolution {
         }
 
     static {
-        String readcookie = "";
-        try (FileInputStream reader = new FileInputStream("data/cookie")) {
-            readcookie = new String(reader.readAllBytes());
-        } catch (Exception e) {
-            System.out.println("读取data/cookie文件出错！");
-            System.exit(1);
-        }
-        cookie = readcookie;
-        host = realhost;
+        // 太阳花妹妹->天使皇后+3
         EVOLUTION_PATHS.add(new Integer[]{1,178,179,180,181,197,6,7,266,267,268,269,270,271,272,273,274});
+        // 悟空射手->海盗女王+3
+        EVOLUTION_PATHS.add(new Integer[]{45,46,47,93,48,115,13,14,15,277,278,279,280,281,282,283,284,285});
+        // 飞飞萝卜->蝠王榴莲Max
+        EVOLUTION_PATHS.add(new Integer[]{103,40,41,42,43,44,321,322,323,324,325,326,327,328,329,330,331});
     }
 
     private static boolean evolve(String plantId, int pathno){
@@ -55,14 +35,14 @@ public class Evolution {
             end = thispath.length;
         }
         for (int i = start; i < end; i++) {
-            String uri = "http://"+host+getPath(plantId, thispath[i].toString());
+            String path = getPath(plantId, thispath[i].toString());
             System.out.printf("evolue: id=%s, route=%d ---> ", plantId, thispath[i]);
-            int retlen = sendRequest(uri);
+            int retlen = sendGetRequest(path);
             System.out.printf("length: %d\n",retlen);
             if (retlen == -1 || retlen == 191){
                 return false;
             }
-            int sleepTime = 1500;
+            int sleepTime = 1000;
             if (retlen == 2441){
                 sleepTime = 15000;
                 i--;
@@ -79,33 +59,7 @@ public class Evolution {
         return true;
     }
 
-    private static int sendRequest(String uri){
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest.Builder builder = HttpRequest.newBuilder();
-        builder.GET().version(Version.HTTP_1_1).uri(URI.create(uri))
-        .header("Accept", "*/*")
-        .header("Accept-Language", "zh-CN")
-        .header("Referer","http://pvz-s1.youkia.com/youkia/main.swf?1192980633")
-        .header("x-flash-version","34,0,0,305")
-        .header("Accept-Encoding","gzip, deflate")
-        .header("User-Agent","Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; WOW64; Trident/7.0; .NET4.0C; .NET4.0E;")
-        // .header("Host","pvz-s1.youkia.com")
-        .header("Cookie", cookie)
-        // .header("Connection","keep-alive")
-        .timeout(Duration.ofMillis(20000));
-        HttpRequest request = builder.build();
-        try {
-            HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            return response.body().length;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-        
-    }
-    
     public static void main(String[] args) throws IOException, InterruptedException{
-        System.out.println(cookie);
         if (args.length < 2 || args.length > 4){
             System.out.println("need argument: plantId pathno [start [end] ]");
             assert false;
