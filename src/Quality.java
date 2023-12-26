@@ -129,11 +129,8 @@ public class Quality {
     
     /** @return new quality name */
     public static String resolveResponseAmf(byte[] bytes)throws IOException{
-        ByteArrayInputStream bArrayInputStream = new ByteArrayInputStream(bytes);
-        DataInputStream di = new DataInputStream(bArrayInputStream);
         
-        AMF0Deserializer deserializer = new AMF0Deserializer(di);
-        AMF0Message message = deserializer.getAMFMessage();
+        AMF0Message message = Util.decodeAMF(bytes);
         ASObject value = (ASObject) message.getBody(0).getValue();
         if (value.containsKey("quality_name")) {
             return (String) value.get("quality_name");

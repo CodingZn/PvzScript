@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class Request {
+    private static int timeout = 40000;
     private static final String cookie;
     private static String host;
     private static final String realhost = "pvz-s1.youkia.com";
@@ -49,7 +50,7 @@ public class Request {
         String uri = http + host + path;
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
-        builder.GET().uri(URI.create(uri)).timeout(Duration.ofMillis(20000));
+        builder.GET().uri(URI.create(uri)).timeout(Duration.ofMillis(timeout));
         addHeaders(builder);
         HttpRequest request = builder.build();
         try {
@@ -69,7 +70,7 @@ public class Request {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.POST(BodyPublishers.ofByteArray(body))
         .uri(URI.create(uri))
-        .timeout(Duration.ofMillis(20000));
+        .timeout(Duration.ofMillis(timeout));
         addHeaders(builder);
         HttpRequest request = builder.build();
         try {
