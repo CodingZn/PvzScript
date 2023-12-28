@@ -1,5 +1,7 @@
 package src;
 
+import static src.Util.delay;
+
 import java.io.FileInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,6 +11,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
+import com.exadel.flamingo.flex.amf.AMF0Body;
+import com.exadel.flamingo.flex.amf.AMF0Message;
+
 public class Request {
     private static int timeout = 40000;
     private static final String cookie;
@@ -17,6 +22,9 @@ public class Request {
     private static final String http = "http://";
     private static final String amfPath = "/pvz/amf/";
     // private static final String testhost = "pvzol.org";
+
+    private static final int leastInterval = 1000;
+    private static Long lastSentTime = 0L;
     
     static {
         host = realhost;
@@ -45,6 +53,14 @@ public class Request {
         ;
     }
 
+    private static synchronized void sendIntervalBlock(){
+        long interval = System.currentTimeMillis() - lastSentTime;
+        if (interval < leastInterval){
+            delay(leastInterval-interval);
+        }
+        lastSentTime = System.currentTimeMillis();
+    }
+
     /** return the len of response body */
     public static int sendGetRequest(String path){
         String uri = http + host + path;
@@ -54,6 +70,7 @@ public class Request {
         addHeaders(builder);
         HttpRequest request = builder.build();
         try {
+            sendIntervalBlock();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
             return response.body().length;
         } catch (Exception e) {
@@ -74,12 +91,62 @@ public class Request {
         addHeaders(builder);
         HttpRequest request = builder.build();
         try {
+            sendIntervalBlock();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /** @return valid amf body of response, 2441 block handled */
+    public static byte[] sendPostAmf(byte[] body, boolean handleAmfBlock){
+        byte[] response;
+        do {
+            System.out.println("send");
+            response = sendPostAmf(body);
+            if (response==null) return null;
+            if (!is2441Block(response)){
+                if(!handleAmfBlock || !isAmfBlock(response)){
+                    break;
+                }
+                else{
+                    System.out.print("拦");
+                    delay(3000);
+                    System.out.print("\b\b");
+                }
+            }
+            else{
+                System.out.print("拦");
+                delay(15000);
+                System.out.print("\b\b");
+                break;
+            }
+        } while (true);
+        return response;
+    }
+
+    /** to check if there is a rechapter block */
+    private static boolean is2441Block(byte[] response){
+        assert(response != null);
+        if (response.length == 2441){
+            return true;
+        }
+        return false;
+    }
+
+    /** to check if amf block is traggered */
+    private static boolean isAmfBlock(byte[] response){
+        AMF0Message msg = Util.decodeAMF(response);
+        if (msg == null) return false;
+        AMF0Body body = msg.getBody(0);
+        if(Response.isOnStatusException(body, false)
+        && Response.getExcpDesc(body).equals("Exception:请不要操作过于频繁。"))
+        {
+            return true;
+        }
+        return false;
     }
     
     public static void main(String[] args) {
