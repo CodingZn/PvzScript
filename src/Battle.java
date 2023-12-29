@@ -1,7 +1,9 @@
 package src;
 
 
-import java.util.Arrays;
+import static src.Util.delay;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +14,7 @@ import com.exadel.flamingo.flex.amf.AMF0Message;
 
 public class Battle {
     
-    public static byte[] shuaDongAmf(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
+    private static byte[] shuaDongAmf(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         Object[] value = new Object[3];
         value[0] = caveid;
         Set<Integer> participants = new HashSet<>(paohui);
@@ -24,31 +26,26 @@ public class Battle {
 
     }
 
-    // private static void chuli22SunShang(ASObject obj){
-    //     ASObject[] processes = (ASObject[]) obj.get("proceses");
-    //     for (ASObject asObject : processes) {
-    //         System.out.println(asObject);
-    //     }
-    // }
-
     /** second arg: 13, 14, 15 */
     public static boolean buXie(int plantId, int xiepingId){
         int[] value = new int[]{plantId, xiepingId};
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
-        byte[] response = Request.sendPostAmf(reqAmf, false);
+        byte[] response = Request.sendPostAmf(reqAmf, true);
 
         System.out.printf("plant %d use %d\n", plantId, xiepingId);
         return Response.isOnStatusException(Util.decodeAMF(response).getBody(0), false);
 
     }
 
+    /** 只给炮灰补血 */
     public static boolean shuaDongDaiji(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(caveid, hard_level, zhuli, paohui);
         byte[] response;
         do {
             System.out.printf("刷洞%d开始",caveid);
-            response = Request.sendPostAmf(reqAmf, true);
+            response = Request.sendPostAmf(reqAmf, false);
             AMF0Message msg = Util.decodeAMF(response);
+            // 返回战斗数据但由于amf库有问题解析出错
             if (msg == null){
                 System.out.printf("cave %d success\n", caveid);
                 return true;
@@ -57,9 +54,9 @@ public class Battle {
             if(Response.isOnStatusException(body, true)){
                 String exc = Response.getExceptionDescription(body);
                 if (exc.equals("Exception:参与战斗的生物HP不能小于1")){
-                    zhuli.forEach(i->{
-                        buXie(i, 13);
-                    });
+                    // zhuli.forEach(i->{
+                    //     buXie(i, 13);
+                    // });
                     paohui.forEach(i->{
                         buXie(i, 13);
                     });
@@ -78,12 +75,37 @@ public class Battle {
     }
 
     public static void main(String[] args) {
-        List<Integer> zhuli = Arrays.asList(new Integer[]{9137747, 8727892, 8832506});
-        List<Integer> paohui = Arrays.asList(new Integer[]{10093766, 10093559, 10094084});
-        List<Integer> caves = Util.readIntegersFromFile("data/cave.txt");
-        caves.forEach(c->{
-            shuaDongDaiji(c, 3, zhuli, paohui);
-        });
-        
+        if (args.length == 4) {
+            try {
+                int hard_level = Integer.parseInt(args[1]);
+                List<Integer> caves = Util.readIntegersFromFile(args[0]);
+                List<Integer> zhuli = Util.readIntegersFromFile(args[2]);
+                List<Integer> paohui = Util.readIntegersFromFile(args[3]);
+                caves.forEach(c->{
+                    shuaDongDaiji(c, hard_level, zhuli, paohui);
+                    delay(2000);
+                });
+                return;
+            } catch (NumberFormatException e) {
+            }
+        }
+        else if (args.length == 3){
+            try {
+                int hard_level = Integer.parseInt(args[1]);
+                List<Integer> caves = Util.readIntegersFromFile(args[0]);
+                List<Integer> zhuli = Util.readIntegersFromFile(args[2]);
+                List<Integer> paohui = new ArrayList<>();
+                caves.forEach(c->{
+                    shuaDongDaiji(c, hard_level, zhuli, paohui);
+                    delay(2000);
+                });
+                return;
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        System.out.println("args: cave_file hard_level zhuli_file [ paohui_file ]");
+        System.out.println("hard_level: 1 or 2 or 3");
+        System.out.println("file format: id seperated by \\n");
     }
 }
