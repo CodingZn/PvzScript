@@ -61,6 +61,9 @@ public class Request {
         if (interval < leastInterval){
             delay(leastInterval-interval);
         }
+    }
+
+    private static synchronized void updateLastSend(){
         lastSentTime = System.currentTimeMillis();
     }
 
@@ -101,6 +104,7 @@ public class Request {
         try {
             sendIntervalBlock();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            updateLastSend();
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,6 +126,7 @@ public class Request {
         try {
             sendIntervalBlock();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            updateLastSend();
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
