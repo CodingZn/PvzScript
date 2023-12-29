@@ -23,6 +23,11 @@ public class Evolution {
         EVOLUTION_PATHS.add(new Integer[]{45,46,47,93,48,115,13,14,15,277,278,279,280,281,282,283,284,285});
         // 飞飞萝卜->蝠王榴莲Max
         EVOLUTION_PATHS.add(new Integer[]{103,40,41,42,43,44,321,322,323,324,325,326,327,328,329,330,331});
+        // 太阳花妹妹->超五悟空+3
+        EVOLUTION_PATHS.add(new Integer[]{1,178,179,180,196,95,50,51,332,333,334,335,336,337,338,339,340});
+        // 莲花战车->葵花战车+3
+        EVOLUTION_PATHS.add(new Integer[]{86,387,388,389,390,391,392,393,394,395});
+
     }
 
     private static boolean evolve(String plantId, int pathno){

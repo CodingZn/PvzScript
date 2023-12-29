@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class BatchEvolution {
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException{
-        File file = new File("src/evolution.txt");
+        File file = new File("data/evolution.txt");
         FileReader fr = new FileReader(file);
         BufferedReader bReader = new BufferedReader(fr);
         String line = bReader.readLine();
