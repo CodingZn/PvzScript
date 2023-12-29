@@ -55,7 +55,7 @@ public class Battle {
             }
             AMF0Body body= msg.getBody(0);
             if(Response.isOnStatusException(body, true)){
-                String exc = Response.getExcpDesc(body);
+                String exc = Response.getExceptionDescription(body);
                 if (exc.equals("Exception:参与战斗的生物HP不能小于1")){
                     zhuli.forEach(i->{
                         buXie(i, 13);

@@ -25,6 +25,9 @@ public class Request {
 
     private static final int leastInterval = 1000;
     private static Long lastSentTime = 0L;
+
+    private static final int wait2441Time = 15000;
+    private static final int waitAmfTime = 3000;
     
     static {
         host = realhost;
@@ -61,8 +64,34 @@ public class Request {
         lastSentTime = System.currentTimeMillis();
     }
 
-    /** return the len of response body */
-    public static int sendGetRequest(String path){
+    /** @return valid body of response, null if exceptio */
+    public static byte[] sendGetRequest(String path, boolean handleAmfBlock){
+        byte[] response;
+        do {
+            response = sendOneGet(path);
+            if (response==null) return null;
+            if (!is2441Block(response)){
+                if(!handleAmfBlock || !isAmfBlock(response)){
+                    break;
+                }
+                else{
+                    System.out.print("拦");
+                    delay(waitAmfTime);
+                    System.out.print("\b\b");
+                }
+            }
+            else{
+                System.out.print("拦");
+                delay(wait2441Time);
+                System.out.print("\b\b");
+                break;
+            }
+        } while (true);
+        return response;
+    }
+   
+    /** @return body of response, null if exception */
+    private static byte[] sendOneGet(String path){
         String uri = http + host + path;
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
@@ -72,16 +101,16 @@ public class Request {
         try {
             sendIntervalBlock();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            return response.body().length;
+            return response.body();
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            return null;
         }
         
     }
 
     /** @return amf body of response, null if exception */
-    public static byte[] sendPostAmf(byte[] body){
+    private static byte[] sendOnePostAmf(byte[] body){
         String uri = http + host + amfPath;
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
@@ -104,8 +133,7 @@ public class Request {
     public static byte[] sendPostAmf(byte[] body, boolean handleAmfBlock){
         byte[] response;
         do {
-            System.out.println("send");
-            response = sendPostAmf(body);
+            response = sendOnePostAmf(body);
             if (response==null) return null;
             if (!is2441Block(response)){
                 if(!handleAmfBlock || !isAmfBlock(response)){
@@ -113,13 +141,13 @@ public class Request {
                 }
                 else{
                     System.out.print("拦");
-                    delay(3000);
+                    delay(waitAmfTime);
                     System.out.print("\b\b");
                 }
             }
             else{
                 System.out.print("拦");
-                delay(15000);
+                delay(wait2441Time);
                 System.out.print("\b\b");
                 break;
             }
@@ -142,7 +170,7 @@ public class Request {
         if (msg == null) return false;
         AMF0Body body = msg.getBody(0);
         if(Response.isOnStatusException(body, false)
-        && Response.getExcpDesc(body).equals("Exception:请不要操作过于频繁。"))
+        && Response.getExceptionDescription(body).equals("Exception:请不要操作过于频繁。"))
         {
             return true;
         }

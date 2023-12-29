@@ -27,7 +27,7 @@ public class Response {
         }
     }
 
-    public static String getExcpDesc(AMF0Body body){
+    public static String getExceptionDescription(AMF0Body body){
         return (String) ((ASObject)body.getValue()).get("description");
     }
 }

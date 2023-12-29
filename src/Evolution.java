@@ -42,24 +42,12 @@ public class Evolution {
         for (int i = start; i < end; i++) {
             String path = getPath(plantId, thispath[i].toString());
             System.out.printf("evolue: id=%s, route=%d ---> ", plantId, thispath[i]);
-            int retlen = sendGetRequest(path);
+            int retlen = sendGetRequest(path, false).length;
             System.out.printf("length: %d\n",retlen);
-            if (retlen == -1 || retlen == 191){
+            if (retlen == 191){
                 return false;
-            }
-            int sleepTime = 1000;
-            if (retlen == 2441){
-                sleepTime = 15000;
-                i--;
             }
 
-            try {
-                Thread.sleep(sleepTime);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-            
         }
         return true;
     }
