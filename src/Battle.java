@@ -30,9 +30,15 @@ public class Battle {
     public static boolean buXie(int plantId, int xiepingId){
         int[] value = new int[]{plantId, xiepingId};
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
-        byte[] response = Request.sendPostAmf(reqAmf, true);
+        byte[] response = Request.sendPostAmf(reqAmf, false);
 
-        System.out.printf("plant %d use %d\n", plantId, xiepingId);
+        System.out.printf("plant %d use %d", plantId, xiepingId);
+        Object obj = Util.decodeAMF(response).getBody(0).getValue();
+        if (obj instanceof String){
+            System.out.printf(" hp=%s\n", obj);
+            return true;
+        }
+        System.out.printf(" failed\n", obj);
         return Response.isOnStatusException(Util.decodeAMF(response).getBody(0), false);
 
     }
@@ -61,6 +67,10 @@ public class Battle {
                         buXie(i, 13);
                     });
                     continue;
+                }
+                else if (exc.equals("Exception:请不要操作过于频繁。")){
+                    delay(5000);
+                    return false;
                 }
                 else{
                     System.out.printf("cave %d fail\n", caveid);
