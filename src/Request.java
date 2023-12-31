@@ -176,7 +176,7 @@ public class Request {
         AMF0Body body = msg.getBody(0);
         if(Response.isOnStatusException(body, false)
         && (Response.getExceptionDescription(body).equals("Exception:请不要操作过于频繁。")
-        || Response.getExceptionDescription(body).equals("请求错误：请不要操作过于频繁。")))
+        || Response.getExceptionDescription(body).equals("请不要操作过于频繁。")))
         {
             return true;
         }
