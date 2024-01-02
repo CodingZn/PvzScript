@@ -27,7 +27,7 @@ public class Request {
     private static Long lastSentTime = 0L;
 
     private static final int wait2441Time = 15000;
-    private static final int waitAmfTime = 3000;
+    private static final int waitAmfTime = 10000;
     
     static {
         host = realhost;

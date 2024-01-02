@@ -49,7 +49,7 @@ public class Battle {
         byte[] response;
         do {
             System.out.printf("刷洞%d开始",caveid);
-            response = Request.sendPostAmf(reqAmf, false);
+            response = Request.sendPostAmf(reqAmf, true);
             AMF0Message msg = Util.decodeAMF(response);
             // 返回战斗数据但由于amf库有问题解析出错
             if (msg == null){
@@ -68,10 +68,10 @@ public class Battle {
                     });
                     continue;
                 }
-                else if (exc.equals("Exception:请不要操作过于频繁。")){
-                    delay(5000);
-                    return false;
-                }
+                // else if (exc.equals("Exception:请不要操作过于频繁。")){
+                //     delay(10000);
+                //     continue;
+                // }
                 else{
                     System.out.printf("cave %d fail\n", caveid);
                     return false;
