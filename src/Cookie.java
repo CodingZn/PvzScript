@@ -40,9 +40,11 @@ public class Cookie {
         if (args.length == 2) {
             if (args[0].equals("load")){
                 Cookie.loadCookie(args[1]);
+                return;
             }
             else if (args[0].equals("set")){
                 Cookie.setCookie(args[1]);
+                return;
             }
             
         }
