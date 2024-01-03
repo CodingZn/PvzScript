@@ -1,34 +1,19 @@
 package src;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 
-import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
-import lib.MyAMF0Serializer;
 
 public class Quality {
     
-    public static byte[] getQualityUpAmf(int plantId) throws IOException{
-        ByteArrayOutputStream ba = new ByteArrayOutputStream();
-        DataOutputStream doo = new DataOutputStream(ba);
-        MyAMF0Serializer serializer = new MyAMF0Serializer(doo);
+    public static byte[] getQualityUpAmf(int plantId){
         int[] value = {plantId};
-        AMF0Body mBody = new AMF0Body("api.apiorganism.qualityUp", "/1", value, AMF0Body.DATA_TYPE_ARRAY);
-        AMF0Message msg = new AMF0Message();
-        msg.addBody(mBody);
-        msg.setVersion(3);
-        serializer.serializeMessage(msg);
-        
-        return ba.toByteArray();
-        
+        return Util.encodeAMF("api.apiorganism.qualityUp", "/1", value);
     }
     
     /** @return new quality name */
-    public static String resolveResponseAmf(byte[] bytes)throws IOException{
+    public static String resolveResponseAmf(byte[] bytes){
         
         AMF0Message message = Util.decodeAMF(bytes);
         ASObject value = (ASObject) message.getBody(0).getValue();
@@ -39,7 +24,7 @@ public class Quality {
             return null;
     }
 
-    public static SimpleEntry<Integer, String> qualityUp(int plantId, String goal, int maximum) throws IOException{
+    public static SimpleEntry<Integer, String> qualityUp(int plantId, String goal, int maximum){
         String now_quality="";
         int total_use = 0;
         byte[] body = getQualityUpAmf(plantId);
@@ -53,7 +38,7 @@ public class Quality {
         return new SimpleEntry<Integer,String>(total_use, now_quality);
     }
 
-    public static SimpleEntry<Integer, String> qualityUp(int plantId, int maximum) throws IOException{
+    public static SimpleEntry<Integer, String> qualityUp(int plantId, int maximum){
         String now_quality="";
         int total_use = 0;
         byte[] body = getQualityUpAmf(plantId);
@@ -68,9 +53,7 @@ public class Quality {
     }
 
     
-    public static void main(String[] args) throws IOException{
-        // System.out.println(args[0]);
-        // return;
+    public static void main(String[] args){
         if (args.length == 3 || args.length == 4){
             if (args[0].equals("goal")){
                 int plantId = Integer.parseInt(args[1]);

@@ -1,5 +1,4 @@
 package src;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +51,7 @@ public class Evolution {
         return true;
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException{
+    public static void main(String[] args){
         if (args.length < 2 || args.length > 4){
             System.out.println("need argument: plantId pathno [start [end] ]");
             assert false;

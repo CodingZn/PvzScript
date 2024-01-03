@@ -2,7 +2,6 @@ package src;
 
 import static src.Util.delay;
 
-import java.io.FileInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
@@ -16,7 +15,7 @@ import com.exadel.flamingo.flex.amf.AMF0Message;
 
 public class Request {
     private static int timeout = 40000;
-    private static final String cookie;
+    private static String cookie;
     private static String host;
     private static final String realhost = "pvz-s1.youkia.com";
     private static final String http = "http://";
@@ -31,15 +30,11 @@ public class Request {
     
     static {
         host = realhost;
-        String readcookie = "";
-        try (FileInputStream reader = new FileInputStream("data/cookie")) {
-            readcookie = new String(reader.readAllBytes());
-        } catch (Exception e) {
+        cookie = Cookie.getCookie();
+        if (cookie == null){
             System.out.println("读取data/cookie文件出错！");
-            System.exit(1);
+            System.out.println("请在运行前设置cookie！");
         }
-        cookie = readcookie;
-
     }
 
     private static void addHeaders(HttpRequest.Builder builder){
