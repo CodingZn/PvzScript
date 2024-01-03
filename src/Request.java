@@ -15,7 +15,6 @@ import com.exadel.flamingo.flex.amf.AMF0Message;
 
 public class Request {
     private static int timeout = 40000;
-    private static String cookie;
     private static String host;
     private static final String realhost = "pvz-s1.youkia.com";
     private static final String http = "http://";
@@ -30,8 +29,7 @@ public class Request {
     
     static {
         host = realhost;
-        cookie = Cookie.getCookie();
-        if (cookie == null){
+        if (Cookie.getCookie() == null){
             System.out.println("读取data/cookie文件出错！");
             System.out.println("请在运行前设置cookie！");
         }
@@ -46,7 +44,7 @@ public class Request {
         .header("Accept-Encoding","gzip, deflate")
         .header("User-Agent","Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; WOW64; Trident/7.0; .NET4.0C; .NET4.0E;")
         // .header("Host","pvz-s1.youkia.com")
-        .header("Cookie", cookie)
+        .header("Cookie", Cookie.getCookie())
         // .header("Connection","keep-alive")
         ;
     }

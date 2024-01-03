@@ -12,6 +12,11 @@ public class CommandResolver {
         if (strs.length == 2) {
             String[] args = strs[1].split(" ");
             switch (strs[0].toLowerCase()) {
+                case "cookie" ->{
+                    String[] cookieArgs = strs[1].split(" ", 2);
+                    Cookie.resolver(cookieArgs);
+                    return;
+                }
                 case "evolution"->{
                     Evolution.main(args);
                     return;
