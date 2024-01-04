@@ -151,7 +151,6 @@ public class Request {
     /** @return amf body of response, null if exception */
     private static byte[] sendOnePostAmf(byte[] body){
         String uri = http + host + amfPath;
-        HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.POST(BodyPublishers.ofByteArray(body))
         .uri(URI.create(uri))
