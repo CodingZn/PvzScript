@@ -2,6 +2,7 @@ package src;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,6 +21,7 @@ public class Organism {
         if (document == null){
             return false;
         }
+        organismMap.clear();
         Element organismsEle = (Element) document.getElementsByTagName("organisms").item(0);
         NodeList organismList = organismsEle.getChildNodes();
         for (int i = 0; i < organismList.getLength(); i++) {
@@ -35,9 +37,9 @@ public class Organism {
         
     }
 
-    private static Map<Integer, Organism> organismMap;
+    private static TreeMap<Integer, Organism> organismMap = new TreeMap<>();
 
-    public static Map<Integer, Organism> getOrganisms(){
+    public static TreeMap<Integer, Organism> getOrganisms(){
         return organismMap;
     }
 
@@ -60,16 +62,16 @@ public class Organism {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("植物id=%-9d  原型id=%-5d  等级=%-3d  品质=%s\n".formatted(this.id, this.pid, this.grade, this.quality))
-        .append("当前hp=%ld\n".formatted(this.hp_now))
-        .append("战力=%ld\n".formatted(this.fight))
-        .append("总血量=%ld\n".formatted(this.hp_max))
-        .append("攻击=%ld\n".formatted(this.attack))
-        .append("护甲=%ld\n".formatted(this.hujia))
-        .append("穿透=%ld\n".formatted(this.chuantou))
-        .append("闪避=%ld\n".formatted(this.miss))
-        .append("命中=%ld\n".formatted(this.precision))
-        .append("速度=%ld\n".formatted(this.speed));
+        sb.append("植物id=\t%-9d  原型id=%-5d  等级=%-3d  品质=%s\n".formatted(this.id, this.pid, this.grade, this.quality))
+        .append("当前hp=\t%d\n".formatted(this.hp_now))
+        .append("战力=\t%d\n".formatted(this.fight))
+        .append("总血量=\t%d\n".formatted(this.hp_max))
+        .append("攻击=\t%d\n".formatted(this.attack))
+        .append("护甲=\t%d\n".formatted(this.hujia))
+        .append("穿透=\t%d\n".formatted(this.chuantou))
+        .append("闪避=\t%d\n".formatted(this.miss))
+        .append("命中=\t%d\n".formatted(this.precision))
+        .append("速度=\t%d\n".formatted(this.speed));
         return sb.toString();
     }
 
@@ -101,4 +103,23 @@ public class Organism {
     /** 战斗力 */
     public final long fight;
 
+    private static void show(){
+        if (loadOrganisms()){
+            TreeMap<Integer, Organism> map = getOrganisms();
+            for (Map.Entry<Integer, Organism> orga : map.entrySet()) {
+                System.out.println(orga.getValue());
+            }
+        }
+        return;
+    }
+
+    public static void main(String[] args) {
+        if (args.length == 1) {
+            if (args[0].equals("show")) {
+                show();
+                return;
+            }
+        }
+        System.out.println("args: show");
+    }
 }

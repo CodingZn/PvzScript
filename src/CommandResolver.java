@@ -22,6 +22,10 @@ public class CommandResolver {
                     Request.resolve(args);
                     return;
                 }
+                case "organism"->{
+                    Organism.main(args);
+                    return;
+                }
                 case "evolution"->{
                     Evolution.main(args);
                     return;
