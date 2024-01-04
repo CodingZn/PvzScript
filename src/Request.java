@@ -27,7 +27,8 @@ public class Request {
     private static final String amfPath = "/pvz/amf/";
     // private static final String testhost = "pvzol.org";
 
-    private static final int leastInterval = 1000;
+    private static final int leastInterval = 100;
+    private static int reqInterval = 1000;
     private static Long lastSentTime = 0L;
 
     private static final int wait2441Time = 15000;
@@ -64,6 +65,16 @@ public class Request {
         return httpClient!=null;
     }
 
+    public static int setInterval(int interval){
+        if (interval < leastInterval){
+            Request.reqInterval = leastInterval;
+        }
+        else{
+            Request.reqInterval = interval;
+        }
+        return Request.reqInterval;
+    }
+
     private static void addHeaders(HttpRequest.Builder builder){
         builder.version(Version.HTTP_1_1)
         .header("Accept", "*/*")
@@ -80,8 +91,8 @@ public class Request {
 
     private static synchronized void sendIntervalBlock(){
         long interval = System.currentTimeMillis() - lastSentTime;
-        if (interval < leastInterval){
-            delay(leastInterval-interval);
+        if (interval < reqInterval){
+            delay(reqInterval-interval);
         }
     }
 
@@ -193,9 +204,9 @@ public class Request {
                 System.out.print("\b\b");
             }
             else if(handleAmfBlock && isAmfBlock(response)){
-                System.out.print("拦");
+                System.out.print("频繁");
                 delay(waitAmfTime);
-                System.out.print("\b\b");
+                System.out.print("\b\b\b\b");
             }
             else{
                 break;
@@ -246,8 +257,17 @@ public class Request {
                 return;
             }
         }
+        else if (args.length == 2 && args[0].equals("interval")) {
+            try {
+                int value = Integer.parseInt(args[1]);
+                int actual = setInterval(value);
+                System.out.printf("new interval: %d\n", actual);
+            } catch (Exception e) {
+            }
+        }
 
         System.out.println("args: proxy on|off");
+        System.out.println("or  : interval n(ms)");
     }
     
     public static void main(String[] args) {
