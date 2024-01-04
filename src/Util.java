@@ -11,6 +11,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 import com.exadel.flamingo.flex.messaging.amf.io.AMF0Deserializer;
@@ -101,4 +106,20 @@ public class Util {
         }
     }
 
+    public static Document parseXml(byte[] byteArray){
+        try {
+            //创建DOM解析器的工厂实例
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            //从DOM工厂中获取解析器
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            ByteArrayInputStream bInputStream = new ByteArrayInputStream(byteArray);
+            //使用解析器生成Document实例
+            return documentBuilder.parse(bInputStream);
+        } catch (Exception e) {
+            Util.printBytes(byteArray, System.out);
+            System.out.println(byteArray);
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

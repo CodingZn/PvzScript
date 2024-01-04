@@ -41,9 +41,15 @@ public class Evolution {
         for (int i = start; i < end; i++) {
             String path = getPath(plantId, thispath[i].toString());
             System.out.printf("evolue: id=%s, route=%d ---> ", plantId, thispath[i]);
-            int retlen = sendGetRequest(path, false).length;
-            System.out.printf("length: %d\n",retlen);
-            if (retlen == 191){
+            byte[] body = sendGetRequest(path);
+            String strBody = new String(body);
+            if (strBody.indexOf("<status>failure</status>")!=-1){
+                return false;
+            }else if (strBody.indexOf("<status>success</status>")!=-1){
+                ;
+            }else {
+                System.out.println("未知响应");
+                System.out.println(strBody);
                 return false;
             }
 

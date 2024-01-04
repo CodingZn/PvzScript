@@ -2,6 +2,9 @@ package src;
 
 import static src.Util.delay;
 
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
@@ -9,6 +12,9 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.zip.GZIPInputStream;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
@@ -26,6 +32,12 @@ public class Request {
 
     private static final int wait2441Time = 15000;
     private static final int waitAmfTime = 10000;
+    private static final int retryInterval = 3000;
+
+    private static final HttpClient directClient;
+    private static final HttpClient proxyClient;
+    private static HttpClient httpClient;
+    private static int proxyPort;
     
     static {
         host = realhost;
@@ -33,6 +45,23 @@ public class Request {
             System.out.println("读取data/cookie文件出错！");
             System.out.println("请在运行前设置cookie！");
         }
+        proxyPort = 8887;
+        proxyClient = HttpClient.newBuilder()
+        .proxy(ProxySelector.of(new InetSocketAddress("127.0.0.1", proxyPort)))
+        .build();
+        directClient = HttpClient.newHttpClient();
+
+        httpClient = proxyClient;
+    }
+
+    public static boolean changeProxy(boolean on){
+        if (on){
+            httpClient = proxyClient;
+        }
+        else{
+            httpClient = directClient;
+        }
+        return httpClient!=null;
     }
 
     private static void addHeaders(HttpRequest.Builder builder){
@@ -60,45 +89,58 @@ public class Request {
         lastSentTime = System.currentTimeMillis();
     }
 
-    /** @return valid body of response, null if exceptio */
-    public static byte[] sendGetRequest(String path, boolean handleAmfBlock){
+    /** @return valid body of response, null if exception */
+    public static byte[] sendGetRequest(String path){
         byte[] response;
+        int retryCount = 5;
         do {
             response = sendOneGet(path);
-            if (response==null) return null;
-            if (!is2441Block(response)){
-                if(!handleAmfBlock || !isAmfBlock(response)){
-                    break;
+            if (response==null){
+                if (retryCount == 0){
+                    System.out.println("请求失败！请检查网络设置。");
+                    return null;
                 }
                 else{
-                    System.out.print("拦");
-                    delay(waitAmfTime);
-                    System.out.print("\b\b");
+                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次", retryInterval/1000, retryCount);
+                    delay(retryInterval);
+                    System.out.print(String.join("", Collections.nCopies(32,"\b")));
+                    retryCount--;
+                    continue;
                 }
             }
-            else{
+            else if (is2441Block(response, true)){
                 System.out.print("拦");
                 delay(wait2441Time);
                 System.out.print("\b\b");
+                continue;
+            }
+            else{
                 break;
             }
         } while (true);
         return response;
     }
-   
-    /** @return body of response, null if exception */
+
+    /** @return body of response, null if exception. 
+     * @apiNote support gzip compress
+     */
     private static byte[] sendOneGet(String path){
         String uri = http + host + path;
-        HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.GET().uri(URI.create(uri)).timeout(Duration.ofMillis(timeout));
         addHeaders(builder);
         HttpRequest request = builder.build();
         try {
             sendIntervalBlock();
-            HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
+            HttpResponse<InputStream> response = httpClient.send(request, bh);
             updateLastSend();
-            return response.body();
+            Optional<String> s = response.headers().firstValue("Content-Encoding");
+            if (s.isPresent() && s.get().toLowerCase().equals("gzip")) {
+                GZIPInputStream gi = new GZIPInputStream(response.body());
+                return gi.readAllBytes();
+            }
+            return response.body().readAllBytes();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -130,23 +172,33 @@ public class Request {
     /** @return valid amf body of response, 2441 block handled */
     public static byte[] sendPostAmf(byte[] body, boolean handleAmfBlock){
         byte[] response;
+        int retryCount = 5;
         do {
             response = sendOnePostAmf(body);
-            if (response==null) return null;
-            if (!is2441Block(response)){
-                if(!handleAmfBlock || !isAmfBlock(response)){
-                    break;
+            if (response==null){
+                if (retryCount == 0){
+                    System.out.println("请求失败！请检查网络设置。");
+                    return null;
                 }
                 else{
-                    System.out.print("拦");
-                    delay(waitAmfTime);
-                    System.out.print("\b\b");
+                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次", retryInterval/1000, retryCount);
+                    delay(retryInterval);
+                    System.out.print(String.join("", Collections.nCopies(32,"\b")));
+                    retryCount--;
+                    continue;
                 }
             }
-            else{
+            else if (is2441Block(response, false)){
                 System.out.print("拦");
                 delay(wait2441Time);
                 System.out.print("\b\b");
+            }
+            else if(handleAmfBlock && isAmfBlock(response)){
+                System.out.print("拦");
+                delay(waitAmfTime);
+                System.out.print("\b\b");
+            }
+            else{
                 break;
             }
         } while (true);
@@ -154,10 +206,19 @@ public class Request {
     }
 
     /** to check if there is a rechapter block */
-    private static boolean is2441Block(byte[] response){
+    private static boolean is2441Block(byte[] response, boolean decoded){
         assert(response != null);
-        if (response.length == 2441){
+        if (!decoded && response.length == 2441){
             return true;
+        }
+        else if (decoded){
+            String body = new String(response);
+            if (body.indexOf("<script type=\"text/javascript\">") != -1){
+                return true;
+            }
+            if (body.indexOf("Your requests are too frequent!") != -1){
+                return true;
+            }
         }
         return false;
     }
@@ -174,6 +235,20 @@ public class Request {
             return true;
         }
         return false;
+    }
+
+    public static void resolve(String[] args) {
+        if (args.length == 2 && args[0].equals("proxy")) {
+            if (args[1].equals("on")){
+                changeProxy(true);
+                return;
+            }else if (args[1].equals("off")){
+                changeProxy(false);
+                return;
+            }
+        }
+
+        System.out.println("args: proxy on|off");
     }
     
     public static void main(String[] args) {

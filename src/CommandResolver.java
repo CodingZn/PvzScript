@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 public class CommandResolver {
@@ -15,6 +16,10 @@ public class CommandResolver {
                 case "cookie" ->{
                     String[] cookieArgs = strs[1].split(" ", 2);
                     Cookie.resolver(cookieArgs);
+                    return;
+                }
+                case "request" ->{
+                    Request.resolve(args);
                     return;
                 }
                 case "evolution"->{
@@ -40,7 +45,7 @@ public class CommandResolver {
 
     public static void resolveFile(String filename){
         List<String> cmds;
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename, Charset.forName("UTF-8")))) {
             cmds = reader.lines().toList();
         } catch (FileNotFoundException e) {
             System.out.printf("file %s not found!\n", filename);
@@ -50,8 +55,9 @@ public class CommandResolver {
             return;
         }
         cmds.forEach(c->{
-            System.out.println(c);
+            System.out.printf(">>> %s <<<\n", c);
             resolve(c);
+            System.out.println();
         });
     }
 
