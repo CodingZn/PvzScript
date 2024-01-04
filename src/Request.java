@@ -262,6 +262,7 @@ public class Request {
                 int value = Integer.parseInt(args[1]);
                 int actual = setInterval(value);
                 System.out.printf("new interval: %d\n", actual);
+                return;
             } catch (Exception e) {
             }
         }

@@ -9,6 +9,19 @@ public class App {
      */
     private static int mode = 0;
     public static void main(String[] args) {
+        if (args.length == 0){
+            interact();
+        }
+        else if (args.length == 1){
+            CommandResolver.resolveFile(args[0]);
+        }
+        else {
+            System.out.println("args: NO ARGS --for-interact");
+            System.out.println("or  : filename --for-execute-one-file");
+        }
+    }
+
+    private static void interact(){
         System.out.println("Welcome to PvzScript!");
         System.out.println("Command Mode:");
         Scanner scanner = new Scanner(System.in);
