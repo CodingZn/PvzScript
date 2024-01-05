@@ -33,7 +33,8 @@ public class Request {
 
     private static final int wait2441Time = 15000;
     private static final int waitAmfTime = 10000;
-    private static final int retryInterval = 3000;
+    private static final int retryInterval = 20000;
+    private static final int retryMaxCount = 10;
 
     private static final HttpClient directClient;
     private static final HttpClient proxyClient;
@@ -103,7 +104,7 @@ public class Request {
     /** @return valid body of response, null if exception */
     public static byte[] sendGetRequest(String path){
         byte[] response;
-        int retryCount = 5;
+        int retryCount = retryMaxCount;
         do {
             response = sendOneGet(path);
             if (response==null){
@@ -182,7 +183,7 @@ public class Request {
     /** @return valid amf body of response, 2441 block handled */
     public static byte[] sendPostAmf(byte[] body, boolean handleAmfBlock){
         byte[] response;
-        int retryCount = 5;
+        int retryCount = retryMaxCount;
         do {
             response = sendOnePostAmf(body);
             if (response==null){
