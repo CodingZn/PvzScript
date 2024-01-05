@@ -33,8 +33,9 @@ public class Request {
 
     private static final int wait2441Time = 15000;
     private static final int waitAmfTime = 10000;
-    private static final int retryInterval = 20000;
-    private static final int retryMaxCount = 10;
+    private static final int leastRetryInterval = 1000;
+    private static int retryInterval = 20000;
+    private static int retryMaxCount = 10;
 
     private static final HttpClient directClient;
     private static final HttpClient proxyClient;
@@ -74,6 +75,21 @@ public class Request {
             Request.reqInterval = interval;
         }
         return Request.reqInterval;
+    }
+
+    public static int setRetry(int max_count, int retry_interval){
+        if (retry_interval < leastRetryInterval){
+            Request.retryInterval = leastRetryInterval;
+        }
+        else{
+            Request.retryInterval = retry_interval;
+        }
+
+        if (max_count >= 1){
+            Request.retryMaxCount = max_count;
+        }
+
+        return Request.retryInterval;
     }
 
     private static void addHeaders(HttpRequest.Builder builder){
@@ -261,8 +277,18 @@ public class Request {
         else if (args.length == 2 && args[0].equals("interval")) {
             try {
                 int value = Integer.parseInt(args[1]);
-                int actual = setInterval(value);
-                System.out.printf("new interval: %d\n", actual);
+                setInterval(value);
+                System.out.printf("new interval: %d\n", Request.reqInterval);
+                return;
+            } catch (Exception e) {
+            }
+        }
+        else if (args.length == 3 && args[0].equals("retry")){
+            try {
+                int max_count = Integer.parseInt(args[1]);
+                int retry_interval = Integer.parseInt(args[2]);
+                setRetry(max_count, retry_interval);
+                System.out.printf("new retry interval: %d, maxCount: %d\n", Request.retryInterval, Request.retryMaxCount);
                 return;
             } catch (Exception e) {
             }
@@ -270,6 +296,7 @@ public class Request {
 
         System.out.println("args: proxy on|off");
         System.out.println("or  : interval n(ms)");
+        System.out.println("or  : retry max_count retry_interval(ms)");
     }
     
     public static void main(String[] args) {
