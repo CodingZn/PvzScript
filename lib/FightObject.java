@@ -22,7 +22,8 @@ public class FightObject {
     public final Integer rank;
 
     @SuppressWarnings({"unchecked"})
-    public FightObject(HashMap<Object, Object> fightMap){
+    public FightObject(Object value){
+        HashMap<Object, Object> fightMap = (HashMap<Object, Object>) value;
         Object[] assObjArr = (Object[]) fightMap.get(ASSAILANTS);
         int assSize = assObjArr.length;
         FighterInfo[] res = new FighterInfo[assSize];
