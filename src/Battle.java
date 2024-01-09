@@ -26,23 +26,6 @@ public class Battle {
 
     }
 
-    /** second arg: 13, 14, 15 */
-    public static boolean buXie(int plantId, int xiepingId){
-        int[] value = new int[]{plantId, xiepingId};
-        byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
-        byte[] response = Request.sendPostAmf(reqAmf, false);
-
-        System.out.printf("plant %d use %d", plantId, xiepingId);
-        Object obj = Util.decodeAMF(response).getBody(0).getValue();
-        if (obj instanceof String){
-            System.out.printf(" hp=%s\n", obj);
-            return true;
-        }
-        System.out.printf(" failed\n", obj);
-        return Response.isOnStatusException(Util.decodeAMF(response).getBody(0), false);
-
-    }
-
     /** 只给炮灰补血 */
     public static boolean shuaDongDaiji(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(caveid, hard_level, zhuli, paohui);
@@ -64,7 +47,7 @@ public class Battle {
                     //     buXie(i, 13);
                     // });
                     paohui.forEach(i->{
-                        buXie(i, 13);
+                        BuXie.bu1xie(i, 13);
                     });
                     continue;
                 }

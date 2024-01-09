@@ -1,6 +1,5 @@
 package src;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,17 +9,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Organism {
-    private static String getPath(){
-        String time = Long.toString(new Date().getTime());
-        return "/pvz/index.php/Warehouse/index/sig/755f2a102fbea19a61c432205e4a550d?" + time;
-    }
-    
-    public static boolean loadOrganisms(){
-        byte[] response = Request.sendGetRequest(getPath());
-        Document document = Util.parseXml(response);
-        if (document == null){
-            return false;
+
+    public static TreeMap<Integer, Organism> getNewestOrganisms(){
+        if (loadOrganisms()){
+            return getOrganisms();
         }
+        else return null;
+    }
+
+    public static boolean loadOrganisms(Document document){
         organismMap.clear();
         Element organismsEle = (Element) document.getElementsByTagName("organisms").item(0);
         NodeList organismList = organismsEle.getChildNodes();
@@ -34,7 +31,15 @@ public class Organism {
             
         }
         return true;
-        
+    }
+    
+    public static boolean loadOrganisms(){
+        byte[] response = Request.sendGetRequest(Warehouse.getPath());
+        Document document = Util.parseXml(response);
+        if (document == null){
+            return false;
+        }
+        return loadOrganisms(document);
     }
 
     private static TreeMap<Integer, Organism> organismMap = new TreeMap<>();

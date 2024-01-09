@@ -18,9 +18,9 @@ import org.w3c.dom.Document;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
-import com.exadel.flamingo.flex.messaging.amf.io.AMF0Deserializer;
 
 import lib.MyAMF0Serializer;
+import lib.MyAMF0Deserializer;
 
 public class Util {
     public static void printBytes(byte[] bytes, PrintStream out){
@@ -50,11 +50,11 @@ public class Util {
         ByteArrayInputStream bArrayInputStream = new ByteArrayInputStream(bytes);
         DataInputStream di = new DataInputStream(bArrayInputStream);
         try {
-            AMF0Deserializer deserializer = new AMF0Deserializer(di);
+            MyAMF0Deserializer deserializer = new MyAMF0Deserializer(di);
             return deserializer.getAMFMessage();
         } catch (IOException e) {
             System.out.println("Error Decoding AMF message!");
-            // e.printStackTrace();
+            e.printStackTrace();
             return null;
         }
         
