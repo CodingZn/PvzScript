@@ -11,6 +11,8 @@ import java.util.Set;
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
+import lib.FightObject;
+
 
 public class Battle {
     
@@ -26,7 +28,21 @@ public class Battle {
 
     }
 
-    /** 只给炮灰补血 */
+    private static boolean getAward(String award_key){
+        byte[] reqAmf = Util.encodeAMF("api.reward.lottery", "/1", new Object[]{award_key});
+        byte[] response = Request.sendPostAmf(reqAmf, true);
+        AMF0Message msg = Util.decodeAMF(response);
+        System.out.printf(" award: ");
+        if (Response.isOnStatusException(msg.getBody(0), true)){
+            System.out.print("x\n");
+            return false;
+        }else{
+            System.out.print("√\n");
+            return true;
+        }
+    }
+
+    /** 仅在有植物死亡后触发补血 */
     public static boolean shuaDongDaiji(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(caveid, hard_level, zhuli, paohui);
         byte[] response;
@@ -34,21 +50,15 @@ public class Battle {
             System.out.printf("刷洞%d开始",caveid);
             response = Request.sendPostAmf(reqAmf, true);
             AMF0Message msg = Util.decodeAMF(response);
-            // 返回战斗数据但由于amf库有问题解析出错
-            if (msg == null){
-                System.out.printf("cave %d success\n", caveid);
-                return true;
-            }
             AMF0Body body= msg.getBody(0);
             if(Response.isOnStatusException(body, true)){
                 String exc = Response.getExceptionDescription(body);
                 if (exc.equals("Exception:参与战斗的生物HP不能小于1")){
-                    // zhuli.forEach(i->{
-                    //     buXie(i, 13);
-                    // });
-                    paohui.forEach(i->{
-                        BuXie.bu1xie(i, 13);
-                    });
+                    boolean res = BuXie.buxie(zhuli, paohui);
+                    if (!res){
+                        System.out.printf("血瓶不足！\n");
+                        return false;
+                    }
                     continue;
                 }
                 // else if (exc.equals("Exception:请不要操作过于频繁。")){
@@ -56,13 +66,15 @@ public class Battle {
                 //     continue;
                 // }
                 else{
-                    System.out.printf("cave %d fail\n", caveid);
+                    System.out.printf(" fail\n", caveid);
                     return false;
                 }
             }
             else{
-                System.out.printf("cave %d success\n", caveid);
-                return true;
+                System.out.printf(" success.", caveid);
+                FightObject fo = new FightObject(body.getValue());
+                boolean res = getAward(fo.award_key);
+                return res;
             }
         } while (true);
     }
