@@ -136,7 +136,7 @@ public class Request {
                     continue;
                 }
             }
-            else if (is2441Block(response, true)){
+            else if (is2441Block(response)){
                 System.out.print("拦");
                 delay(wait2441Time);
                 System.out.print("\b\b");
@@ -187,9 +187,15 @@ public class Request {
         HttpRequest request = builder.build();
         try {
             sendIntervalBlock();
-            HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
+            HttpResponse<InputStream> response = httpClient.send(request, bh);
             updateLastSend();
-            return response.body();
+            Optional<String> s = response.headers().firstValue("Content-Encoding");
+            if (s.isPresent() && s.get().toLowerCase().equals("gzip")) {
+                GZIPInputStream gi = new GZIPInputStream(response.body());
+                return gi.readAllBytes();
+            }
+            return response.body().readAllBytes();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -215,7 +221,7 @@ public class Request {
                     continue;
                 }
             }
-            else if (is2441Block(response, false)){
+            else if (is2441Block(response)){
                 System.out.print("拦");
                 delay(wait2441Time);
                 System.out.print("\b\b");
@@ -233,12 +239,12 @@ public class Request {
     }
 
     /** to check if there is a rechapter block */
-    private static boolean is2441Block(byte[] response, boolean decoded){
+    private static boolean is2441Block(byte[] response){
         assert(response != null);
-        if (!decoded && response.length == 2441){
+        if (response.length == 2441){
             return true;
         }
-        else if (decoded){
+        else{
             String body = new String(response);
             if (body.indexOf("<script type=\"text/javascript\">") != -1){
                 return true;

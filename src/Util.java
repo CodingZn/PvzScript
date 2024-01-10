@@ -54,6 +54,7 @@ public class Util {
             return deserializer.getAMFMessage();
         } catch (IOException e) {
             System.out.println("Error Decoding AMF message!");
+            Util.printBytes(bytes, System.out);
             e.printStackTrace();
             return null;
         }
