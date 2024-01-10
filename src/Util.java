@@ -16,6 +16,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
@@ -123,6 +125,21 @@ public class Util {
         }
     }
 
+    public static Document parseXml(String filename){
+        try {
+            //创建DOM解析器的工厂实例
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            //从DOM工厂中获取解析器
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            FileInputStream fInputStream = new FileInputStream(filename);
+            //使用解析器生成Document实例
+            return documentBuilder.parse(fInputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static Document parseXml(byte[] byteArray){
         try {
             //创建DOM解析器的工厂实例
@@ -136,6 +153,20 @@ public class Util {
             Util.printBytes(byteArray, System.out);
             System.out.println(byteArray);
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    /** if xml failure, return message; else return null */
+    public static String getXmlMessage(Document document){
+        Node statusNode = document.getElementsByTagName("status").item(0);
+        if (statusNode.getNodeType()==Node.ELEMENT_NODE && 
+        ((Element) statusNode).getTextContent().equals("failure")){
+            Node errorNode = document.getElementsByTagName("error").item(0);
+            String msg = ((Element) errorNode).getAttribute("message");
+            return msg;
+        }
+        else{
             return null;
         }
     }
