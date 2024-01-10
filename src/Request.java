@@ -258,7 +258,7 @@ public class Request {
 
     /** to check if amf block is traggered */
     private static boolean isAmfBlock(byte[] response){
-        AMF0Message msg = Util.decodeAMF(response);
+        AMF0Message msg = Util.tryDecodeAMF(response);
         if (msg == null) return false;
         AMF0Body body = msg.getBody(0);
         if(Response.isOnStatusException(body, false)

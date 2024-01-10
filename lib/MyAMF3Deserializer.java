@@ -35,9 +35,7 @@ public class MyAMF3Deserializer extends DataInputStream implements ObjectInput, 
    public MyAMF3Deserializer(InputStream in) {
       super(in);
       this.debug = log.isDebugEnabled();
-    //   this.debug = true;
       this.debugMore = logMore.isDebugEnabled();
-    //   this.debugMore = true;
       if (this.debugMore) {
          this.debug("new MyAMF3Deserializer(in=", in, ")");
       }
@@ -581,16 +579,10 @@ public class MyAMF3Deserializer extends DataInputStream implements ObjectInput, 
       }
 
       if (t != null) {
-         System.out.println(t.getMessage());
-         System.out.println(message);
+         log.debug(message, t);
       } else {
-        System.out.println(message);
+         log.debug(message);
       }
-    //   if (t != null) {
-    //      log.debug(message, t);
-    //   } else {
-    //      log.debug(message);
-    //   }
 
    }
 }

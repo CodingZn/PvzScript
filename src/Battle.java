@@ -4,17 +4,39 @@ package src;
 import static src.Util.delay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
+import flex.messaging.io.ASObject;
 import lib.FightObject;
+import lib.FightProcess;
+import lib.FighterInfo;
+import lib.FightingDefender;
 
 
 public class Battle {
+    /** 
+     * 策略0：不补血，有植物死亡直接停止。 
+     * <p/> 
+     * 策略1：仅在有植物死亡后触发补血。（适合无伤带级）。
+     * <p/> 
+     * 策略2：每次挑战后根据战斗状况获取植物最新血量补血。（适合有伤带级）。
+     * <p/> 
+     * 策略3：每次挑战后获取仓库信息进行补血。（请求过多，但准确）
+     */
+    private static int strategy = 1;
+    private static int setStrategy(int newStrategy){
+        if (newStrategy>=0 && newStrategy<=3){
+            strategy = newStrategy;
+        }
+        return strategy;
+    }
     
     private static byte[] shuaDongAmf(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         Object[] value = new Object[3];
@@ -42,7 +64,74 @@ public class Battle {
         }
     }
 
-    /** 仅在有植物死亡后触发补血 */
+    public static boolean zhanhouBuxie(FightObject fo, List<Integer> zhuli, List<Integer> paohui){
+        Set<Integer> attacked_zhuli = new HashSet<>();
+        Set<Integer> attacked_paohui = new HashSet<>();
+        if (strategy==2){
+            Map<Integer, Long> fightersHp = new HashMap<>();
+            for (FighterInfo fighter : fo.assailants) {
+                fightersHp.put(fighter.id, fighter.hp_max);
+            }
+            for (FightProcess process : fo.processes) {
+                for (FightingDefender defender : process.defenders) {
+                    if (zhuli.contains(defender.id)){
+                        long max_hp = fightersHp.getOrDefault(defender.id, Long.MAX_VALUE);
+                        double percent = (double)defender.hp/max_hp;
+                        if (percent <= BuXie.getThreshold())
+                            attacked_zhuli.add(defender.id);
+                    }
+                    else if (paohui.contains(defender.id) && defender.hp.equals(0L)){
+                        attacked_paohui.add(defender.id);
+                    }
+                }
+            }
+            return BuXie.blindBuxie(attacked_zhuli, attacked_paohui);
+        }
+        else if (strategy==3){
+            return BuXie.buxie(zhuli, paohui);
+        }
+        else return false;
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private static boolean zhanhouBuxie(ASObject fo, List<Integer> zhuli, List<Integer> paohui){
+        Set<Integer> attacked_zhuli = new HashSet<>();
+        Set<Integer> attacked_paohui = new HashSet<>();
+        if (strategy==2){
+            Map<Integer, Long> fightersHp = new HashMap<>();
+            for (ASObject fighter : (List<ASObject> )fo.get("assailants")) {
+                fightersHp.put(Integer.parseInt(fighter.get("id").toString()), 
+                Long.parseLong(fighter.get("hp_max").toString()));
+            }
+            // 分析每次攻击
+            for (ASObject process : (List<ASObject> )fo.get("proceses")) {
+                // 仅考虑己方被攻击的情况
+                String assailantType = (String) ((ASObject) process.get("assailant")).get("type");
+                if (assailantType.equals("assailant")) continue;
+                // 对被攻击的植物进行检查
+                for (ASObject defender : (List<ASObject> )process.get("defenders")) {
+                    Integer id = Integer.parseInt(defender.get("id").toString());
+                    Long hp = Long.parseLong(defender.get("hp").toString());
+                    if (zhuli.contains(id)){
+                        long max_hp = fightersHp.getOrDefault(id, Long.MAX_VALUE);
+                        double percent = (double)hp/max_hp;
+                        if (percent <= BuXie.getThreshold())
+                            attacked_zhuli.add(id);
+                    }
+                    else if (paohui.contains(id) && hp.equals(0L)){
+                        attacked_paohui.add(id);
+                    }
+                }
+            }
+            return BuXie.blindBuxie(attacked_zhuli, attacked_paohui);
+        }
+        else if (strategy==3){
+            return BuXie.buxie(zhuli, paohui);
+        }
+        else return false;
+    }
+
+    /** 返回值代表是否继续 */
     public static boolean shuaDongDaiji(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(caveid, hard_level, zhuli, paohui);
         byte[] response;
@@ -54,6 +143,7 @@ public class Battle {
             if(Response.isOnStatusException(body, true)){
                 String exc = Response.getExceptionDescription(body);
                 if (exc.equals("Exception:参与战斗的生物HP不能小于1")){
+                    if (strategy==0) return false;
                     boolean res = BuXie.buxie(zhuli, paohui);
                     if (!res){
                         System.out.printf("血瓶不足！\n");
@@ -61,19 +151,22 @@ public class Battle {
                     }
                     continue;
                 }
-                // else if (exc.equals("Exception:请不要操作过于频繁。")){
-                //     delay(10000);
-                //     continue;
-                // }
+                else if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
+                    return false;
+                }
                 else{
                     System.out.printf(" fail\n", caveid);
-                    return false;
+                    return true;
                 }
             }
             else{
                 System.out.printf(" success.", caveid);
-                FightObject fo = new FightObject(body.getValue());
-                boolean res = getAward(fo.award_key);
+                // System.out.println(body.getValue());
+                ASObject resObj = (ASObject)body.getValue();
+                boolean res = getAward((String)resObj.get("awards_key"));
+                if (strategy == 2 || strategy == 3) {
+                    res = zhanhouBuxie(resObj, zhuli, paohui) && res;
+                }
                 return res;
             }
         } while (true);
@@ -86,10 +179,11 @@ public class Battle {
                 List<Integer> caves = Util.readIntegersFromFile(args[0]);
                 List<Integer> zhuli = Util.readIntegersFromFile(args[2]);
                 List<Integer> paohui = Util.readIntegersFromFile(args[3]);
-                caves.forEach(c->{
-                    shuaDongDaiji(c, hard_level, zhuli, paohui);
+                for (Integer c : caves) {
+                    boolean res = shuaDongDaiji(c, hard_level, zhuli, paohui);
+                    if (!res) break;
                     delay(2000);
-                });
+                }
                 return;
             } catch (NumberFormatException e) {
             }
@@ -100,17 +194,25 @@ public class Battle {
                 List<Integer> caves = Util.readIntegersFromFile(args[0]);
                 List<Integer> zhuli = Util.readIntegersFromFile(args[2]);
                 List<Integer> paohui = new ArrayList<>();
-                caves.forEach(c->{
-                    shuaDongDaiji(c, hard_level, zhuli, paohui);
+                for (Integer c : caves) {
+                    boolean res = shuaDongDaiji(c, hard_level, zhuli, paohui);
+                    if (!res) break;
                     delay(2000);
-                });
+                }
                 return;
             } catch (NumberFormatException e) {
             }
+        }
+        else if (args.length == 2 && args[0].equals("strategy")){
+            setStrategy(Integer.parseInt(args[1]));
+            System.out.printf("new battle strategy: %d\n", strategy);
+            return;
         }
 
         System.out.println("args: cave_file hard_level zhuli_file [ paohui_file ]");
         System.out.println("hard_level: 1 or 2 or 3");
         System.out.println("file format: id seperated by \\n");
+        System.out.println("or  : strategy no");
+        System.out.println("no: 0 to 3");
     }
 }

@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -23,6 +24,9 @@ import lib.MyAMF0Serializer;
 import lib.MyAMF0Deserializer;
 
 public class Util {
+    public static void printBytes(byte[] bytes){
+        printBytes(bytes, System.out);
+    }
     public static void printBytes(byte[] bytes, PrintStream out){
         for (int i = 0; i < bytes.length; i++) {
             if (i%16==0){
@@ -56,6 +60,18 @@ public class Util {
             System.out.println("Error Decoding AMF message!");
             Util.printBytes(bytes, System.out);
             e.printStackTrace();
+            return null;
+        }
+        
+    }
+
+    public static AMF0Message tryDecodeAMF(byte[] bytes){
+        ByteArrayInputStream bArrayInputStream = new ByteArrayInputStream(bytes);
+        DataInputStream di = new DataInputStream(bArrayInputStream);
+        try {
+            MyAMF0Deserializer deserializer = new MyAMF0Deserializer(di);
+            return deserializer.getAMFMessage();
+        } catch (IOException e) {
             return null;
         }
         
@@ -123,4 +139,26 @@ public class Util {
             return null;
         }
     }
+
+    public static byte[] toByteArray(String hex) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String[] toks = hex.split("([ \n\t]+)|(\r\n)+");
+    
+        for(int i = 0; i < toks.length; ++i) {
+            baos.write(Integer.parseInt(toks[i], 16));
+        }
+ 
+        return baos.toByteArray();
+    }
+
+    public static byte[] readBytesFromFile(String filename) {
+        try (FileInputStream fi = new FileInputStream(filename)) {
+            String str = new String(fi.readAllBytes());
+            return toByteArray(str);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

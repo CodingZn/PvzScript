@@ -8,11 +8,9 @@ public class Response {
     
     /** handle onStatus exception */
     public static boolean isOnStatusException(AMF0Body body, boolean printMsg){
-        // try {
-        //     ASObject obj = (ASObject)body.getValue(); 
-        // } catch (ClassCastException e) {
-        //     System.out.println((String)body.getValue());
-        // }
+        if (body.getValue() instanceof String){
+            return false;
+        }
         ASObject obj = (ASObject)body.getValue(); 
         if (body.getTarget().equals("/1/onStatus")){
             if (printMsg){

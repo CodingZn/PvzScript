@@ -1,16 +1,21 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class BuXie {
-    private static double threshold = 70.0;
-    private static final double DIJI_EFFECT = 20.0;
-    private static final double ZHONGJI_EFFECT = 50.0;
+    private static double threshold = 0.70;
+    private static final double DIJI_EFFECT = 0.20;
+    private static final double ZHONGJI_EFFECT = 0.50;
     public static final int DIJIXIE_ID = 13;
     public static final int ZHONGJIXIE_ID = 14;
     public static final int GAOJIXIE_ID = 15;
 
+    public static double getThreshold(){
+        return threshold;
+    }
 
     /** second arg: 13, 14, 15 */
     public static boolean bu1xie(int plantId, int xiepingId){
@@ -29,7 +34,21 @@ public class BuXie {
 
     }
 
+    /** 不获取仓库直接补血 */
+    public static boolean blindBuxie(Set<Integer> zhuli, Set<Integer> paohui){
+        for (Integer integer : paohui) {
+            if (!bu1xie(integer, DIJIXIE_ID)) return false;
+        }
+        for (Integer integer : zhuli) {
+            if (!bu1xie(integer, DIJIXIE_ID)) return false;
+        }
+        return true;
+    }
 
+    /** 策略：主力使用最少的血瓶补到阈值以上；炮灰保证有血 */
+    public static boolean buxie(Set<Integer> zhuli, Set<Integer> paohui){
+        return buxie(new ArrayList<>(zhuli), new ArrayList<>(paohui));
+    }
     /** 策略：主力使用最少的血瓶补到阈值以上；炮灰保证有血 */
     public static boolean buxie(List<Integer> zhuli, List<Integer> paohui){
         if(Warehouse.loadWarehouse()){
