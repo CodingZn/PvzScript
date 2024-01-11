@@ -30,6 +30,14 @@ public class CommandResolver {
                     Warehouse.main(args);
                     return;
                 }
+                case "friend"->{
+                    Friend.main(args);
+                    return;
+                }
+                case "cave"->{
+                    Cave.main(args);
+                    return;
+                }
                 case "evolution"->{
                     Evolution.main(args);
                     return;

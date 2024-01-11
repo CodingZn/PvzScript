@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class Util {
         }
     }
 
+    /** @return nullable */
     public static AMF0Message decodeAMF(byte[] bytes){
         ByteArrayInputStream bArrayInputStream = new ByteArrayInputStream(bytes);
         DataInputStream di = new DataInputStream(bArrayInputStream);
@@ -67,6 +69,7 @@ public class Util {
         
     }
 
+    /** @return nullable */
     public static AMF0Message tryDecodeAMF(byte[] bytes){
         ByteArrayInputStream bArrayInputStream = new ByteArrayInputStream(bytes);
         DataInputStream di = new DataInputStream(bArrayInputStream);
@@ -83,6 +86,7 @@ public class Util {
         return encodeAMF(target, response, value, AMF0Body.DATA_TYPE_ARRAY);
     }
 
+    /** @return nullable */
     public static byte[] encodeAMF(String target, String response, Object value, byte type){
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
         MyAMF0Serializer serializer = new MyAMF0Serializer(new DataOutputStream(bStream));
@@ -107,6 +111,7 @@ public class Util {
         return res;
     }
 
+    /** @return nullable */
     public static List<Integer> readIntegersFromFile(String filename){
         try (BufferedReader bStream = new BufferedReader(new FileReader(filename))) {
             List<Integer> res = new ArrayList<>();
@@ -125,6 +130,7 @@ public class Util {
         }
     }
 
+    /** @return nullable */
     public static Document parseXml(String filename){
         try {
             //创建DOM解析器的工厂实例
@@ -140,6 +146,23 @@ public class Util {
         }
     }
 
+    /** @return nullable */
+    public static Document parseXml(File file){
+        try {
+            //创建DOM解析器的工厂实例
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            //从DOM工厂中获取解析器
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            FileInputStream fInputStream = new FileInputStream(file);
+            //使用解析器生成Document实例
+            return documentBuilder.parse(fInputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /** @return nullable */
     public static Document parseXml(byte[] byteArray){
         try {
             //创建DOM解析器的工厂实例
@@ -182,6 +205,7 @@ public class Util {
         return baos.toByteArray();
     }
 
+    /** @return nullable */
     public static byte[] readBytesFromFile(String filename) {
         try (FileInputStream fi = new FileInputStream(filename)) {
             String str = new String(fi.readAllBytes());
