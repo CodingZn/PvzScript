@@ -29,6 +29,8 @@ public class Battle {
      * 策略2：每次挑战后根据战斗状况获取植物最新血量补血。（适合有伤带级）。
      * <p/> 
      * 策略3：每次挑战后获取仓库信息进行补血。（请求过多，但准确）
+     * <p/>
+     * TODO: 战后补血策略、奖励领取策略、炮灰自动选择策略、挑战次数策略
      */
     private static int strategy = 1;
     private static int setStrategy(int newStrategy){
