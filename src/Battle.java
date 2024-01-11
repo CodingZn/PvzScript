@@ -3,21 +3,16 @@ package src;
 
 import static src.Util.delay;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
-import lib.FightObject;
-import lib.FightProcess;
-import lib.FighterInfo;
-import lib.FightingDefender;
 
 
 public class Battle {
@@ -52,7 +47,7 @@ public class Battle {
 
     }
 
-    private static boolean getAward(String award_key){
+    public static boolean getAward(String award_key){
         byte[] reqAmf = Util.encodeAMF("api.reward.lottery", "/1", new Object[]{award_key});
         byte[] response = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(response);
@@ -66,66 +61,10 @@ public class Battle {
         }
     }
 
-    public static boolean zhanhouBuxie(FightObject fo, List<Integer> zhuli, List<Integer> paohui){
-        Set<Integer> attacked_zhuli = new HashSet<>();
-        Set<Integer> attacked_paohui = new HashSet<>();
-        if (strategy==2){
-            Map<Integer, Long> fightersHp = new HashMap<>();
-            for (FighterInfo fighter : fo.assailants) {
-                fightersHp.put(fighter.id, fighter.hp_max);
-            }
-            for (FightProcess process : fo.processes) {
-                for (FightingDefender defender : process.defenders) {
-                    if (zhuli.contains(defender.id)){
-                        long max_hp = fightersHp.getOrDefault(defender.id, Long.MAX_VALUE);
-                        double percent = (double)defender.hp/max_hp;
-                        if (percent <= BuXie.getThreshold())
-                            attacked_zhuli.add(defender.id);
-                    }
-                    else if (paohui.contains(defender.id) && defender.hp.equals(0L)){
-                        attacked_paohui.add(defender.id);
-                    }
-                }
-            }
-            return BuXie.blindBuxie(attacked_zhuli, attacked_paohui);
-        }
-        else if (strategy==3){
-            return BuXie.buxie(zhuli, paohui);
-        }
-        else return false;
-    }
-
-    @SuppressWarnings({"unchecked"})
     private static boolean zhanhouBuxie(ASObject fo, List<Integer> zhuli, List<Integer> paohui){
-        Set<Integer> attacked_zhuli = new HashSet<>();
-        Set<Integer> attacked_paohui = new HashSet<>();
         if (strategy==2){
-            Map<Integer, Long> fightersHp = new HashMap<>();
-            for (ASObject fighter : (List<ASObject> )fo.get("assailants")) {
-                fightersHp.put(Integer.parseInt(fighter.get("id").toString()), 
-                Long.parseLong(fighter.get("hp_max").toString()));
-            }
-            // 分析每次攻击
-            for (ASObject process : (List<ASObject> )fo.get("proceses")) {
-                // 仅考虑己方被攻击的情况
-                String assailantType = (String) ((ASObject) process.get("assailant")).get("type");
-                if (assailantType.equals("assailant")) continue;
-                // 对被攻击的植物进行检查
-                for (ASObject defender : (List<ASObject> )process.get("defenders")) {
-                    Integer id = Integer.parseInt(defender.get("id").toString());
-                    Long hp = Long.parseLong(defender.get("hp").toString());
-                    if (zhuli.contains(id)){
-                        long max_hp = fightersHp.getOrDefault(id, Long.MAX_VALUE);
-                        double percent = (double)hp/max_hp;
-                        if (percent <= BuXie.getThreshold())
-                            attacked_zhuli.add(id);
-                    }
-                    else if (paohui.contains(id) && hp.equals(0L)){
-                        attacked_paohui.add(id);
-                    }
-                }
-            }
-            return BuXie.blindBuxie(attacked_zhuli, attacked_paohui);
+            SimpleEntry<Set<Integer>, Set<Integer>> res = BuXie.getAttacked(fo, zhuli, paohui);
+            return BuXie.blindBuxie(res.getKey(), res.getValue());
         }
         else if (strategy==3){
             return BuXie.buxie(zhuli, paohui);

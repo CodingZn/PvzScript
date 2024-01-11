@@ -1,8 +1,17 @@
 package src;
 
+import java.util.AbstractMap.SimpleEntry;
+
+import static src.Util.obj2int;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import flex.messaging.io.ASObject;
+
 import java.util.Map;
 
 public class BuXie {
@@ -125,6 +134,42 @@ public class BuXie {
             return true;
         }
         return false;
+    }
+
+
+    /** 获取被攻击的主力和炮灰 */
+    @SuppressWarnings({"unchecked"})
+    public static SimpleEntry<Set<Integer>, Set<Integer>> getAttacked(ASObject fo, List<Integer> zhuli, List<Integer> paohui){
+        Set<Integer> attacked_zhuli = new HashSet<>();
+        Set<Integer> attacked_paohui = new HashSet<>();
+        Map<Integer, Long> fightersHp = new HashMap<>();
+        for (ASObject fighter : (List<ASObject> )fo.get("assailants")) {
+            Object id_obj = fighter.get("id");
+            int id = obj2int(id_obj);
+            long hp_max = Long.parseLong(fighter.get("hp_max").toString());
+            fightersHp.put(id, hp_max);
+        }
+        // 分析每次攻击
+        for (ASObject process : (List<ASObject> )fo.get("proceses")) {
+            // 仅考虑己方被攻击的情况
+            String assailantType = (String) ((ASObject) process.get("assailant")).get("type");
+            if (assailantType.equals("assailant")) continue;
+            // 对被攻击的植物进行检查
+            for (ASObject defender : (List<ASObject> )process.get("defenders")) {
+                Integer id = Integer.parseInt(defender.get("id").toString());
+                Long hp = Long.parseLong(defender.get("hp").toString());
+                if (zhuli.contains(id)){
+                    long max_hp = fightersHp.getOrDefault(id, Long.MAX_VALUE);
+                    double percent = (double)hp/max_hp;
+                    if (percent <= BuXie.getThreshold())
+                        attacked_zhuli.add(id);
+                }
+                else if (paohui.contains(id) && hp.equals(0L)){
+                    attacked_paohui.add(id);
+                }
+            }
+        }
+        return new SimpleEntry<Set<Integer>, Set<Integer>>(attacked_zhuli, attacked_paohui);
     }
 
     public static void main(String[] args) {

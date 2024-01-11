@@ -50,6 +50,10 @@ public class CommandResolver {
                     Battle.main(args);
                     return;
                 }
+                case "stonebattle"->{
+                    StoneBattle.main(args);
+                    return;
+                }
             
                 default->{
                     break;

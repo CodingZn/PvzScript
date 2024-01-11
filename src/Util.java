@@ -216,4 +216,31 @@ public class Util {
         }
     }
 
+    public static Integer obj2int(Object number){
+        int res;
+        if (number instanceof String){
+            res = Integer.parseInt((String)number);
+        }
+        else if (number instanceof Float){
+            res = ((Float)number).intValue();
+        }
+        else if (number instanceof Double){
+            res = ((Double)number).intValue();
+        }
+        else if (number instanceof Short){
+            res = ((Short) number).intValue();
+        }
+        else if (number instanceof Integer){
+            res = (Integer) number;
+        }
+        else if (number instanceof Long){
+            res = ((Long) number).intValue();
+        }
+        else{
+            System.out.println(number.getClass());
+            return null;
+        }
+        return res;
+    }
+
 }
