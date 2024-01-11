@@ -1,7 +1,11 @@
 package src;
 
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -10,7 +14,7 @@ import org.w3c.dom.NodeList;
 
 public class Organism {
 
-    public static TreeMap<Integer, Organism> getNewestOrganisms(){
+    public static LinkedHashMap<Integer, Organism> getNewestOrganisms(){
         if (loadOrganisms()){
             return getOrganisms();
         }
@@ -42,9 +46,9 @@ public class Organism {
         return loadOrganisms(document);
     }
 
-    private static TreeMap<Integer, Organism> organismMap = new TreeMap<>();
+    private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
 
-    public static TreeMap<Integer, Organism> getOrganisms(){
+    public static LinkedHashMap<Integer, Organism> getOrganisms(){
         return organismMap;
     }
 
@@ -108,23 +112,45 @@ public class Organism {
     /** 战斗力 */
     public final long fight;
 
-    private static void show(){
+    private static void show(boolean byGrade){
         if (loadOrganisms()){
-            TreeMap<Integer, Organism> map = getOrganisms();
-            for (Map.Entry<Integer, Organism> orga : map.entrySet()) {
-                System.out.println(orga.getValue());
+            LinkedHashMap<Integer, Organism> map = getOrganisms();
+            if (byGrade){
+                List<Organism> orgList = new ArrayList<>(map.values());
+                Collections.sort(orgList, new Comparator<Organism>() {
+                    @Override
+                    public int compare(Organism o1, Organism o2) {
+                        if (o1.grade > o2.grade){
+                            return -1;
+                        }else if (o1.grade == o2.grade && o1.id < o2.id){
+                            return -1;
+                        }else return 1;
+                    }
+                });
+                for (Organism organism : orgList) {
+                    System.out.println(organism);
+                }
+            }
+            else{
+                for (Map.Entry<Integer, Organism> orga : map.entrySet()) {
+                    System.out.println(orga.getValue());
+                }
             }
         }
         return;
     }
 
     public static void main(String[] args) {
-        if (args.length == 1) {
-            if (args[0].equals("show")) {
-                show();
+        if ((args.length == 1 || args.length == 2) && args[0].equals("show")) {
+            if (args.length==1){
+                show(true);
+                return;
+            }
+            else if (args[1].equals("id")){
+                show(false);
                 return;
             }
         }
-        System.out.println("args: show");
+        System.out.println("args: show ['id']");
     }
 }

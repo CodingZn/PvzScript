@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.AbstractMap.SimpleEntry;
 
 import com.exadel.flamingo.flex.amf.AMF0Message;
@@ -76,7 +75,7 @@ public class Quality {
     }
 
     public static String getPlantQuality(int plantid){
-        TreeMap<Integer, Organism> plants = Organism.getNewestOrganisms();
+        Map<Integer, Organism> plants = Organism.getNewestOrganisms();
         Organism plant = plants.get(plantid);
         if (plant==null) return "";
         return plant.quality;

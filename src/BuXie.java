@@ -3,7 +3,7 @@ package src;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.Map;
 
 public class BuXie {
     private static double threshold = 0.70;
@@ -52,8 +52,8 @@ public class BuXie {
     /** 策略：主力使用最少的血瓶补到阈值以上；炮灰保证有血 */
     public static boolean buxie(List<Integer> zhuli, List<Integer> paohui){
         if(Warehouse.loadWarehouse()){
-            TreeMap<Integer, Organism> organisms = Organism.getOrganisms();
-            TreeMap<Integer, Integer> tools = Warehouse.getTools();
+            Map<Integer, Organism> organisms = Organism.getOrganisms();
+            Map<Integer, Integer> tools = Warehouse.getTools();
             int diji = tools.getOrDefault(DIJIXIE_ID, 0);
             int zhongji = tools.getOrDefault(ZHONGJIXIE_ID, 0);
             int gaoji = tools.getOrDefault(GAOJIXIE_ID, 0);
