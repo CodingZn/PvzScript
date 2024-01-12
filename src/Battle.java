@@ -113,7 +113,7 @@ public class Battle {
                 }
             }
             else{
-                System.out.printf("√");
+                System.out.printf("√ ");
                 ASObject resObj = (ASObject)body.getValue();
                 boolean res = getAward((String)resObj.get("awards_key"));
                 if (strategy == 2 || strategy == 3) {
