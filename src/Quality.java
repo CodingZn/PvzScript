@@ -1,6 +1,7 @@
 package src;
 import static src.Util.dateFormatNow;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
@@ -97,6 +98,8 @@ public class Quality {
                 }
                 SimpleEntry<Integer, String> res = qualityUp(plantId, iniQuality, goalQuality, maximum);
                 try {
+                    File logDir = new File("log");
+                    logDir.mkdirs();
                     printStream = new PrintStream(new FileOutputStream(
                         "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
                     true),true, Charset.forName("UTF-8")) ;
@@ -113,6 +116,8 @@ public class Quality {
                 String iniQuality = getPlantQuality(plantId);
                 SimpleEntry<Integer, String> res = qualityUp(plantId,  maximum);
                 try {
+                    File logDir = new File("log");
+                    logDir.mkdirs();
                     printStream = new PrintStream(new FileOutputStream(
                         "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
                     true),true, Charset.forName("UTF-8")) ;
