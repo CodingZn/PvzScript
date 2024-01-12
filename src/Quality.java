@@ -1,4 +1,6 @@
 package src;
+import static src.Util.dateFormatNow;
+
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
@@ -95,13 +97,14 @@ public class Quality {
                 }
                 SimpleEntry<Integer, String> res = qualityUp(plantId, iniQuality, goalQuality, maximum);
                 try {
-                    printStream = new PrintStream(new FileOutputStream("output/shuapin.txt", 
+                    printStream = new PrintStream(new FileOutputStream(
+                        "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
                     true),true, Charset.forName("UTF-8")) ;
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
                 }
-                printStream.printf("plant %d: %s --%d books--> %s.\n", plantId, iniQuality, res.getKey(), res.getValue());
+                printStream.printf("%s plant %d: %s --%d books--> %s.\n",dateFormatNow("HH:mm:ss"), plantId, iniQuality, res.getKey(), res.getValue());
                 printStream.close();
                 return;
             }else if (args[0].equals("count") && args.length == 3){
@@ -110,13 +113,14 @@ public class Quality {
                 String iniQuality = getPlantQuality(plantId);
                 SimpleEntry<Integer, String> res = qualityUp(plantId,  maximum);
                 try {
-                    printStream = new PrintStream(new FileOutputStream("output/shuapin.txt", 
+                    printStream = new PrintStream(new FileOutputStream(
+                        "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
                     true),true, Charset.forName("UTF-8")) ;
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
                 }
-                printStream.printf("plant %d: %s --%d books--> %s.\n", plantId, iniQuality, res.getKey(), res.getValue());
+                printStream.printf("%s plant %d: %s --%d books--> %s.\n",dateFormatNow("HH:mm:ss"), plantId, iniQuality, res.getKey(), res.getValue());
                 printStream.close();
                 return;
             }

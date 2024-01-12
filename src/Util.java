@@ -10,7 +10,9 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -241,6 +243,18 @@ public class Util {
             return null;
         }
         return res;
+    }
+
+    /** format as yyyy-MM-dd HH:mm:ss */
+    public static String dateFormat(Date date, String format){
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(date);
+    }
+
+    /** format as yyyy-MM-dd HH:mm:ss */
+    public static String dateFormatNow(String format){
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(new Date());
     }
 
 }

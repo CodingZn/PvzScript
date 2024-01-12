@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.w3c.dom.Document;
+
 import static src.Request.sendGetRequest;
 
 public class Evolution {
@@ -16,17 +18,27 @@ public class Evolution {
         }
 
     static {
-        // 太阳花妹妹->天使皇后+3
+        //0 太阳花妹妹->天使皇后+3
         EVOLUTION_PATHS.add(new Integer[]{1,178,179,180,181,197,6,7,266,267,268,269,270,271,272,273,274});
-        // 悟空射手->海盗女王+3
+        //1 悟空射手->海盗女王+3
         EVOLUTION_PATHS.add(new Integer[]{45,46,47,93,48,115,13,14,15,277,278,279,280,281,282,283,284,285});
-        // 飞飞萝卜->蝠王榴莲Max
+        //2 飞飞萝卜->蝠王榴莲Max
         EVOLUTION_PATHS.add(new Integer[]{103,40,41,42,43,44,321,322,323,324,325,326,327,328,329,330,331});
-        // 太阳花妹妹->超五悟空+3
+        //3 太阳花妹妹->超五悟空+3
         EVOLUTION_PATHS.add(new Integer[]{1,178,179,180,196,95,50,51,332,333,334,335,336,337,338,339,340});
-        // 莲花战车->葵花战车+3
-        EVOLUTION_PATHS.add(new Integer[]{86,387,388,389,390,391,392,393,394,395});
-
+        //4 莲花战车->葵花战车Max
+        EVOLUTION_PATHS.add(new Integer[]{86,387,388,389,390,391,392,393,394,395,396,397});
+        //5 石榴娃娃->极鬼椒王+3
+        EVOLUTION_PATHS.add(new Integer[]{134,135,136,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155});
+        //6 茄子战车->莲花战车
+        EVOLUTION_PATHS.add(new Integer[]{80,81,82,83,84,85});
+        //7 草莓小红->极鬼椒王+3
+        EVOLUTION_PATHS.add(new Integer[]{102,134,135,136,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155});
+        //8 草莓小红->刺炎榴莲+3
+        EVOLUTION_PATHS.add(new Integer[]{102,73,74,75,76,77,78,79,376,377,378,379,380,381,382,383,384});
+        //9 葵花战车Max->葵花战车☆圣
+        EVOLUTION_PATHS.add(new Integer[]{527,552,577,602});
+        
     }
 
     private static boolean evolve(String plantId, int pathno){
@@ -38,21 +50,20 @@ public class Evolution {
         if (end == -1){
             end = thispath.length;
         }
+        System.out.printf("evolue: id=%s\n", plantId);
         for (int i = start; i < end; i++) {
             String path = getPath(plantId, thispath[i].toString());
-            System.out.printf("evolue: id=%s, route=%d ---> ", plantId, thispath[i]);
+            System.out.printf("route=%d ", thispath[i]);
             byte[] body = sendGetRequest(path);
-            String strBody = new String(body);
-            if (strBody.indexOf("<status>failure</status>")!=-1){
-                return false;
-            }else if (strBody.indexOf("<status>success</status>")!=-1){
-                ;
-            }else {
-                System.out.println("未知响应");
-                System.out.println(strBody);
+            Document document = Util.parseXml(body);
+            String msg = Util.getXmlMessage(document);
+            if (msg!=null){
+                System.out.println(msg+"x ");
                 return false;
             }
-
+            else{
+                System.out.println("√");
+            }
         }
         return true;
     }
