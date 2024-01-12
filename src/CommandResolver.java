@@ -10,7 +10,10 @@ import java.util.List;
 public class CommandResolver {
     public static void resolve(String cmd){
         String[] strs = cmd.split(" ", 2);
-        if (strs.length == 2) {
+        if (!isValid(cmd)){
+            return;
+        }
+        else if (strs.length == 2) {
             String[] args = strs[1].split(" ");
             switch (strs[0].toLowerCase()) {
                 case "cookie" ->{
@@ -67,6 +70,13 @@ public class CommandResolver {
         System.out.println("Error format!");
     }
 
+    private static boolean isValid(String cmd){
+        if (cmd.trim().length()==0 || cmd.trim().charAt(0)=='#'){
+            return false;
+        }
+        else return true;
+    }
+
     public static void resolveFile(String filename){
         List<String> cmds;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename, Charset.forName("UTF-8")))) {
@@ -79,9 +89,11 @@ public class CommandResolver {
             return;
         }
         cmds.forEach(c->{
-            System.out.printf(">>> %s <<<\n", c);
-            resolve(c);
-            System.out.println();
+            if (isValid(c)){
+                System.out.printf(">>> %s <<<\n", c);
+                resolve(c);
+                System.out.println();
+            }
         });
     }
 
