@@ -24,7 +24,7 @@ public class StoneBattle {
         if(Response.isOnStatusException(msg.getBody(0), true)){
             return false;
         }
-        
+        System.out.printf("√ ");
         ASObject resObj = (ASObject)msg.getBody(0).getValue();
         boolean res = Battle.getAward((String)resObj.get("awards_key"));
         SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, zhuli, paohui);
