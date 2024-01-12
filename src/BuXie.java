@@ -26,6 +26,8 @@ public class BuXie {
         return threshold;
     }
 
+    public static final List<Integer> EMPTY_LIST = new ArrayList<>();
+
     /** second arg: 13, 14, 15 */
     public static boolean bu1xie(int plantId, int xiepingId){
         int[] value = new int[]{plantId, xiepingId};

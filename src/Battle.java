@@ -47,6 +47,18 @@ public class Battle {
 
     }
 
+    @SuppressWarnings({"unchecked"})
+    public static String resolveAward(ASObject awardObj){
+        StringBuffer sb = new StringBuffer();
+        List<ASObject> toolList = (List<ASObject>) awardObj.get("tools");
+        for (ASObject object : toolList) {
+            sb.append("%s(%d) ".formatted(
+                (String)object.get("id"), Util.obj2int(object.get("amount"))));
+            
+        }
+        return sb.toString();
+    }
+
     public static boolean getAward(String award_key){
         byte[] reqAmf = Util.encodeAMF("api.reward.lottery", "/1", new Object[]{award_key});
         byte[] response = Request.sendPostAmf(reqAmf, true);
@@ -56,7 +68,8 @@ public class Battle {
             System.out.print("x\n");
             return false;
         }else{
-            System.out.print("√\n");
+            String awardString = resolveAward((ASObject)msg.getBody(0).getValue());
+            System.out.print("[%s]\n".formatted(awardString));
             return true;
         }
     }

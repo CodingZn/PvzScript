@@ -8,7 +8,7 @@ public class Response {
     
     /** handle onStatus exception */
     public static boolean isOnStatusException(AMF0Body body, boolean printMsg){
-        if (body.getValue() instanceof String){
+        if (!(body.getValue() instanceof ASObject)){
             return false;
         }
         ASObject obj = (ASObject)body.getValue(); 

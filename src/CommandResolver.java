@@ -54,6 +54,10 @@ public class CommandResolver {
                     StoneBattle.main(args);
                     return;
                 }
+                case "fubenbattle"->{
+                    FubenBattle.main(args);
+                    return;
+                }
             
                 default->{
                     break;
