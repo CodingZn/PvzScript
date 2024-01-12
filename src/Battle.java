@@ -48,7 +48,7 @@ public class Battle {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static String resolveAward(ASObject awardObj){
+    public static String resolveAwardObj(ASObject awardObj){
         StringBuffer sb = new StringBuffer();
         List<ASObject> toolList = (List<ASObject>) awardObj.get("tools");
         for (ASObject object : toolList) {
@@ -63,12 +63,12 @@ public class Battle {
         byte[] reqAmf = Util.encodeAMF("api.reward.lottery", "/1", new Object[]{award_key});
         byte[] response = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(response);
-        System.out.printf(" award: ");
+        System.out.printf("award: ");
         if (Response.isOnStatusException(msg.getBody(0), true)){
             System.out.print("x\n");
             return false;
         }else{
-            String awardString = resolveAward((ASObject)msg.getBody(0).getValue());
+            String awardString = resolveAwardObj((ASObject)msg.getBody(0).getValue());
             System.out.print("[%s]\n".formatted(awardString));
             return true;
         }
@@ -109,13 +109,11 @@ public class Battle {
                     return false;
                 }
                 else{
-                    System.out.printf(" fail\n", caveid);
                     return true;
                 }
             }
             else{
-                System.out.printf(" success.", caveid);
-                // System.out.println(body.getValue());
+                System.out.printf("√");
                 ASObject resObj = (ASObject)body.getValue();
                 boolean res = getAward((String)resObj.get("awards_key"));
                 if (strategy == 2 || strategy == 3) {
