@@ -1,13 +1,35 @@
 package src;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import static src.Request.sendGetRequest;
 
-public class Evolution {
+public class Evolution implements Serializable{
+
+    public final int id;
+    public final int grade;
+    public final int target;
+    public final int tool_id;
+    public final int money;
+
+    public Evolution(Element element){
+        id = Integer.parseInt(element.getAttribute("id"));
+        grade = Integer.parseInt(element.getAttribute("grade"));
+        target = Integer.parseInt(element.getAttribute("target"));
+        tool_id = Integer.parseInt(element.getAttribute("tool_id"));
+        money = Integer.parseInt(element.getAttribute("money"));
+    }
+
+    @Override
+    public String toString() {
+        return "route %d: -(%d, %d)-> %d".formatted(id,tool_id,money,target);
+    }
+
 
     private static List<Integer[]> EVOLUTION_PATHS = new ArrayList<>();
 

@@ -48,6 +48,16 @@ public class Organism {
 
     private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
 
+    public static Organism getOrganism(int id){
+        return organismMap.get(id);
+    }
+
+    public static void setGrade(int id, int new_grade){
+        Organism plant = organismMap.get(id);
+        plant.grade_pre = new_grade;
+        organismMap.put(id, plant);
+    }
+
     public static LinkedHashMap<Integer, Organism> getOrganisms(){
         return organismMap;
     }
@@ -55,12 +65,14 @@ public class Organism {
     public Organism(Element element){
         this.id = Integer.parseInt(element.getAttribute("id"));
         this.pid = Integer.parseInt(element.getAttribute("pid"));
+        this.orid = Orid.getOrid(pid);
         this.attack = Long.parseLong(element.getAttribute("at"));
         this.hujia = Long.parseLong(element.getAttribute("mi"));
         this.speed = Long.parseLong(element.getAttribute("sp"));
         this.hp_now = Long.parseLong(element.getAttribute("hp"));
         this.hp_max = Long.parseLong(element.getAttribute("hm"));
         this.grade = Integer.parseInt(element.getAttribute("gr"));
+        this.grade_pre = grade;
         this.chuantou = Long.parseLong(element.getAttribute("pr"));
         this.miss = Long.parseLong(element.getAttribute("new_miss"));
         this.precision = Long.parseLong(element.getAttribute("new_precision"));
@@ -68,10 +80,19 @@ public class Organism {
         this.fight = Long.parseLong(element.getAttribute("fight"));
     }
 
+    public String toShortString(){
+        if (this.grade_pre > this.grade){
+            return "Lv%d %s(%d)".formatted(this.grade_pre, this.orid.name, this.id);
+        }
+        else{
+            return "Lv.%d %s(%d)".formatted(this.grade, this.orid.name, this.id);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("植物id=\t%-9d  原型id=%-5d  等级=%-3d  品质=%s\n".formatted(this.id, this.pid, this.grade, this.quality))
+        sb.append("%s(%d)   \t pid=%-5d  等级=%-3d  品质=%s\n".formatted(this.orid.name, this.id,this.pid, this.grade, this.quality))
         .append("当前hp=\t%d\n".formatted(this.hp_now))
         .append("战力=\t%d\n".formatted(this.fight))
         .append("总血量=\t%d\n".formatted(this.hp_max))
@@ -88,6 +109,7 @@ public class Organism {
     public final int id;
     /** 原型id */
     public final int pid;
+    public final Orid orid;
     /** 攻击 */
     public final long attack;
     /** 护甲 */
@@ -100,6 +122,8 @@ public class Organism {
     public final long hp_max;
     /** 等级 */
     public final int grade;
+    /** 预测等级 */
+    public int grade_pre;
 
     /** 穿透 */
     public final long chuantou;

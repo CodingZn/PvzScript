@@ -2,7 +2,6 @@ package src;
 
 import static src.Request.sendPostAmf;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +10,8 @@ import java.util.Set;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
+
+import static src.GeneralBattle.*;
 
 public class FubenBattle {
     /** 策略0：不使用副本书
@@ -36,7 +37,8 @@ public class FubenBattle {
         Set<Integer> participants = new HashSet<>(plantIds);
         value[1] = Util.integerArr2int(participants.toArray());
         byte[] reqAmf = Util.encodeAMF("api.fuben.challenge", "/1", value);
-        System.out.printf("battle fuben %d: ",caveid);
+        System.out.printf("打副本%d: ",caveid);
+        System.out.print(resolveFighter(plantIds));
         byte[] resp = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(resp);
         if (msg==null) return false;
@@ -45,9 +47,8 @@ public class FubenBattle {
         }
         System.out.printf("√ ");
         ASObject resObj = (ASObject)msg.getBody(0).getValue();
-        boolean res = Battle.getAward((String)resObj.get("awards_key"));
-        SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, plantIds, BuXie.EMPTY_LIST);
-        res=BuXie.blindBuxie(attacked.getKey(), attacked.getValue()) && res;
+        boolean res = getAward((String)resObj.get("awards_key"));
+        res=BuXie.blindBuxie(resObj, plantIds, BuXie.EMPTY_LIST) && res;
         return res;
         
     }
@@ -90,7 +91,10 @@ public class FubenBattle {
             if (!useFubenBook(times_n)) return false;
             if (!useFubenClock(caveid, times_n)) return false;
         }
-        BuXie.buxie(plantIds, new ArrayList<>());
+        if (!BuXie.buxie(plantIds, new ArrayList<>(), true)){
+            System.out.println("战斗前补血失败！");
+            return false;
+        }
         for (int i = 0; i < times_n; i++) {
             if (!battle(caveid, plantIds)) return false;
         }

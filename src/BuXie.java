@@ -5,6 +5,7 @@ import java.util.AbstractMap.SimpleEntry;
 import static src.Util.obj2int;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,7 @@ public class BuXie {
     public static final List<Integer> EMPTY_LIST = new ArrayList<>();
 
     /** second arg: 13, 14, 15 */
-    public static boolean bu1xie(int plantId, int xiepingId){
+    private static boolean bu1xie(int plantId, int xiepingId){
         int[] value = new int[]{plantId, xiepingId};
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
         byte[] response = Request.sendPostAmf(reqAmf, false);
@@ -46,7 +47,13 @@ public class BuXie {
     }
 
     /** 不获取仓库直接补血 */
-    public static boolean blindBuxie(Set<Integer> zhuli, Set<Integer> paohui){
+    public static boolean blindBuxie(ASObject fo, Collection<Integer> zhuli, Collection<Integer> paohui){
+        SimpleEntry<Set<Integer>, Set<Integer>> res = BuXie.getAttacked(fo, zhuli, paohui);
+        return BuXie.blindBuxie(res.getKey(), res.getValue());
+    }
+
+    /** 不获取仓库直接补血 */
+    public static boolean blindBuxie(Collection<Integer> zhuli, Collection<Integer> paohui){
         for (Integer integer : paohui) {
             if (!bu1xie(integer, DIJIXIE_ID)) return false;
         }
@@ -56,92 +63,96 @@ public class BuXie {
         return true;
     }
 
-    /** 策略：主力使用最少的血瓶补到阈值以上；炮灰保证有血 */
-    public static boolean buxie(Set<Integer> zhuli, Set<Integer> paohui){
-        return buxie(new ArrayList<>(zhuli), new ArrayList<>(paohui));
-    }
-    /** 策略：主力使用最少的血瓶补到阈值以上；炮灰保证有血 */
-    public static boolean buxie(List<Integer> zhuli, List<Integer> paohui){
-        if(Warehouse.loadWarehouse()){
-            Map<Integer, Organism> organisms = Organism.getOrganisms();
-            Map<Integer, Integer> tools = Warehouse.getTools();
-            int diji = tools.getOrDefault(DIJIXIE_ID, 0);
-            int zhongji = tools.getOrDefault(ZHONGJIXIE_ID, 0);
-            int gaoji = tools.getOrDefault(GAOJIXIE_ID, 0);
-
-            boolean res = true;
-            
-            for (Integer plantid : paohui) {
-                Organism plant = organisms.get(plantid); 
-                if (plant.hp_now > 0L){
-                    continue;
-                }else if (diji > 0){
-                    res = res && bu1xie(plantid, DIJIXIE_ID);
-                    diji--;
-                }else if (zhongji > 0){
-                    res = res && bu1xie(plantid, ZHONGJIXIE_ID);
-                    zhongji--;
-                }else if (gaoji > 0){
-                    res = res && bu1xie(plantid, GAOJIXIE_ID);
-                    gaoji--;
-                }else{
-                    res = false;
-                }
-                if (!res) return false;
-            }
-
-            for (Integer plantid : zhuli) {
-                Organism plant = organisms.get(plantid); 
-                double now_percent = (double) plant.hp_now / plant.hp_max;
-                if (now_percent >= threshold){
-                    continue;
-                }else if (now_percent + DIJI_EFFECT >= threshold && diji > 0){
-                    res = res && bu1xie(plantid, DIJIXIE_ID);
-                    diji--;
-                }else if (now_percent + ZHONGJI_EFFECT >= threshold && zhongji > 0){
-                    res = res && bu1xie(plantid, ZHONGJIXIE_ID);
-                    zhongji--;
-                }else if (gaoji > 0){
-                    res = res && bu1xie(plantid, GAOJIXIE_ID);
-                    gaoji--;
-                }else if (zhongji > 0){
-                    res = res && bu1xie(plantid, ZHONGJIXIE_ID);
-                    zhongji--;
-                    now_percent += ZHONGJI_EFFECT;
-                    if (now_percent >= threshold) continue;
-                    else if (now_percent + DIJI_EFFECT >= threshold){
-                        if (diji>0){
-                            res = res && bu1xie(plantid, DIJIXIE_ID);
-                            diji--;
-                        }
-                        else if (zhongji>0){
-                            res = res && bu1xie(plantid, ZHONGJIXIE_ID);
-                            zhongji--;
-                        }
-                        else res = false;
-                    }else {
-                        if (zhongji>0){
-                            res = res && bu1xie(plantid, ZHONGJIXIE_ID);
-                            zhongji--;
-                        }
-                        else res = false;
-                    }
-                    
-                }else{
-                    res = false;
-                }
-                if (!res) return false;
-            }
-
-            return true;
+    /** 主力使用最少的血瓶补到阈值以上；炮灰保证有血
+     * @param requestWare 是否请求仓库最新信息
+     */
+    public static boolean buxie(Collection<Integer> zhuli, Collection<Integer> paohui, boolean requestWare){
+        Map<Integer, Organism> organisms;
+        if(requestWare && Warehouse.loadWarehouse()){
+            organisms = Organism.getOrganisms();
         }
-        return false;
+        else if (!requestWare){
+            organisms = Organism.getOrganisms();
+        }
+        else{
+            return false;
+        }
+        Map<Integer, Integer> tools = Warehouse.getTools();
+        int diji = tools.getOrDefault(DIJIXIE_ID, 0);
+        int zhongji = tools.getOrDefault(ZHONGJIXIE_ID, 0);
+        int gaoji = tools.getOrDefault(GAOJIXIE_ID, 0);
+
+        boolean res = true;
+        
+        for (Integer plantid : paohui) {
+            Organism plant = organisms.get(plantid); 
+            if (plant.hp_now > 0L){
+                continue;
+            }else if (diji > 0){
+                res = res && bu1xie(plantid, DIJIXIE_ID);
+                diji--;
+            }else if (zhongji > 0){
+                res = res && bu1xie(plantid, ZHONGJIXIE_ID);
+                zhongji--;
+            }else if (gaoji > 0){
+                res = res && bu1xie(plantid, GAOJIXIE_ID);
+                gaoji--;
+            }else{
+                res = false;
+            }
+            if (!res) return false;
+        }
+
+        for (Integer plantid : zhuli) {
+            Organism plant = organisms.get(plantid); 
+            double now_percent = (double) plant.hp_now / plant.hp_max;
+            if (now_percent >= threshold){
+                continue;
+            }else if (now_percent + DIJI_EFFECT >= threshold && diji > 0){
+                res = res && bu1xie(plantid, DIJIXIE_ID);
+                diji--;
+            }else if (now_percent + ZHONGJI_EFFECT >= threshold && zhongji > 0){
+                res = res && bu1xie(plantid, ZHONGJIXIE_ID);
+                zhongji--;
+            }else if (gaoji > 0){
+                res = res && bu1xie(plantid, GAOJIXIE_ID);
+                gaoji--;
+            }else if (zhongji > 0){
+                res = res && bu1xie(plantid, ZHONGJIXIE_ID);
+                zhongji--;
+                now_percent += ZHONGJI_EFFECT;
+                if (now_percent >= threshold) continue;
+                else if (now_percent + DIJI_EFFECT >= threshold){
+                    if (diji>0){
+                        res = res && bu1xie(plantid, DIJIXIE_ID);
+                        diji--;
+                    }
+                    else if (zhongji>0){
+                        res = res && bu1xie(plantid, ZHONGJIXIE_ID);
+                        zhongji--;
+                    }
+                    else res = false;
+                }else {
+                    if (zhongji>0){
+                        res = res && bu1xie(plantid, ZHONGJIXIE_ID);
+                        zhongji--;
+                    }
+                    else res = false;
+                }
+                
+            }else{
+                res = false;
+            }
+            if (!res) return false;
+        }
+
+        return true;
     }
 
 
     /** 获取被攻击的主力和炮灰 */
     @SuppressWarnings({"unchecked"})
-    public static SimpleEntry<Set<Integer>, Set<Integer>> getAttacked(ASObject fo, List<Integer> zhuli, List<Integer> paohui){
+    public static SimpleEntry<Set<Integer>, Set<Integer>> getAttacked(ASObject fo, Collection<Integer> zhuli, Collection<Integer> paohui){
         Set<Integer> attacked_zhuli = new HashSet<>();
         Set<Integer> attacked_paohui = new HashSet<>();
         Map<Integer, Long> fightersHp = new HashMap<>();

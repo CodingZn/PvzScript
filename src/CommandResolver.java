@@ -29,6 +29,10 @@ public class CommandResolver {
                     Organism.main(args);
                     return;
                 }
+                case "orid"->{
+                    Orid.main(args);
+                    return;
+                }
                 case "warehouse"->{
                     Warehouse.main(args);
                     return;

@@ -7,8 +7,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -255,6 +259,38 @@ public class Util {
     public static String dateFormatNow(String format){
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(new Date());
+    }
+
+    public static Object loadObject(String filename){
+        try {
+            FileInputStream fInputStream = new FileInputStream(filename);
+            ObjectInputStream oInputStream = new ObjectInputStream(fInputStream);
+            Object readobj = oInputStream.readObject();
+            oInputStream.close();
+            return readobj;
+        } catch (InvalidClassException e){
+            System.out.println("类信息不一致。重新加载xml文件...");
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ClassNotFoundException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean saveObject(Object obj, String filename){
+        try {
+            FileOutputStream fOutputStream = new FileOutputStream(filename);
+            ObjectOutputStream outputStream = new ObjectOutputStream(fOutputStream);
+            outputStream.writeObject(obj);
+            outputStream.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
