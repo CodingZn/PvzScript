@@ -53,6 +53,10 @@ public class CommandResolver {
                     Quality.main(args);
                     return;
                 }
+                case "buxie"->{
+                    BuXie.main(args);
+                    return;
+                }
                 case "battle"->{
                     Battle.main(args);
                     return;

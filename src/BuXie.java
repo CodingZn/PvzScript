@@ -30,7 +30,7 @@ public class BuXie {
     public static final List<Integer> EMPTY_LIST = new ArrayList<>();
 
     /** second arg: 13, 14, 15 */
-    private static boolean bu1xie(int plantId, int xiepingId){
+    public static boolean bu1xie(int plantId, int xiepingId){
         int[] value = new int[]{plantId, xiepingId};
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
         byte[] response = Request.sendPostAmf(reqAmf, false);
@@ -186,6 +186,19 @@ public class BuXie {
     }
 
     public static void main(String[] args) {
-        
+        if (args.length == 2){
+            int plantid = Integer.parseInt(args[0]);
+            int xieping = Integer.parseInt(args[1]);
+            if (xieping == 13 || xieping == 14 || xieping == 15){
+                bu1xie(plantid, xieping);
+                return;
+            }else if (xieping == 1 || xieping == 2 || xieping == 3 ){
+                xieping = xieping+12;
+                bu1xie(plantid, xieping);
+                return;
+            }
+        }
+        System.out.println("args: plantid xiepingid|1|2|3");
+        System.out.println("1|2|3 means xiepingid: 13|14|15");
     }
 }
