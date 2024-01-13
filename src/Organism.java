@@ -49,6 +49,9 @@ public class Organism {
     private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
 
     public static Organism getOrganism(int id){
+        if (organismMap==null || organismMap.size()==0) {
+            loadOrganisms();
+        }
         return organismMap.get(id);
     }
 
@@ -62,6 +65,8 @@ public class Organism {
         return organismMap;
     }
 
+
+    // TODO 数据溢出
     public Organism(Element element){
         this.id = Integer.parseInt(element.getAttribute("id"));
         this.pid = Integer.parseInt(element.getAttribute("pid"));
