@@ -66,6 +66,7 @@ public class Battle {
         AMF0Message msg = Util.decodeAMF(response);
         AMF0Body body= msg.getBody(0);
         if(Response.isOnStatusException(body, true)){
+            System.out.println();
             String exc = Response.getExceptionDescription(body);
             if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
                 return new SimpleEntry<Boolean,ASObject>(false, null);
@@ -78,7 +79,6 @@ public class Battle {
             System.out.printf("√ ");
             ASObject resObj = (ASObject)body.getValue();
             boolean res = getAward((String)resObj.get("awards_key"));
-            System.out.println("fuck2");
             return new SimpleEntry<Boolean,ASObject>(res, resObj);
         }
     }
