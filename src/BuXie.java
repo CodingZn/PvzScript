@@ -2,8 +2,10 @@ package src;
 
 import java.util.AbstractMap.SimpleEntry;
 
+import static src.Util.obj2bigint;
 import static src.Util.obj2int;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -86,7 +88,7 @@ public class BuXie {
         
         for (Integer plantid : paohui) {
             Organism plant = organisms.get(plantid); 
-            if (plant.hp_now > 0L){
+            if (plant.hp_now.compareTo(BigInteger.ZERO)>0){
                 continue;
             }else if (diji > 0){
                 res = res && bu1xie(plantid, DIJIXIE_ID);
@@ -105,7 +107,7 @@ public class BuXie {
 
         for (Integer plantid : zhuli) {
             Organism plant = organisms.get(plantid); 
-            double now_percent = (double) plant.hp_now / plant.hp_max;
+            double now_percent = plant.hp_now.doubleValue() / plant.hp_max.doubleValue();
             if (now_percent >= threshold){
                 continue;
             }else if (now_percent + DIJI_EFFECT >= threshold && diji > 0){
@@ -155,11 +157,10 @@ public class BuXie {
     public static SimpleEntry<Set<Integer>, Set<Integer>> getAttacked(ASObject fo, Collection<Integer> zhuli, Collection<Integer> paohui){
         Set<Integer> attacked_zhuli = new HashSet<>();
         Set<Integer> attacked_paohui = new HashSet<>();
-        Map<Integer, Long> fightersHp = new HashMap<>();
+        Map<Integer, BigInteger> fightersHp = new HashMap<>();
         for (ASObject fighter : (List<ASObject> )fo.get("assailants")) {
-            Object id_obj = fighter.get("id");
-            int id = obj2int(id_obj);
-            long hp_max = Long.parseLong(fighter.get("hp_max").toString());
+            int id = obj2int(fighter.get("id"));
+            BigInteger hp_max = obj2bigint(fighter.get("hp_max"));
             fightersHp.put(id, hp_max);
         }
         // 分析每次攻击
@@ -170,14 +171,14 @@ public class BuXie {
             // 对被攻击的植物进行检查
             for (ASObject defender : (List<ASObject> )process.get("defenders")) {
                 Integer id = obj2int(defender.get("id"));
-                Long hp = Long.parseLong(defender.get("hp").toString());
+                BigInteger hp = obj2bigint(defender.get("hp"));
                 if (zhuli.contains(id)){
-                    long max_hp = fightersHp.getOrDefault(id, Long.MAX_VALUE);
-                    double percent = (double)hp/max_hp;
+                    BigInteger max_hp = fightersHp.get(id);
+                    double percent = hp.doubleValue()/max_hp.doubleValue();
                     if (percent <= BuXie.getThreshold())
                         attacked_zhuli.add(id);
                 }
-                else if (paohui.contains(id) && hp.equals(0L)){
+                else if (paohui.contains(id) && hp.equals(BigInteger.ZERO)){
                     attacked_paohui.add(id);
                 }
             }

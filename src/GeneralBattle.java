@@ -15,7 +15,7 @@ public class GeneralBattle {
         List<ASObject> toolList = (List<ASObject>) awardObj.get("tools");
         for (ASObject object : toolList) {
             sb.append("%s(%d) ".formatted(
-                (String)object.get("id"), Util.obj2int(object.get("amount"))));
+                object.get("id").toString(), Util.obj2int(object.get("amount"))));
             
         }
         return sb.toString();

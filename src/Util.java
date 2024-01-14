@@ -14,6 +14,7 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -223,7 +224,7 @@ public class Util {
     }
 
     public static Integer obj2int(Object number){
-        int res;
+        Integer res;
         if (number instanceof String){
             res = Integer.parseInt((String)number);
         }
@@ -241,6 +242,65 @@ public class Util {
         }
         else if (number instanceof Long){
             res = ((Long) number).intValue();
+        }
+        else{
+            System.out.println(number.getClass());
+            return null;
+        }
+        return res;
+    }
+
+    public static Long obj2long(Object number){
+        Long res;
+        if (number instanceof String){
+            res = Long.parseLong((String)number);
+        }
+        else if (number instanceof Float){
+            res = ((Float)number).longValue();
+        }
+        else if (number instanceof Double){
+            res = ((Double)number).longValue();
+        }
+        else if (number instanceof Short){
+            res = ((Short) number).longValue();
+        }
+        else if (number instanceof Integer){
+            res = ((Integer) number).longValue();
+        }
+        else if (number instanceof Long){
+            res = ((Long) number);
+        }
+        else{
+            System.out.println(number.getClass());
+            return null;
+        }
+        return res;
+    }
+
+    public static BigInteger obj2bigint(Object number){
+        BigInteger res;
+        if (number instanceof String){
+            res = new BigInteger((String)number);
+        }
+        else if (number instanceof Float){
+            Long tmp = ((Float)number).longValue();
+            res = new BigInteger(tmp.toString());
+        }
+        else if (number instanceof Double){
+            Long tmp = ((Double)number).longValue();
+            res = new BigInteger(tmp.toString());
+        }
+        else if (number instanceof Short){
+            Long tmp = ((Short)number).longValue();
+            res = new BigInteger(tmp.toString());
+        }
+        else if (number instanceof Integer){
+            Long tmp = ((Integer)number).longValue();
+            res = new BigInteger(tmp.toString());
+        }
+        else if (number instanceof Long){
+            Long tmp = ((Long)number).longValue();
+            res = new BigInteger(tmp.toString());
         }
         else{
             System.out.println(number.getClass());
