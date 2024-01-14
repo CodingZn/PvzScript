@@ -78,6 +78,7 @@ public class Battle {
             System.out.printf("√ ");
             ASObject resObj = (ASObject)body.getValue();
             boolean res = getAward((String)resObj.get("awards_key"));
+            System.out.println("fuck2");
             return new SimpleEntry<Boolean,ASObject>(res, resObj);
         }
     }
@@ -138,6 +139,8 @@ public class Battle {
                 battleRepeat(caves, hard_level, zhuli, paohui);
                 return;
             } catch (NumberFormatException e) {
+                e.printStackTrace();
+                System.out.println("fuck");
             }
         }
         else if (args.length == 3){

@@ -77,10 +77,10 @@ public class BuXie {
         else{
             return false;
         }
-        Map<Integer, Integer> tools = Warehouse.getTools();
-        int diji = tools.getOrDefault(DIJIXIE_ID, 0);
-        int zhongji = tools.getOrDefault(ZHONGJIXIE_ID, 0);
-        int gaoji = tools.getOrDefault(GAOJIXIE_ID, 0);
+        Map<Integer, Long> tools = Warehouse.getTools();
+        long diji = tools.getOrDefault(DIJIXIE_ID, 0L);
+        long zhongji = tools.getOrDefault(ZHONGJIXIE_ID, 0L);
+        long gaoji = tools.getOrDefault(GAOJIXIE_ID, 0L);
 
         boolean res = true;
         
@@ -169,7 +169,7 @@ public class BuXie {
             if (assailantType.equals("assailant")) continue;
             // 对被攻击的植物进行检查
             for (ASObject defender : (List<ASObject> )process.get("defenders")) {
-                Integer id = Integer.parseInt(defender.get("id").toString());
+                Integer id = obj2int(defender.get("id"));
                 Long hp = Long.parseLong(defender.get("hp").toString());
                 if (zhuli.contains(id)){
                     long max_hp = fightersHp.getOrDefault(id, Long.MAX_VALUE);

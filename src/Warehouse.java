@@ -14,9 +14,9 @@ public class Warehouse {
         return "/pvz/index.php/Warehouse/index/sig/755f2a102fbea19a61c432205e4a550d?" + time;
     }
 
-    private static TreeMap<Integer, Integer> toolsMap = new TreeMap<>();
+    private static TreeMap<Integer, Long> toolsMap = new TreeMap<>();
 
-    public static TreeMap<Integer, Integer> getTools(){
+    public static TreeMap<Integer, Long> getTools(){
         return toolsMap;
     }
 
@@ -46,7 +46,7 @@ public class Warehouse {
                 if (element.hasAttribute("id") && 
                     element.hasAttribute("amount")){
                     int id = Integer.parseInt(element.getAttribute("id"));
-                    int amount = Integer.parseInt(element.getAttribute("amount"));
+                    long amount = Long.parseLong(element.getAttribute("amount"));
                     toolsMap.put(id, amount);
                 }
             }
@@ -90,13 +90,6 @@ public class Warehouse {
     }
 
     public static void main(String[] args) {
-        // Document doc = Util.parseXml("resources/开仓库.xml");
-        // Node statusNode = doc.getElementsByTagName("status").item(0);
-        // if (statusNode.getNodeType()==Node.ELEMENT_NODE && ((Element) statusNode).getTextContent().equals("success")){
-        //         Element warehouseEle = (Element)doc.getElementsByTagName("warehouse").item(0);
-        //         int a = Integer.parseInt(warehouseEle.getAttribute("organism"));
-        //         System.out.println(a);
-        //     }
         if (args.length==1 && args[0].equals("open")){
             openGrid(192);
             return;

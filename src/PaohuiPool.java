@@ -128,7 +128,7 @@ public class PaohuiPool {
             return paohuiIdList;
         }
         this.removeHigherLevel();
-        if (now_occupy > space){System.out.println("sort and chose");
+        if (now_occupy > space){
             this.sort();
             return this.getChosen();
         }
