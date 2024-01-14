@@ -140,7 +140,6 @@ public class Battle {
                 return;
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                System.out.println("fuck");
             }
         }
         else if (args.length == 3){
@@ -152,6 +151,7 @@ public class Battle {
                 battleRepeat(caves, hard_level, zhuli, paohui);
                 return;
             } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
         else if (args.length == 2 && args[0].equals("updatefreq")){
