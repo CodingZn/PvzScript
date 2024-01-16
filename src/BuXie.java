@@ -37,7 +37,7 @@ public class BuXie {
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
         byte[] response = Request.sendPostAmf(reqAmf, false);
 
-        System.out.printf("%s 使用 %s", Organism.getOrganism(plantId).toShortString(), Tool.getTool(xiepingId));
+        System.out.printf("%s 使用 %s", Organism.getOrganism(plantId).toShortString(), Tool.getTool(xiepingId).name);
         Object obj = Util.decodeAMF(response).getBody(0).getValue();
         if (obj instanceof String){
             System.out.printf(" hp=%s\n", obj);
