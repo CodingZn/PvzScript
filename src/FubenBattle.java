@@ -53,27 +53,12 @@ public class FubenBattle {
         
     }
 
-    public static boolean useFubenBook(int n){
-        Object[] value = new Object[2];
-        value[0] = FUBEN_BOOK_ID;
-        value[1] = n;
-        byte[] req= Util.encodeAMF("api.tool.useOf", "/1", value);
-        System.out.printf("use %d fuben books: ",n);
-        byte[] res=sendPostAmf(req, true);
-        AMF0Message msg = Util.decodeAMF(res);
-        if (msg==null || Response.isOnStatusException(msg.getBody(0), true)) 
-            return false;
-        System.out.println(" √");
-
-        return true;
-    }
-
     public static boolean useFubenClock(int fubenCaveId, int n){
         Object[] value = new Object[2];
         value[0] = fubenCaveId;
         value[1] = n;
         byte[] req= Util.encodeAMF("api.fuben.addCaveChallengeCount", "/1", value);
-        System.out.printf("for %d, use %d fuben clocks: ", fubenCaveId, n);
+        System.out.printf("对关卡 %d 使用 %d 个怀表: ", fubenCaveId, n);
         byte[] res=sendPostAmf(req, true);
         AMF0Message msg = Util.decodeAMF(res);
         if (msg==null || Response.isOnStatusException(msg.getBody(0), true)) 
@@ -86,9 +71,9 @@ public class FubenBattle {
     public static boolean battleRepeat(int caveid, List<Integer> plantIds, int times_n){
         
         if(strategy==1){
-            if (!useFubenBook(times_n)) return false;
+            if (!Warehouse.useTool(FUBEN_BOOK_ID,times_n)) return false;
         }else if(strategy==2){
-            if (!useFubenBook(times_n)) return false;
+            if (!Warehouse.useTool(FUBEN_BOOK_ID,times_n)) return false;
             if (!useFubenClock(caveid, times_n)) return false;
         }
         if (!BuXie.buxie(plantIds, new ArrayList<>(), true)){

@@ -1,23 +1,21 @@
 package src;
 
+import static src.Util.obj2int;
+
 import java.util.Date;
-import java.util.TreeMap;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
+import com.exadel.flamingo.flex.amf.AMF0Body;
+
+import flex.messaging.io.ASObject;
 
 public class Warehouse {
     public static final String getPath(){
         String time = Long.toString(new Date().getTime());
         return "/pvz/index.php/Warehouse/index/sig/755f2a102fbea19a61c432205e4a550d?" + time;
-    }
-
-    private static TreeMap<Integer, Long> toolsMap = new TreeMap<>();
-
-    public static TreeMap<Integer, Long> getTools(){
-        return toolsMap;
     }
 
     private static Document warehouseDoc = null;
@@ -31,32 +29,8 @@ public class Warehouse {
         warehouseDoc = document;
         boolean res = true;
         res = Organism.loadOrganisms(document);
-        res = res && loadTools(document);
+        res = res && MyTool.loadTools(document);
         return res;
-    }
-
-    private static boolean loadTools(Document document){
-        toolsMap.clear();
-        Element toolsEle = (Element) document.getElementsByTagName("tools").item(0);
-        NodeList toolsList = toolsEle.getChildNodes();
-        for (int i = 0; i < toolsList.getLength(); i++) {
-            Node node = toolsList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("item")){
-                Element element = (Element) node;
-                if (element.hasAttribute("id") && 
-                    element.hasAttribute("amount")){
-                    int id = Integer.parseInt(element.getAttribute("id"));
-                    long amount = Long.parseLong(element.getAttribute("amount"));
-                    toolsMap.put(id, amount);
-                }
-            }
-            
-        }
-        return true;
-    }
-
-    public static final String toolString(int id, int amount){
-        return "Tool: id=%-5d, amount=%-9d ".formatted(id, amount);
     }
 
     public static boolean openGrid(int goal){
@@ -87,6 +61,36 @@ public class Warehouse {
         } while (now_grid_num < goal);
         
         return true;
+    }
+
+    public static final String[] TOOL_USE_MSG = new String[]{
+        "",
+        "增加了%d次洞口挑战次数",
+        "增加了%d次斗技场挑战次数",
+        "增加了%d天vip",
+        "增加了%d次领地挑战",
+        "增加了%d次副本挑战",
+        "增加了%d次宝石挑战",
+        "增加了%d次花园挑战",
+    };
+
+    public static boolean useTool(int toolid, int amount){
+        Object[] value = new Object[]{toolid, amount};
+        byte[] req = Util.encodeAMF("api.tool.useOf", "/1", value);
+        System.out.printf("使用%d个%s ", amount, Tool.getTool(toolid).name);
+        byte[] response = Request.sendPostAmf(req, false);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            System.out.println();
+            return false;
+        }
+        else{
+            ASObject asObj = (ASObject) body.getValue();
+            int msgidx = obj2int(asObj.get("name"));
+            int effect = obj2int(asObj.get("effect"));
+            System.out.println(TOOL_USE_MSG[msgidx].formatted(effect));
+            return true;
+        }
     }
 
     public static void main(String[] args) {

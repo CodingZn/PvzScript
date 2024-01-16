@@ -43,6 +43,9 @@ public class Battle {
         return maxLevel;
     }
 
+    public static final Integer CHA_BOOK_TOOL_ID = 6;
+    public static final Integer ADV_CHA_BOOK_TOOL_ID = 7;
+
     
     private static byte[] shuaDongAmf(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         Object[] value = new Object[3];
@@ -165,10 +168,31 @@ public class Battle {
             System.out.printf("new maxLevel: %d\n", maxLevel);
             return;
         }
+        else if (args.length == 2 && args[0].equals("book")){
+            int amount;
+            if (args[1].toLowerCase().equals("full")) {
+                User me = User.loadUser();
+                amount = me.cave_cha_max - me.getCaveCha();
+            }
+            else{
+                amount = Integer.parseInt(args[1]);
+            }
+            if (amount%5==0){
+                long chaAmount = MyTool.getTool(CHA_BOOK_TOOL_ID).getAmount();
+                long advAmount = MyTool.getTool(ADV_CHA_BOOK_TOOL_ID).getAmount();
+                if (advAmount > chaAmount / 6) {
+                    Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, amount/5);
+                    return;
+                }
+            }
+            Warehouse.useTool(CHA_BOOK_TOOL_ID, amount);
+            return;
+        }
 
         System.out.println("args: cave_file hard_level zhuli_file [ paohui_file ]");
         System.out.println("hard_level: 1 or 2 or 3");
         System.out.println("or  : maxlevel grade");
         System.out.println("or  : updatefreq freq");
+        System.out.println("or  : book <amount>|full");
     }
 }

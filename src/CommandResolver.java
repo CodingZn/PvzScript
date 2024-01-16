@@ -31,6 +31,10 @@ public class CommandResolver {
                     Organism.main(args);
                     return;
                 }
+                case "mytool"->{
+                    MyTool.main(args);
+                    return;
+                }
                 case "orid"->{
                     Orid.main(args);
                     return;

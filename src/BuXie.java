@@ -37,13 +37,13 @@ public class BuXie {
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
         byte[] response = Request.sendPostAmf(reqAmf, false);
 
-        System.out.printf("plant %d use %d", plantId, xiepingId);
+        System.out.printf("%s 使用 %s", Organism.getOrganism(plantId).toShortString(), Tool.getTool(xiepingId));
         Object obj = Util.decodeAMF(response).getBody(0).getValue();
         if (obj instanceof String){
             System.out.printf(" hp=%s\n", obj);
             return true;
         }
-        System.out.printf(" failed\n", obj);
+        System.out.printf(" failed\n");
         return !Response.isOnStatusException(Util.decodeAMF(response).getBody(0), true);
 
     }
@@ -79,10 +79,10 @@ public class BuXie {
         else{
             return false;
         }
-        Map<Integer, Long> tools = Warehouse.getTools();
-        long diji = tools.getOrDefault(DIJIXIE_ID, 0L);
-        long zhongji = tools.getOrDefault(ZHONGJIXIE_ID, 0L);
-        long gaoji = tools.getOrDefault(GAOJIXIE_ID, 0L);
+
+        long diji = MyTool.getTool(DIJIXIE_ID).getAmount();
+        long zhongji = MyTool.getTool(ZHONGJIXIE_ID).getAmount();
+        long gaoji = MyTool.getTool(GAOJIXIE_ID).getAmount();
 
         boolean res = true;
         

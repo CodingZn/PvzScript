@@ -63,7 +63,7 @@ public class Tool implements Serializable{
     public static boolean loadMap(){
         if (!loadMapBinary()){
             if (!loadToolXml()){
-                System.out.println("植物原型模块数据未加载！");
+                System.out.println("道具原型模块数据未加载！");
                 System.out.println("请将tool或tool.xml放在static目录下");
                 System.out.println("或使用命令手动加载。");
                 return false;
@@ -116,6 +116,7 @@ public class Tool implements Serializable{
     public static void main(String[] args) {
         if (args.length==2 && args[0].equals("show")){
             System.out.println(getToolMap().get(Integer.parseInt(args[1])));
+            return;
         }
         else if (args.length==2 && args[0].equals("search")){
             String str = args[1];
@@ -124,6 +125,9 @@ public class Tool implements Serializable{
                     System.out.println(tool);
                 }
             });
+            return;
         }
+        System.out.println("args: show <id>");
+        System.out.println("or  : search <name>");
     }
 }

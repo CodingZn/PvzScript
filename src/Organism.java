@@ -17,7 +17,7 @@ import static src.Util.obj2long;
 public class Organism {
 
     public static LinkedHashMap<Integer, Organism> getNewestOrganisms(){
-        if (loadOrganisms()){
+        if (Warehouse.loadWarehouse()){
             return getOrganisms();
         }
         else return null;
@@ -38,15 +38,6 @@ public class Organism {
         }
         return true;
     }
-    
-    public static boolean loadOrganisms(){
-        byte[] response = Request.sendGetRequest(Warehouse.getPath());
-        Document document = Util.parseXml(response);
-        if (document == null){
-            return false;
-        }
-        return loadOrganisms(document);
-    }
 
     private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
 
@@ -56,7 +47,7 @@ public class Organism {
 
     public static Organism getOrganism(int id){
         if (isEmpty()) {
-            loadOrganisms();
+            Warehouse.loadWarehouse();
         }
         return organismMap.get(id);
     }
@@ -146,7 +137,7 @@ public class Organism {
     public final BigInteger fight;
 
     private static void show(boolean byGrade, String filter){
-        if (loadOrganisms()){
+        if (Warehouse.loadWarehouse()){
             LinkedHashMap<Integer, Organism> map = getOrganisms();
             if (byGrade){
                 List<Organism> orgList = new ArrayList<>(map.values());
@@ -161,7 +152,7 @@ public class Organism {
                     }
                 });
 
-                if (filter.equals(null)) {
+                if (filter==null) {
                     for (Organism organism : orgList) {
                         System.out.println(organism);
                     }
