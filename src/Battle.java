@@ -102,9 +102,10 @@ public class Battle {
             }
             SimpleEntry<Boolean,ASObject> resEntry = battle(c, hard_level, zhuli, paohui_actual);
             boolean res = resEntry.getKey();
+            if (!res) return false;
             ASObject asObject = resEntry.getValue();
             // 其他报错导致没打洞，跳过
-            if (res==true && asObject==null) continue;
+            if (asObject==null) continue;
             blindCount++;
             // 请求仓库同步信息
             if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){
