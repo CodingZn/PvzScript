@@ -130,5 +130,17 @@ public class Orid implements Serializable{
         if (args.length==2 && args[0].equals("show")){
             System.out.println(getOridMap().get(Integer.parseInt(args[1])));
         }
+        else if (args.length==2 && args[0].equals("search")){
+            String str = args[1];
+            oridMap.values().stream().forEach(orid->{
+                if (orid.name.contains(str)){
+                    System.out.println(orid);
+                }
+            });
+        }
+        else {
+            System.out.println("args: orid show id");
+            System.out.println("or  : orid search name");
+        }
     }
 }

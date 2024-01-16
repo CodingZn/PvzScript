@@ -117,5 +117,13 @@ public class Tool implements Serializable{
         if (args.length==2 && args[0].equals("show")){
             System.out.println(getToolMap().get(Integer.parseInt(args[1])));
         }
+        else if (args.length==2 && args[0].equals("search")){
+            String str = args[1];
+            toolMap.values().stream().forEach(tool->{
+                if (tool.name.contains(str)){
+                    System.out.println(tool);
+                }
+            });
+        }
     }
 }

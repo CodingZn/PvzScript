@@ -50,8 +50,12 @@ public class Organism {
 
     private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
 
+    private static boolean isEmpty(){
+        return organismMap==null || organismMap.size()==0;
+    }
+
     public static Organism getOrganism(int id){
-        if (organismMap==null || organismMap.size()==0) {
+        if (isEmpty()) {
             loadOrganisms();
         }
         return organismMap.get(id);
@@ -141,7 +145,7 @@ public class Organism {
     /** 战斗力 */
     public final BigInteger fight;
 
-    private static void show(boolean byGrade){
+    private static void show(boolean byGrade, String filter){
         if (loadOrganisms()){
             LinkedHashMap<Integer, Organism> map = getOrganisms();
             if (byGrade){
@@ -156,9 +160,20 @@ public class Organism {
                         }else return 1;
                     }
                 });
-                for (Organism organism : orgList) {
-                    System.out.println(organism);
+
+                if (filter.equals(null)) {
+                    for (Organism organism : orgList) {
+                        System.out.println(organism);
+                    }
                 }
+                else{
+                    orgList.stream().forEach(org->{
+                        if (org.orid.name.contains(filter)){
+                            System.out.println(org);
+                        }
+                    });
+                }
+                
             }
             else{
                 for (Map.Entry<Integer, Organism> orga : map.entrySet()) {
@@ -172,14 +187,20 @@ public class Organism {
     public static void main(String[] args) {
         if ((args.length == 1 || args.length == 2) && args[0].equals("show")) {
             if (args.length==1){
-                show(true);
+                show(true,null);
                 return;
             }
             else if (args[1].equals("id")){
-                show(false);
+                show(false,null);
                 return;
             }
         }
-        System.out.println("args: show ['id']");
+        else if ((args.length == 1 || args.length == 2) && args[0].equals("search")) {
+            String str = args[1];
+            show(true, str);
+            return;
+        }
+        System.out.println("args: show [id]");
+        System.out.println("or  : search <name>");
     }
 }
