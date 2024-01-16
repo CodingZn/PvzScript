@@ -27,7 +27,9 @@ public class Evolution implements Serializable{
 
     @Override
     public String toString() {
-        return "route %d: -(%d, %d)-> %d".formatted(id,tool_id,money,target);
+        String toolname = Tool.getTool(tool_id).name;
+        String targetName = Orid.getOrid(target).name;
+        return "route %d: -(%s, %d)-> %s(%d)".formatted(id,toolname,money,targetName,target);
     }
 
 

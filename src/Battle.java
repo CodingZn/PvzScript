@@ -104,7 +104,7 @@ public class Battle {
             boolean res = resEntry.getKey();
             ASObject asObject = resEntry.getValue();
             // 其他报错导致没打洞，跳过
-            if (asObject==null) continue;
+            if (res==true && asObject==null) continue;
             blindCount++;
             // 请求仓库同步信息
             if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){

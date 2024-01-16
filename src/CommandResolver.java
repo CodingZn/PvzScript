@@ -1,11 +1,13 @@
 package src;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Stack;
 
 public class CommandResolver {
     public static void resolve(String cmd){
@@ -31,6 +33,10 @@ public class CommandResolver {
                 }
                 case "orid"->{
                     Orid.main(args);
+                    return;
+                }
+                case "tool"->{
+                    Tool.main(args);
                     return;
                 }
                 case "warehouse"->{
@@ -69,6 +75,10 @@ public class CommandResolver {
                     FubenBattle.main(args);
                     return;
                 }
+                case "execfile"->{
+                    resolveFile(strs[1]);
+                    return;
+                }
             
                 default->{
                     break;
@@ -85,9 +95,12 @@ public class CommandResolver {
         else return true;
     }
 
+    private static Stack<File> fileStack = new Stack<>(); 
+
     public static void resolveFile(String filename){
         List<String> cmds;
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename, Charset.forName("UTF-8")))) {
+        File scriptFile = new File(filename);
+        try (BufferedReader reader = new BufferedReader(new FileReader(scriptFile, Charset.forName("UTF-8")))) {
             cmds = reader.lines().toList();
         } catch (FileNotFoundException e) {
             System.out.printf("file %s not found!\n", filename);
@@ -96,13 +109,25 @@ public class CommandResolver {
             e.printStackTrace();
             return;
         }
+        if (fileStack.contains(scriptFile)){
+            System.out.println("recursion call is forbidden!");
+            return;
+        }
+        fileStack.push(scriptFile);
         cmds.forEach(c->{
             if (isValid(c)){
-                System.out.printf(">>> %s <<<\n", c);
+                printPrompt(c);
                 resolve(c);
                 System.out.println();
             }
         });
+        fileStack.pop();
+    }
+
+    private static void printPrompt(String cmd){
+        int depth = fileStack.size();
+        System.out.printf("%s %s %s\n",">>>".repeat(depth), cmd, "<<<");
+        return;
     }
 
 }

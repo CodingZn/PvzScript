@@ -3,6 +3,7 @@ package src;
 import static src.Util.delay;
 
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -12,7 +13,6 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
@@ -117,6 +117,8 @@ public class Request {
         lastSentTime = System.currentTimeMillis();
     }
 
+    private static final byte[] PROXY_ERR_NOTE = new byte[]{1,1,1};
+
     /** @return valid body of response, null if exception */
     public static byte[] sendGetRequest(String path){
         byte[] response;
@@ -129,12 +131,14 @@ public class Request {
                     return null;
                 }
                 else{
-                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次", retryInterval/1000, retryCount);
+                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次\n", retryInterval/1000, retryCount);
                     delay(retryInterval);
-                    System.out.print(String.join("", Collections.nCopies(32,"\b")));
                     retryCount--;
                     continue;
                 }
+            }
+            else if (response.equals(PROXY_ERR_NOTE)){
+                continue;
             }
             else if (is2441Block(response)){
                 System.out.print("拦");
@@ -169,10 +173,18 @@ public class Request {
                 return gi.readAllBytes();
             }
             return response.body().readAllBytes();
+        } catch (ConnectException e){
+            System.out.println("错误：连接通道关闭。");
+            if (httpClient==proxyClient) {
+                System.out.print("可能由于代理未开启导致。");
+                httpClient = directClient;
+                System.out.println("已关闭代理。");
+            }
+            return PROXY_ERR_NOTE;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }
+        } 
         
     }
 
@@ -196,6 +208,14 @@ public class Request {
                 return gi.readAllBytes();
             }
             return response.body().readAllBytes();
+        } catch (ConnectException e){
+            System.out.println("错误：连接通道关闭。");
+            if (httpClient==proxyClient) {
+                System.out.print("可能由于代理未开启导致。");
+                httpClient = directClient;
+                System.out.println("已关闭代理。");
+            }
+            return PROXY_ERR_NOTE;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -214,12 +234,14 @@ public class Request {
                     return null;
                 }
                 else{
-                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次", retryInterval/1000, retryCount);
+                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次\n", retryInterval/1000, retryCount);
                     delay(retryInterval);
-                    System.out.print(String.join("", Collections.nCopies(32,"\b")));
                     retryCount--;
                     continue;
                 }
+            }
+            else if (response.equals(PROXY_ERR_NOTE)){
+                continue;
             }
             else if (is2441Block(response)){
                 System.out.print("拦");

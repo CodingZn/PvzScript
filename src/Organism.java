@@ -67,8 +67,6 @@ public class Organism {
         return organismMap;
     }
 
-
-    // TODO 数据溢出
     public Organism(Element element){
         this.id = Integer.parseInt(element.getAttribute("id"));
         this.pid = Integer.parseInt(element.getAttribute("pid"));

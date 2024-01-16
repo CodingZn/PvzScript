@@ -52,7 +52,7 @@ public class Orid implements Serializable{
         if(evolution1!=null){
             sb.append(evolution1);
             if (evolution2!=null){
-                sb.append("\n");
+                sb.append("\n ");
                 sb.append(evolution2);
             }
         }

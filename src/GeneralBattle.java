@@ -1,5 +1,7 @@
 package src;
 
+import static src.Util.obj2int;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -14,9 +16,10 @@ public class GeneralBattle {
         StringBuffer sb = new StringBuffer();
         List<ASObject> toolList = (List<ASObject>) awardObj.get("tools");
         for (ASObject object : toolList) {
-            sb.append("%s(%d) ".formatted(
-                object.get("id").toString(), Util.obj2int(object.get("amount"))));
-            
+            int toolid = obj2int(object.get("id"));
+            int amount = obj2int(object.get("amount"));
+            sb.append(Tool.getTool(toolid).toShortString(amount));
+            sb.append(" ");
         }
         return sb.toString();
     }
