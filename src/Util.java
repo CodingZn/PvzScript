@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -57,6 +58,21 @@ public class Util {
         } catch (InterruptedException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    /** @return nullable */
+    public static AMF0Message decodeAMF(String filename){
+        try (FileInputStream fi = new FileInputStream(filename)) {
+            return decodeAMF(fi.readAllBytes());
+        } catch (FileNotFoundException e){
+            System.out.println("File Not Found!");
+            return null;
+        }
+         catch (IOException e) {
+            System.out.println("Error Decoding AMF file!");
+            e.printStackTrace();
+            return null;
         }
     }
 

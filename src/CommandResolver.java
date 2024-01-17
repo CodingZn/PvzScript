@@ -43,6 +43,10 @@ public class CommandResolver {
                     Tool.main(args);
                     return;
                 }
+                case "skill"->{
+                    Skill.main(args);
+                    return;
+                }
                 case "warehouse"->{
                     Warehouse.main(args);
                     return;

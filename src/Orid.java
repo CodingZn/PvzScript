@@ -48,15 +48,15 @@ public class Orid implements Serializable{
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("%s(%d) %s %s %d格\n[".formatted(name,id,attribute, use_condition, occupy));
+        sb.append("%s(%d) %s %s %d格\n{".formatted(name,id,attribute, use_condition, occupy));
         if(evolution1!=null){
             sb.append(evolution1);
             if (evolution2!=null){
-                sb.append("\n ");
+                sb.append("}\n{");
                 sb.append(evolution2);
             }
         }
-        sb.append("]");
+        sb.append("}");
         return sb.toString();
     }
 

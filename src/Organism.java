@@ -78,6 +78,15 @@ public class Organism {
         this.precision = new BigInteger(element.getAttribute("new_precision"));
         this.quality = element.getAttribute("qu");
         this.fight = new BigInteger(element.getAttribute("fight"));
+
+        List<Skill> tmp = new ArrayList<>();
+        Element skillsEle = (Element) element.getElementsByTagName("sk").item(0);
+        NodeList skillList = skillsEle.getElementsByTagName("item");
+        for (int i = 0; i < skillList.getLength(); i++) {
+            int skillId = Integer.parseInt(((Element)skillList.item(i)).getAttribute("id"));
+            tmp.add(Skill.getSkill(skillId));
+        }
+        skills = tmp;
     }
 
     public String toShortString(){
@@ -102,6 +111,20 @@ public class Organism {
         .append("闪避=\t%d\n".formatted(this.miss))
         .append("命中=\t%d\n".formatted(this.precision))
         .append("速度=\t%d\n".formatted(this.speed));
+        for (int i=0; i<skills.size(); i++) {
+            sb.append(skills.get(i).toShortString());
+            if (i%2==0){
+                if (i==skills.size()-1) {
+                    sb.append("\n");
+                }
+                else{
+                    sb.append("\t\t");
+                }
+            }
+            else {
+                sb.append("\n");
+            }
+        }
         return sb.toString();
     }
 
@@ -135,6 +158,8 @@ public class Organism {
     public final String quality;
     /** 战斗力 */
     public final BigInteger fight;
+
+    public final List<Skill> skills;
 
     private static void show(boolean byGrade, String filter){
         if (Warehouse.loadWarehouse()){
