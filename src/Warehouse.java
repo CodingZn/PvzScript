@@ -97,7 +97,7 @@ public class Warehouse {
     public static boolean skillUp(int plantId, int ori_skill_id, int grade_by){
         int succ_count = 0;
         int now_skill_id = ori_skill_id;
-        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId),Skill.getSkill(now_skill_id).toShortString()));
+        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),Skill.getSkill(now_skill_id).toShortString()));
         while (succ_count < grade_by) {
             byte[] req = Util.encodeAMF("api.apiorganism.skillUp", "/1", 
             new Object[]{plantId, now_skill_id});

@@ -46,7 +46,7 @@ public class Quality {
 
     public static SimpleEntry<Integer,String> qualityUp(int plantId, String iniQuality, String goal, int maximum){
         String now_quality=iniQuality;
-        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId),now_quality));
+        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),now_quality));
         int now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 0);
         final int goal_level = QNAME2LEVEL.getOrDefault(goal, 0);
         int total_use = 0;
