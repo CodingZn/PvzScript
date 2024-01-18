@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?><root>
+	<response>
+		<status>success</status>	
+	</response>
+<gemexchanges>
+<item
+target_tool_id = "886"
+cost_tool = "885"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "887"
+cost_tool = "886"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "888"
+cost_tool = "887"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "889"
+cost_tool = "888"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "890"
+cost_tool = "889"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "891"
+cost_tool = "890"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "892"
+cost_tool = "891"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "893"
+cost_tool = "892"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "894"
+cost_tool = "893"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "895"
+cost_tool = "894"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "897"
+cost_tool = "896"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "898"
+cost_tool = "897"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "899"
+cost_tool = "898"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "900"
+cost_tool = "899"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "901"
+cost_tool = "900"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "902"
+cost_tool = "901"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "903"
+cost_tool = "902"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "904"
+cost_tool = "903"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "905"
+cost_tool = "904"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "906"
+cost_tool = "905"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "908"
+cost_tool = "907"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "909"
+cost_tool = "908"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "910"
+cost_tool = "909"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "911"
+cost_tool = "910"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "912"
+cost_tool = "911"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "913"
+cost_tool = "912"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "914"
+cost_tool = "913"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "915"
+cost_tool = "914"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "916"
+cost_tool = "915"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "917"
+cost_tool = "916"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "919"
+cost_tool = "918"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "920"
+cost_tool = "919"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "921"
+cost_tool = "920"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "922"
+cost_tool = "921"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "923"
+cost_tool = "922"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "924"
+cost_tool = "923"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "925"
+cost_tool = "924"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "926"
+cost_tool = "925"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "927"
+cost_tool = "926"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "928"
+cost_tool = "927"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "930"
+cost_tool = "929"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "931"
+cost_tool = "930"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "932"
+cost_tool = "931"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "933"
+cost_tool = "932"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "934"
+cost_tool = "933"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "935"
+cost_tool = "934"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "936"
+cost_tool = "935"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "937"
+cost_tool = "936"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "938"
+cost_tool = "937"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "939"
+cost_tool = "938"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "941"
+cost_tool = "940"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "942"
+cost_tool = "941"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "943"
+cost_tool = "942"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "944"
+cost_tool = "943"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "945"
+cost_tool = "944"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "946"
+cost_tool = "945"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "947"
+cost_tool = "946"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "948"
+cost_tool = "947"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "949"
+cost_tool = "948"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "950"
+cost_tool = "949"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "952"
+cost_tool = "951"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "953"
+cost_tool = "952"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "954"
+cost_tool = "953"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "955"
+cost_tool = "954"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "956"
+cost_tool = "955"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "957"
+cost_tool = "956"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "958"
+cost_tool = "957"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "959"
+cost_tool = "958"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "960"
+cost_tool = "959"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "961"
+cost_tool = "960"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "963"
+cost_tool = "962"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "964"
+cost_tool = "963"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "965"
+cost_tool = "964"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "966"
+cost_tool = "965"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "967"
+cost_tool = "966"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "968"
+cost_tool = "967"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "969"
+cost_tool = "968"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "970"
+cost_tool = "969"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "971"
+cost_tool = "970"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "972"
+cost_tool = "971"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+<item
+target_tool_id = "974"
+cost_tool = "973"
+cost_num = "50"
+cost_money = "500"
+/>
+<item
+target_tool_id = "975"
+cost_tool = "974"
+cost_num = "5"
+cost_money = "2500"
+/>
+<item
+target_tool_id = "976"
+cost_tool = "975"
+cost_num = "5"
+cost_money = "13000"
+/>
+<item
+target_tool_id = "977"
+cost_tool = "976"
+cost_num = "5"
+cost_money = "64000"
+/>
+<item
+target_tool_id = "978"
+cost_tool = "977"
+cost_num = "5"
+cost_money = "320000"
+/>
+<item
+target_tool_id = "979"
+cost_tool = "978"
+cost_num = "5"
+cost_money = "1600000"
+/>
+<item
+target_tool_id = "980"
+cost_tool = "979"
+cost_num = "5"
+cost_money = "8000000"
+/>
+<item
+target_tool_id = "981"
+cost_tool = "980"
+cost_num = "5"
+cost_money = "40000000"
+/>
+<item
+target_tool_id = "982"
+cost_tool = "981"
+cost_num = "5"
+cost_money = "200000000"
+/>
+<item
+target_tool_id = "983"
+cost_tool = "982"
+cost_num = "5"
+cost_money = "1000000000"
+/>
+</gemexchanges>
+</root>

@@ -1,0 +1,1447 @@
+<?xml version="1.0" encoding="utf-8"?><root>
+	<response>
+		<status>success</status>	
+    </response>
+<talents>
+<talent id="talent_1"  
+name="猛攻"
+describe_a="攻击"  
+describe_b="攻击" 
+>
+<level 
+grade="1" 
+org_grade="24"
+user_grade="20"
+possi="100"
+num="503"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="886" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="35"
+user_grade="20"
+possi="100"
+num="1389"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="887" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="70"
+user_grade="20"
+possi="100"
+num="6858"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="888" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="120"
+user_grade="25"
+possi="100"
+num="33867"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="889" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="230"
+user_grade="30"
+possi="100"
+num="237317"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="890" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="380"
+user_grade="35"
+possi="100"
+num="1301305"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="891" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="400"
+user_grade="40"
+possi="100"
+num="4691700"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="892" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="19977502"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="893" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="59932507"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="894" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="179797522"
+describe="增加植物攻击,品质越高，效果越好"
+>
+<tools>
+<tool id="895" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_2"  
+name="强壮"
+describe_a="HP"  
+describe_b="HP" 
+>
+<level 
+grade="1" 
+org_grade="24"
+user_grade="20"
+possi="100"
+num="1813"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="919" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="35"
+user_grade="20"
+possi="100"
+num="5000"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="920" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="70"
+user_grade="20"
+possi="100"
+num="24690"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="921" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="120"
+user_grade="25"
+possi="100"
+num="121924"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="922" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="230"
+user_grade="30"
+possi="100"
+num="854344"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="923" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="380"
+user_grade="35"
+possi="100"
+num="4684699"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="924" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="400"
+user_grade="40"
+possi="100"
+num="16890120"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="925" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="71919009"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="926" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="215757027"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="927" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="647271081"
+describe="增加植物HP,品质越高,效果越好"
+>
+<tools>
+<tool id="928" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_3"  
+name="破甲"
+describe_a="穿透"  
+describe_b="穿透" 
+>
+<level 
+grade="1" 
+org_grade="35"
+user_grade="20"
+possi="100"
+num="720"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="930" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="50"
+user_grade="20"
+possi="100"
+num="2070"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="931" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="70"
+user_grade="20"
+possi="100"
+num="5409"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="932" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="120"
+user_grade="25"
+possi="100"
+num="26870"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="933" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="230"
+user_grade="30"
+possi="100"
+num="189032"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="934" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="380"
+user_grade="35"
+possi="100"
+num="1038312"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="935" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="400"
+user_grade="40"
+possi="100"
+num="3744000"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="936" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="15944040"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="937" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="47832120"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="938" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="143496360"
+describe="增加植物穿透,品质越高,效果越好"
+>
+<tools>
+<tool id="939" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_4"  
+name="坚韧"
+describe_a="护甲"  
+describe_b="护甲" 
+>
+<level 
+grade="1" 
+org_grade="35"
+user_grade="20"
+possi="100"
+num="720"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="908" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="50"
+user_grade="20"
+possi="100"
+num="2070"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="909" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="84"
+user_grade="20"
+possi="100"
+num="7981"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="910" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="120"
+user_grade="25"
+possi="100"
+num="26870"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="911" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="230"
+user_grade="30"
+possi="100"
+num="189032"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="912" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="380"
+user_grade="35"
+possi="100"
+num="1038312"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="913" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="400"
+user_grade="40"
+possi="100"
+num="3744000"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="914" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="15944040"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="915" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="47832120"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="916" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="143496360"
+describe="增加植物护甲,品质越高,效果越好"
+>
+<tools>
+<tool id="917" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_5"  
+name="疾风"
+describe_a="速度"  
+describe_b="速度" 
+>
+<level 
+grade="1" 
+org_grade="35"
+user_grade="20"
+possi="100"
+num="22"
+describe="增加植物速度"
+>
+<tools>
+<tool id="897" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="50"
+user_grade="20"
+possi="100"
+num="40"
+describe="增加植物速度"
+>
+<tools>
+<tool id="898" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="84"
+user_grade="20"
+possi="100"
+num="74"
+describe="增加植物速度"
+>
+<tools>
+<tool id="899" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="120"
+user_grade="25"
+possi="100"
+num="143"
+describe="增加植物速度"
+>
+<tools>
+<tool id="900" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="230"
+user_grade="30"
+possi="100"
+num="359"
+describe="增加植物速度"
+>
+<tools>
+<tool id="901" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="380"
+user_grade="35"
+possi="100"
+num="1060"
+describe="增加植物速度"
+>
+<tools>
+<tool id="902" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="400"
+user_grade="40"
+possi="100"
+num="2763"
+describe="增加植物速度"
+>
+<tools>
+<tool id="903" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="8626"
+describe="增加植物速度"
+>
+<tools>
+<tool id="904" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="25879"
+describe="增加植物速度"
+>
+<tools>
+<tool id="905" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="420"
+user_grade="45"
+possi="100"
+num="77638"
+describe="增加植物速度"
+>
+<tools>
+<tool id="906" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_6"  
+name="光盾"
+describe_a="免伤概率"  
+describe_b="发动概率" 
+>
+<level 
+grade="1" 
+org_grade="160"
+user_grade="20"
+possi="3"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="941" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="165"
+user_grade="20"
+possi="6"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="942" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="170"
+user_grade="20"
+possi="9"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="943" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="175"
+user_grade="25"
+possi="12"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="944" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="180"
+user_grade="30"
+possi="15"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="945" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="185"
+user_grade="35"
+possi="18"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="946" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="190"
+user_grade="40"
+possi="21"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="947" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="195"
+user_grade="45"
+possi="24"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="948" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="205"
+user_grade="45"
+possi="27"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="949" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="215"
+user_grade="45"
+possi="30"
+num="0"
+describe="被攻击时有几率释放光盾,使自己完全不受到伤害"
+>
+<tools>
+<tool id="950" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_7"  
+name="破击"
+describe_a="破盾概率"  
+describe_b="破盾概率" 
+>
+<level 
+grade="1" 
+org_grade="180"
+user_grade="20"
+possi="3"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="952" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="185"
+user_grade="20"
+possi="6"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="953" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="190"
+user_grade="20"
+possi="9"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="954" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="195"
+user_grade="25"
+possi="12"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="955" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="200"
+user_grade="30"
+possi="15"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="956" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="205"
+user_grade="35"
+possi="18"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="957" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="210"
+user_grade="40"
+possi="21"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="958" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="215"
+user_grade="45"
+possi="24"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="959" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="225"
+user_grade="45"
+possi="27"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="960" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="235"
+user_grade="45"
+possi="30"
+num="0"
+describe="攻击时可以触发破盾效果,减少敌人的光盾释放几率"
+>
+<tools>
+<tool id="961" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_8"  
+name="毒雾"
+describe_a="毒雾伤害"  
+describe_b="伤害百分比" 
+>
+<level 
+grade="1" 
+org_grade="300"
+user_grade="20"
+possi="50"
+num="300"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="963" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="305"
+user_grade="20"
+possi="50"
+num="600"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="964" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="310"
+user_grade="20"
+possi="50"
+num="900"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="965" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="315"
+user_grade="25"
+possi="50"
+num="1200"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="966" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="320"
+user_grade="30"
+possi="50"
+num="1500"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="967" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="325"
+user_grade="35"
+possi="50"
+num="1800"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="968" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="330"
+user_grade="40"
+possi="50"
+num="2100"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="969" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="335"
+user_grade="45"
+possi="50"
+num="2400"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="970" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="340"
+user_grade="45"
+possi="50"
+num="2700"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="971" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="345"
+user_grade="45"
+possi="50"
+num="3000"
+describe="攻击时50%几率发动毒雾，额外对敌人造成其当前HP固定百分比的伤害"
+>
+<tools>
+<tool id="972" num="1" />
+</tools>
+</level>
+</talent>
+<talent id="talent_9"  
+name="净化"
+describe_a="毒雾抵抗"  
+describe_b="抵抗百分比" 
+>
+<level 
+grade="1" 
+org_grade="310"
+user_grade="20"
+possi="100"
+num="300"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="974" num="1" />
+</tools>
+</level>
+<level 
+grade="2" 
+org_grade="315"
+user_grade="20"
+possi="100"
+num="600"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="975" num="1" />
+</tools>
+</level>
+<level 
+grade="3" 
+org_grade="320"
+user_grade="20"
+possi="100"
+num="900"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="976" num="1" />
+</tools>
+</level>
+<level 
+grade="4" 
+org_grade="325"
+user_grade="25"
+possi="100"
+num="1200"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="977" num="1" />
+</tools>
+</level>
+<level 
+grade="5" 
+org_grade="330"
+user_grade="30"
+possi="100"
+num="1500"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="978" num="1" />
+</tools>
+</level>
+<level 
+grade="6" 
+org_grade="335"
+user_grade="35"
+possi="100"
+num="1800"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="979" num="1" />
+</tools>
+</level>
+<level 
+grade="7" 
+org_grade="340"
+user_grade="40"
+possi="100"
+num="2100"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="980" num="1" />
+</tools>
+</level>
+<level 
+grade="8" 
+org_grade="345"
+user_grade="45"
+possi="100"
+num="2400"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="981" num="1" />
+</tools>
+</level>
+<level 
+grade="9" 
+org_grade="350"
+user_grade="45"
+possi="100"
+num="2700"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="982" num="1" />
+</tools>
+</level>
+<level 
+grade="10" 
+org_grade="355"
+user_grade="45"
+possi="100"
+num="3000"
+describe="受到毒雾伤害时,减少敌人的毒雾伤害百分比"
+>
+<tools>
+<tool id="983" num="1" />
+</tools>
+</level>
+</talent>
+</talents>
+<souls>
+<soul id="soul_1">
+	<tals>
+								<tal id="talent_1" level="1"/>
+								<tal id="talent_2" level="1"/>
+								<tal id="talent_3" level="1"/>
+								<tal id="talent_4" level="1"/>
+								<tal id="talent_5" level="1"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="3"/>
+					
+			<prop name="attack" vaule="3"/>
+					
+			<prop name="precision" vaule="3"/>
+					
+			<prop name="miss" vaule="3"/>
+					
+			<prop name="speed" vaule="3"/>
+					
+			<prop name="extra_injure" vaule="3"/>
+					
+			<prop name="miss_injure" vaule="3"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_2">
+	<tals>
+								<tal id="talent_1" level="2"/>
+								<tal id="talent_2" level="2"/>
+								<tal id="talent_3" level="2"/>
+								<tal id="talent_4" level="2"/>
+								<tal id="talent_5" level="2"/>
+								<tal id="talent_6" level="2"/>
+								<tal id="talent_7" level="2"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="6"/>
+					
+			<prop name="attack" vaule="6"/>
+					
+			<prop name="precision" vaule="6"/>
+					
+			<prop name="miss" vaule="6"/>
+					
+			<prop name="speed" vaule="6"/>
+					
+			<prop name="extra_injure" vaule="6"/>
+					
+			<prop name="miss_injure" vaule="6"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_3">
+	<tals>
+								<tal id="talent_1" level="3"/>
+								<tal id="talent_2" level="3"/>
+								<tal id="talent_3" level="3"/>
+								<tal id="talent_4" level="3"/>
+								<tal id="talent_5" level="3"/>
+								<tal id="talent_6" level="3"/>
+								<tal id="talent_7" level="3"/>
+								<tal id="talent_8" level="3"/>
+								<tal id="talent_9" level="3"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="9"/>
+					
+			<prop name="attack" vaule="9"/>
+					
+			<prop name="precision" vaule="9"/>
+					
+			<prop name="miss" vaule="9"/>
+					
+			<prop name="speed" vaule="9"/>
+					
+			<prop name="extra_injure" vaule="9"/>
+					
+			<prop name="miss_injure" vaule="9"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_4">
+	<tals>
+								<tal id="talent_1" level="4"/>
+								<tal id="talent_2" level="4"/>
+								<tal id="talent_3" level="4"/>
+								<tal id="talent_4" level="4"/>
+								<tal id="talent_5" level="4"/>
+								<tal id="talent_6" level="4"/>
+								<tal id="talent_7" level="4"/>
+								<tal id="talent_8" level="4"/>
+								<tal id="talent_9" level="4"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="12"/>
+					
+			<prop name="attack" vaule="12"/>
+					
+			<prop name="precision" vaule="12"/>
+					
+			<prop name="miss" vaule="12"/>
+					
+			<prop name="speed" vaule="12"/>
+					
+			<prop name="extra_injure" vaule="12"/>
+					
+			<prop name="miss_injure" vaule="12"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_5">
+	<tals>
+								<tal id="talent_1" level="5"/>
+								<tal id="talent_2" level="5"/>
+								<tal id="talent_3" level="5"/>
+								<tal id="talent_4" level="5"/>
+								<tal id="talent_5" level="5"/>
+								<tal id="talent_6" level="5"/>
+								<tal id="talent_7" level="5"/>
+								<tal id="talent_8" level="5"/>
+								<tal id="talent_9" level="5"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="15"/>
+					
+			<prop name="attack" vaule="15"/>
+					
+			<prop name="precision" vaule="15"/>
+					
+			<prop name="miss" vaule="15"/>
+					
+			<prop name="speed" vaule="15"/>
+					
+			<prop name="extra_injure" vaule="15"/>
+					
+			<prop name="miss_injure" vaule="15"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_6">
+	<tals>
+								<tal id="talent_1" level="6"/>
+								<tal id="talent_2" level="6"/>
+								<tal id="talent_3" level="6"/>
+								<tal id="talent_4" level="6"/>
+								<tal id="talent_5" level="6"/>
+								<tal id="talent_6" level="6"/>
+								<tal id="talent_7" level="6"/>
+								<tal id="talent_8" level="6"/>
+								<tal id="talent_9" level="6"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="18"/>
+					
+			<prop name="attack" vaule="18"/>
+					
+			<prop name="precision" vaule="18"/>
+					
+			<prop name="miss" vaule="18"/>
+					
+			<prop name="speed" vaule="18"/>
+					
+			<prop name="extra_injure" vaule="18"/>
+					
+			<prop name="miss_injure" vaule="18"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_7">
+	<tals>
+								<tal id="talent_1" level="7"/>
+								<tal id="talent_2" level="7"/>
+								<tal id="talent_3" level="7"/>
+								<tal id="talent_4" level="7"/>
+								<tal id="talent_5" level="7"/>
+								<tal id="talent_6" level="7"/>
+								<tal id="talent_7" level="7"/>
+								<tal id="talent_8" level="7"/>
+								<tal id="talent_9" level="7"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="21"/>
+					
+			<prop name="attack" vaule="21"/>
+					
+			<prop name="precision" vaule="21"/>
+					
+			<prop name="miss" vaule="21"/>
+					
+			<prop name="speed" vaule="21"/>
+					
+			<prop name="extra_injure" vaule="21"/>
+					
+			<prop name="miss_injure" vaule="21"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_8">
+	<tals>
+								<tal id="talent_1" level="8"/>
+								<tal id="talent_2" level="8"/>
+								<tal id="talent_3" level="8"/>
+								<tal id="talent_4" level="8"/>
+								<tal id="talent_5" level="8"/>
+								<tal id="talent_6" level="8"/>
+								<tal id="talent_7" level="8"/>
+								<tal id="talent_8" level="8"/>
+								<tal id="talent_9" level="8"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="24"/>
+					
+			<prop name="attack" vaule="24"/>
+					
+			<prop name="precision" vaule="24"/>
+					
+			<prop name="miss" vaule="24"/>
+					
+			<prop name="speed" vaule="24"/>
+					
+			<prop name="extra_injure" vaule="24"/>
+					
+			<prop name="miss_injure" vaule="24"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_9">
+	<tals>
+								<tal id="talent_1" level="9"/>
+								<tal id="talent_2" level="9"/>
+								<tal id="talent_3" level="9"/>
+								<tal id="talent_4" level="9"/>
+								<tal id="talent_5" level="9"/>
+								<tal id="talent_6" level="9"/>
+								<tal id="talent_7" level="9"/>
+								<tal id="talent_8" level="9"/>
+								<tal id="talent_9" level="9"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="27"/>
+					
+			<prop name="attack" vaule="27"/>
+					
+			<prop name="precision" vaule="27"/>
+					
+			<prop name="miss" vaule="27"/>
+					
+			<prop name="speed" vaule="27"/>
+					
+			<prop name="extra_injure" vaule="27"/>
+					
+			<prop name="miss_injure" vaule="27"/>
+			
+	</add_prop>
+</soul>
+<soul id="soul_10">
+	<tals>
+								<tal id="talent_1" level="10"/>
+								<tal id="talent_2" level="10"/>
+								<tal id="talent_3" level="10"/>
+								<tal id="talent_4" level="10"/>
+								<tal id="talent_5" level="10"/>
+								<tal id="talent_6" level="10"/>
+								<tal id="talent_7" level="10"/>
+								<tal id="talent_8" level="10"/>
+								<tal id="talent_9" level="10"/>
+				
+	</tals>
+	<add_prop>
+					
+			<prop name="hp" vaule="30"/>
+					
+			<prop name="attack" vaule="30"/>
+					
+			<prop name="precision" vaule="30"/>
+					
+			<prop name="miss" vaule="30"/>
+					
+			<prop name="speed" vaule="30"/>
+					
+			<prop name="extra_injure" vaule="30"/>
+					
+			<prop name="miss_injure" vaule="30"/>
+			
+	</add_prop>
+</soul>
+</souls>	
+</root>
