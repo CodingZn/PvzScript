@@ -16,52 +16,6 @@ import org.w3c.dom.NodeList;
 import static src.Util.obj2long;
 public class Organism {
 
-    public static LinkedHashMap<Integer, Organism> getNewestOrganisms(){
-        if (Warehouse.loadWarehouse()){
-            return getOrganisms();
-        }
-        else return null;
-    }
-
-    public static boolean loadOrganisms(Document document){
-        organismMap.clear();
-        Element organismsEle = (Element) document.getElementsByTagName("organisms").item(0);
-        NodeList organismList = organismsEle.getChildNodes();
-        for (int i = 0; i < organismList.getLength(); i++) {
-            Node node = organismList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("item")){
-                Element element = (Element) node;
-                Organism plant = new Organism(element);
-                organismMap.put(plant.id, plant);
-            }
-            
-        }
-        return true;
-    }
-
-    private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
-
-    private static boolean isEmpty(){
-        return organismMap==null || organismMap.size()==0;
-    }
-
-    public static Organism getOrganism(int id){
-        if (isEmpty()) {
-            Warehouse.loadWarehouse();
-        }
-        return organismMap.get(id);
-    }
-
-    public static void setGrade(int id, int new_grade){
-        Organism plant = organismMap.get(id);
-        plant.grade_pre = new_grade;
-        organismMap.put(id, plant);
-    }
-
-    public static LinkedHashMap<Integer, Organism> getOrganisms(){
-        return organismMap;
-    }
-
     public Organism(Element element){
         this.id = Integer.parseInt(element.getAttribute("id"));
         this.pid = Integer.parseInt(element.getAttribute("pid"));
@@ -128,6 +82,25 @@ public class Organism {
         return sb.toString();
     }
 
+    /** @return null if no such skill */
+    public Skill getSkillByName(String skillName){
+        for (Skill skill : this.skills) {
+            if (skill.name.equals(skillName)){
+                return skill;
+            }
+        }
+        return null;
+    }
+    /** @return null if no such skill */
+    public Skill getSkillById(int skillid){
+        for (Skill skill : this.skills) {
+            if (skill.id == skillid){
+                return skill;
+            }
+        }
+        return null;
+    }
+
     /** 植物id */
     public final int id;
     /** 原型id */
@@ -160,6 +133,53 @@ public class Organism {
     public final BigInteger fight;
 
     public final List<Skill> skills;
+
+    public static LinkedHashMap<Integer, Organism> getNewestOrganisms(){
+        if (Warehouse.loadWarehouse()){
+            return getOrganisms();
+        }
+        else return null;
+    }
+
+    public static boolean loadOrganisms(Document document){
+        organismMap.clear();
+        Element organismsEle = (Element) document.getElementsByTagName("organisms").item(0);
+        NodeList organismList = organismsEle.getChildNodes();
+        for (int i = 0; i < organismList.getLength(); i++) {
+            Node node = organismList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("item")){
+                Element element = (Element) node;
+                Organism plant = new Organism(element);
+                organismMap.put(plant.id, plant);
+            }
+            
+        }
+        return true;
+    }
+
+    private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();
+
+    private static boolean isEmpty(){
+        return organismMap==null || organismMap.size()==0;
+    }
+
+    /** 懒加载 */
+    public static Organism getOrganism(int id){
+        if (isEmpty()) {
+            Warehouse.loadWarehouse();
+        }
+        return organismMap.get(id);
+    }
+
+    public static void setGrade(int id, int new_grade){
+        Organism plant = organismMap.get(id);
+        plant.grade_pre = new_grade;
+        organismMap.put(id, plant);
+    }
+
+    public static LinkedHashMap<Integer, Organism> getOrganisms(){
+        return organismMap;
+    }
 
     private static void show(boolean byGrade, String filter){
         if (Warehouse.loadWarehouse()){

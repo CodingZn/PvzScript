@@ -67,6 +67,10 @@ public class CommandResolver {
                     Quality.main(args);
                     return;
                 }
+                case "skillup"->{
+                    Warehouse.skillUp(args);
+                    return;
+                }
                 case "buxie"->{
                     BuXie.main(args);
                     return;

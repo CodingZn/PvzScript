@@ -3,6 +3,7 @@ package src;
 import static src.Util.obj2int;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
@@ -61,6 +62,13 @@ public class Skill {
 
     public static Skill getSkill(int id){
         return skillMap.get(id);
+    }
+
+    public static Skill getSkill(String name, int level){
+        Optional<Skill> opsk= skillMap.values().stream().filter(sk->(
+            sk.name.equals(name) && sk.grade == level
+        )).findFirst();
+        return opsk.isPresent()?opsk.get():null;
     }
 
     static {

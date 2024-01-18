@@ -44,35 +44,33 @@ public class Quality {
             return null;
     }
 
-    public static SimpleEntry<Integer, String> qualityUp(int plantId, String iniQuality, String goal, int maximum){
+    public static SimpleEntry<Integer,String> qualityUp(int plantId, String iniQuality, String goal, int maximum){
         String now_quality=iniQuality;
+        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId),now_quality));
         int now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 0);
         final int goal_level = QNAME2LEVEL.getOrDefault(goal, 0);
         int total_use = 0;
+        int currLevelUse = 0;
         byte[] body = getQualityUpAmf(plantId);
         while (now_quality_level<goal_level && total_use < maximum) {
+            System.out.print("+");
             byte[] resp = Request.sendPostAmf(body, true);
             total_use++;
-            now_quality = resolveResponseAmf(resp);
-            if (now_quality==null) continue;
-            now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 9999);
-            System.out.printf("used: %d; curr: %s;\n", total_use, now_quality);
+            currLevelUse++;
+            String tmpQ = resolveResponseAmf(resp);
+            if (tmpQ==null) continue;
+            /** 升级了 */
+            if (!tmpQ.equals(now_quality)){
+                System.out.printf("\n使用%d本刷新书，升级到 %s".formatted(currLevelUse, tmpQ));
+                now_quality = tmpQ;
+                now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 9999);
+                currLevelUse = 0;
+            }
+            else{
+                System.out.print("\b");
+            }
         }
-
-        return new SimpleEntry<Integer,String>(total_use, now_quality);
-    }
-
-    public static SimpleEntry<Integer, String> qualityUp(int plantId, int maximum){
-        String now_quality="";
-        int total_use = 0;
-        byte[] body = getQualityUpAmf(plantId);
-        while (total_use < maximum) {
-            byte[] resp = Request.sendPostAmf(body, true);
-            total_use++;
-            now_quality = resolveResponseAmf(resp);
-            if (now_quality==null) continue;
-            System.out.printf("used: %d; curr: %s;\n", total_use, now_quality);
-        }
+        System.out.println();
 
         return new SimpleEntry<Integer,String>(total_use, now_quality);
     }
@@ -87,50 +85,30 @@ public class Quality {
     
     public static void main(String[] args){
         PrintStream printStream;
-        if (args.length == 3 || args.length == 4){
-            if (args[0].equals("goal")){
-                int plantId = Integer.parseInt(args[1]);
-                String goalQuality = args[2];
-                String iniQuality = getPlantQuality(plantId);
-                int maximum = Integer.MAX_VALUE;
-                if (args.length == 4){
-                    maximum = Integer.parseInt(args[3]);
-                }
-                SimpleEntry<Integer, String> res = qualityUp(plantId, iniQuality, goalQuality, maximum);
-                try {
-                    File logDir = new File("log");
-                    logDir.mkdirs();
-                    printStream = new PrintStream(new FileOutputStream(
-                        "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
-                    true),true, Charset.forName("UTF-8")) ;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-                printStream.printf("%s plant %d: %s --%d books--> %s.\n",dateFormatNow("HH:mm:ss"), plantId, iniQuality, res.getKey(), res.getValue());
-                printStream.close();
-                return;
-            }else if (args[0].equals("count") && args.length == 3){
-                int plantId = Integer.parseInt(args[1]);
-                int maximum = Integer.parseInt(args[2]);
-                String iniQuality = getPlantQuality(plantId);
-                SimpleEntry<Integer, String> res = qualityUp(plantId,  maximum);
-                try {
-                    File logDir = new File("log");
-                    logDir.mkdirs();
-                    printStream = new PrintStream(new FileOutputStream(
-                        "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
-                    true),true, Charset.forName("UTF-8")) ;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-                printStream.printf("%s plant %d: %s --%d books--> %s.\n",dateFormatNow("HH:mm:ss"), plantId, iniQuality, res.getKey(), res.getValue());
-                printStream.close();
+        if (args.length == 2 || args.length == 3){
+            int plantId = Integer.parseInt(args[0]);
+            String goalQuality = args[1];
+            String iniQuality = getPlantQuality(plantId);
+            int maximum = Integer.MAX_VALUE;
+            if (args.length == 3){
+                maximum = Integer.parseInt(args[2]);
+            }
+            SimpleEntry<Integer, String> res = qualityUp(plantId, iniQuality, goalQuality, maximum);
+            try {
+                File logDir = new File("log");
+                logDir.mkdirs();
+                printStream = new PrintStream(new FileOutputStream(
+                    "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
+                true),true, Charset.forName("UTF-8")) ;
+            } catch (Exception e) {
+                e.printStackTrace();
                 return;
             }
+            printStream.printf("%s %s 使用%d本书从%s升级到了%s\n",dateFormatNow("HH:mm:ss"),
+                Organism.getOrganism(plantId).toShortString(), res.getKey(), iniQuality, res.getValue());
+            printStream.close();
+            return;
         }
-        System.out.println("args: goal plantid quality_name [max_usage]\n");
-        System.out.println("or  : count plantid maximum\n");
+        System.out.println("args: plantid quality_name [max_usage]\n");
     }
 }

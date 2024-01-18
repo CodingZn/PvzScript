@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.exadel.flamingo.flex.amf.AMF0Body;
+import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
 
@@ -41,7 +42,7 @@ public class Warehouse {
             Element wareEle = (Element)(warehouseDoc.getElementsByTagName("warehouse").item(0));
             now_grid_num = Integer.parseInt(wareEle.getAttribute("organism_grid_amount"));
         }
-        System.out.printf("curr: %d\n", now_grid_num);
+        System.out.printf("当前格子数: %d\n", now_grid_num);
         if (now_grid_num>=goal) return true;
         System.out.printf("opening...");
         do {
@@ -51,7 +52,7 @@ public class Warehouse {
             if (statusNode.getNodeType()==Node.ELEMENT_NODE && ((Element) statusNode).getTextContent().equals("success")){
                 Element warehouseEle = (Element)doc.getElementsByTagName("warehouse").item(0);
                 now_grid_num = Integer.parseInt(warehouseEle.getAttribute("organism"));
-                System.out.printf("curr: %d\n", now_grid_num);
+                System.out.printf("当前格子数: %d\n", now_grid_num);
             }
             else{
                 System.out.println(Util.getXmlMessage(doc));
@@ -91,6 +92,78 @@ public class Warehouse {
             System.out.println(TOOL_USE_MSG[msgidx].formatted(effect));
             return true;
         }
+    }
+
+    public static boolean skillUp(int plantId, int ori_skill_id, int grade_by){
+        int succ_count = 0;
+        int now_skill_id = ori_skill_id;
+        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId),Skill.getSkill(now_skill_id).toShortString()));
+        while (succ_count < grade_by) {
+            byte[] req = Util.encodeAMF("api.apiorganism.skillUp", "/1", 
+            new Object[]{plantId, now_skill_id});
+            int use_count = 0;
+            while (true) {
+                System.out.print("+");
+                byte[] resp = Request.sendPostAmf(req, true);
+                use_count++;
+                AMF0Message msg = Util.decodeAMF(resp);
+                if (Response.isOnStatusException(msg.getBody(0), true)){
+                    return false;
+                }
+                ASObject resObj = (ASObject) msg.getBody(0).getValue();
+                int now_id = obj2int(resObj.get("now_id"));
+                if (now_id != now_skill_id){
+                    succ_count++;
+                    now_skill_id = now_id;
+                    break;
+                }
+                else{
+                    System.out.printf("\b");
+                }
+            }
+            Skill newSkill = Skill.getSkill(now_skill_id);
+            System.out.printf("\n使用%d个%s，升级到%s "
+            .formatted(use_count,newSkill.learn_tool.name,newSkill.toShortString()));
+
+        }
+        System.out.println();
+        return true;
+    }
+
+    public static void skillUp(String[] args){
+        if (args.length==3){
+            int plantId = Integer.parseInt(args[0]);
+            Organism org = Organism.getOrganism(plantId);
+            if (org==null){
+                System.out.println("plant %d doesn't exist!".formatted(plantId));
+                return;
+            }
+            Skill oriSkill = org.getSkillByName(args[1]);
+            if (oriSkill==null){
+                try {
+                    int ori_skill_id = Integer.parseInt(args[1]);
+                    oriSkill = org.getSkillById(ori_skill_id);
+                    if (oriSkill==null){
+                        System.out.println("skill %s doesn't exist!".formatted(args[1]));
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("skill %s doesn't exist!".formatted(args[1]));
+                    return;
+                }
+            }
+            int grade_by;
+            if (args[2].substring(0,2).equals("lv")){
+                int targetLevel = Integer.parseInt(args[2].substring(2));
+                grade_by = targetLevel - oriSkill.grade;
+            }
+            else{
+                grade_by = Integer.parseInt(args[2]);
+            }
+            skillUp(plantId, oriSkill.id, grade_by);
+            return;
+        }
+        System.out.println("args: <plantId> <skillId>|<skillName> <upgradeCount>|(lv<targetLevel>)");
     }
 
     public static void main(String[] args) {
