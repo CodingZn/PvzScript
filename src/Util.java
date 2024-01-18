@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,7 +67,7 @@ public class Util {
         try (FileInputStream fi = new FileInputStream(filename)) {
             return decodeAMF(fi.readAllBytes());
         } catch (FileNotFoundException e){
-            System.out.println("File Not Found!");
+            System.out.println("文件%s不存在！".formatted(filename));
             return null;
         }
          catch (IOException e) {
@@ -345,7 +346,10 @@ public class Util {
             oInputStream.close();
             return readobj;
         } catch (InvalidClassException e){
-            System.out.println("类信息不一致。重新加载xml文件...");
+            System.out.println("类信息不一致。");
+            return null;
+        } catch (FileNotFoundException e) {
+            System.out.println("文件%s不存在！".formatted(filename));
             return null;
         } catch (IOException e) {
             e.printStackTrace();
@@ -358,7 +362,9 @@ public class Util {
 
     public static boolean saveObject(Object obj, String filename){
         try {
-            FileOutputStream fOutputStream = new FileOutputStream(filename);
+            Path fileDir = Path.of(filename);
+            if (fileDir.getParent()!=null) fileDir.getParent().toFile().mkdirs();
+            FileOutputStream fOutputStream = new FileOutputStream(fileDir.toFile());
             ObjectOutputStream outputStream = new ObjectOutputStream(fOutputStream);
             outputStream.writeObject(obj);
             outputStream.close();

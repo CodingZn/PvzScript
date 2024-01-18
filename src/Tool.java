@@ -62,6 +62,7 @@ public class Tool implements Serializable{
 
     public static boolean loadMap(){
         if (!loadMapBinary()){
+            System.out.println("重新加载xml文件...");
             if (!loadToolXml()){
                 System.out.println("道具原型模块数据未加载！");
                 System.out.println("请将tool或tool.xml放在static目录下");

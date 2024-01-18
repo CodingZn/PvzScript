@@ -15,7 +15,7 @@ public class Cookie {
             currCookie = new String(reader.readAllBytes());
             return true;
         } catch (FileNotFoundException e){
-            System.out.printf("cookie file %s not found!\n", filename);
+            System.out.println("文件%s不存在！".formatted(filename));
             return false;
         } catch (Exception e) {
             e.printStackTrace();

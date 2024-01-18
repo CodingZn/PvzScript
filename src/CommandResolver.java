@@ -63,6 +63,10 @@ public class CommandResolver {
                     Evolution.main(args);
                     return;
                 }
+                case "route"->{
+                    EvolRoute.main(args);
+                    return;
+                }
                 case "quality"->{
                     Quality.main(args);
                     return;
@@ -115,7 +119,7 @@ public class CommandResolver {
         try (BufferedReader reader = new BufferedReader(new FileReader(scriptFile, Charset.forName("UTF-8")))) {
             cmds = reader.lines().toList();
         } catch (FileNotFoundException e) {
-            System.out.printf("file %s not found!\n", filename);
+            System.out.println("文件%s不存在！".formatted(filename));
             return;
         } catch (IOException e){
             e.printStackTrace();

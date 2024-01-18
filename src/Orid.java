@@ -1,6 +1,8 @@
 package src;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.w3c.dom.Document;
@@ -22,7 +24,9 @@ public class Orid implements Serializable{
     public final Evolution evolution1;
     public final Evolution evolution2;
 
-    public Orid(Element element){
+    protected Set<Orid> predecessors = new HashSet<>();
+
+    private Orid(Element element){
         id = Integer.parseInt(element.getAttribute("id"));
         name = element.getAttribute("name");
         attribute = element.getAttribute("attribute");
@@ -42,7 +46,7 @@ public class Orid implements Serializable{
             evolution1 = new Evolution((Element)evols.item(0));
             evolution2 = new Evolution((Element)evols.item(1));
         }
-        
+
     }
 
     @Override
@@ -57,7 +61,17 @@ public class Orid implements Serializable{
             }
         }
         sb.append("}");
+        sb.append("\n前驱[");
+        this.predecessors.stream().forEach(o->{
+            sb.append(o.toShortString());
+            sb.append(" ");
+        });
+        sb.append("]\n");
         return sb.toString();
+    }
+
+    public String toShortString(){
+        return "%s(%d)".formatted(this.name, this.id);
     }
 
     public static final String BINARY_FILENAME = "static/organism";
@@ -75,6 +89,7 @@ public class Orid implements Serializable{
 
     public static boolean loadMap(){
         if (!loadMapBinary()){
+            System.out.println("重新加载xml文件...");
             if (!loadOridXml()){
                 System.out.println("植物原型模块数据未加载！");
                 System.out.println("请将organism或organism.xml放在static目录下");
@@ -106,6 +121,26 @@ public class Orid implements Serializable{
                 }
             }
         }
+        for (Orid orid : oridMap.values()) {
+            if (orid.evolution1!=null){
+                int succ = orid.evolution1.target;
+                oridMap.get(succ).predecessors.add(orid);
+                if (orid.evolution2!=null){
+                    succ = orid.evolution2.target;
+                    oridMap.get(succ).predecessors.add(orid);
+                }
+            }
+        }
+        // 去掉死神植物相互转化
+        Orid yeyi = oridMap.get(896);
+        Orid baizai = oridMap.get(874);
+        Orid dongshilang = oridMap.get(918);
+        // 冬狮郎->夜一
+        yeyi.predecessors.removeIf(pre->pre.id==918);
+        // 夜一->白哉
+        baizai.predecessors.removeIf(pre->pre.id==896);
+        // 白哉->冬狮郎
+        dongshilang.predecessors.removeIf(pre->pre.id==874);
         return true;
     }
 
