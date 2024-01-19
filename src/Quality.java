@@ -61,13 +61,13 @@ public class Quality {
             if (tmpQ==null) continue;
             /** 升级了 */
             if (!tmpQ.equals(now_quality)){
-                System.out.printf("\n使用%d本刷新书，升级到 %s".formatted(currLevelUse, tmpQ));
+                System.out.printf("\n使用%d本刷新书，升级到 %s ".formatted(currLevelUse, tmpQ));
                 now_quality = tmpQ;
                 now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 9999);
                 currLevelUse = 0;
             }
             else{
-                System.out.print("\b");
+                // System.out.print("\b");
             }
         }
         System.out.println();

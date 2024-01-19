@@ -118,7 +118,7 @@ public class Warehouse {
                     break;
                 }
                 else{
-                    System.out.printf("\b");
+                    // System.out.print("\b");
                 }
             }
             Skill newSkill = Skill.getSkill(now_skill_id);

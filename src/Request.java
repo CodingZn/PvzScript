@@ -246,12 +246,12 @@ public class Request {
             else if (is2441Block(response)){
                 System.out.print("拦");
                 delay(wait2441Time);
-                System.out.print("\b\b");
+                // System.out.print("\b\b");
             }
             else if(handleAmfBlock && isAmfBlock(response)){
-                System.out.print("频繁");
+                System.out.print("繁");
                 delay(waitAmfTime);
-                System.out.print("\b\b\b\b");
+                // System.out.print("\b\b\b\b");
             }
             else{
                 break;
