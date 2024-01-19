@@ -143,7 +143,7 @@ public class Request {
             else if (is2441Block(response)){
                 System.out.print("拦");
                 delay(wait2441Time);
-                System.out.print("\b\b");
+                // System.out.print("\b\b");
                 continue;
             }
             else{
