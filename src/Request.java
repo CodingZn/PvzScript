@@ -2,6 +2,7 @@ package src;
 
 import static src.Util.delay;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
@@ -12,6 +13,7 @@ import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -33,6 +35,7 @@ public class Request {
 
     private static final int wait2441Time = 15000;
     private static final int waitAmfTime = 10000;
+    private static final int wait302Time = 2*60*1000;
     private static final int leastRetryInterval = 1000;
     private static int retryInterval = 20000;
     private static int retryMaxCount = 10;
@@ -41,6 +44,10 @@ public class Request {
     private static final HttpClient proxyClient;
     private static HttpClient httpClient;
     private static int proxyPort;
+
+    private enum RequestType{
+        GET, POST_AMF
+    }
     
     static {
         host = realhost;
@@ -117,131 +124,86 @@ public class Request {
         lastSentTime = System.currentTimeMillis();
     }
 
-    private static final byte[] PROXY_ERR_NOTE = new byte[]{1,1,1};
-
     /** @return valid body of response, null if exception */
     public static byte[] sendGetRequest(String path){
-        byte[] response;
-        int retryCount = retryMaxCount;
-        do {
-            response = sendOneGet(path);
-            if (response==null){
-                if (retryCount == 0){
-                    System.out.println("请求失败！请检查网络设置。");
-                    return null;
-                }
-                else{
-                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次\n", retryInterval/1000, retryCount);
-                    delay(retryInterval);
-                    retryCount--;
-                    continue;
-                }
-            }
-            else if (response.equals(PROXY_ERR_NOTE)){
-                continue;
-            }
-            else if (is2441Block(response)){
-                System.out.print("拦");
-                delay(wait2441Time);
-                // System.out.print("\b\b");
-                continue;
-            }
-            else{
-                break;
-            }
-        } while (true);
-        return response;
-    }
-
-    /** @return body of response, null if exception. 
-     * @apiNote support gzip compress
-     */
-    private static byte[] sendOneGet(String path){
-        String uri = http + host + path;
-        HttpRequest.Builder builder = HttpRequest.newBuilder();
-        builder.GET().uri(URI.create(uri)).timeout(Duration.ofMillis(timeout));
-        addHeaders(builder);
-        HttpRequest request = builder.build();
-        try {
-            sendIntervalBlock();
-            HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
-            HttpResponse<InputStream> response = httpClient.send(request, bh);
-            updateLastSend();
-            Optional<String> s = response.headers().firstValue("Content-Encoding");
-            if (s.isPresent() && s.get().toLowerCase().equals("gzip")) {
-                GZIPInputStream gi = new GZIPInputStream(response.body());
-                return gi.readAllBytes();
-            }
-            return response.body().readAllBytes();
-        } catch (ConnectException e){
-            System.out.println("错误：连接通道关闭。");
-            if (httpClient==proxyClient) {
-                System.out.print("可能由于代理未开启导致。");
-                httpClient = directClient;
-                System.out.println("已关闭代理。");
-            }
-            return PROXY_ERR_NOTE;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } 
-        
-    }
-
-    /** @return amf body of response, null if exception */
-    private static byte[] sendOnePostAmf(byte[] body){
-        String uri = http + host + amfPath;
-        HttpRequest.Builder builder = HttpRequest.newBuilder();
-        builder.POST(BodyPublishers.ofByteArray(body))
-        .uri(URI.create(uri))
-        .timeout(Duration.ofMillis(timeout));
-        addHeaders(builder);
-        HttpRequest request = builder.build();
-        try {
-            sendIntervalBlock();
-            HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
-            HttpResponse<InputStream> response = httpClient.send(request, bh);
-            updateLastSend();
-            Optional<String> s = response.headers().firstValue("Content-Encoding");
-            if (s.isPresent() && s.get().toLowerCase().equals("gzip")) {
-                GZIPInputStream gi = new GZIPInputStream(response.body());
-                return gi.readAllBytes();
-            }
-            return response.body().readAllBytes();
-        } catch (ConnectException e){
-            System.out.println("错误：连接通道关闭。");
-            if (httpClient==proxyClient) {
-                System.out.print("可能由于代理未开启导致。");
-                httpClient = directClient;
-                System.out.println("已关闭代理。");
-            }
-            return PROXY_ERR_NOTE;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return sendOneRequest(RequestType.GET, path, null, false);
     }
 
     /** @return valid amf body of response, 2441 block handled */
     public static byte[] sendPostAmf(byte[] body, boolean handleAmfBlock){
+        return sendOneRequest(RequestType.POST_AMF, null, body, handleAmfBlock);
+    }
+
+    private static byte[] send(HttpRequest request) throws IOException, InterruptedException{
+        sendIntervalBlock();
+        HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
+        HttpResponse<InputStream> response = httpClient.send(request, bh);
+        updateLastSend();
+        Optional<String> s = response.headers().firstValue("Content-Encoding");
+        if (s.isPresent() && s.get().toLowerCase().equals("gzip")) {
+            GZIPInputStream gi = new GZIPInputStream(response.body());
+            return gi.readAllBytes();
+        }
+        return response.body().readAllBytes();
+    }
+
+    /** type=0: get; type=1: postAmf; return valid response */
+    private static byte[] sendOneRequest(RequestType type, String path, byte[] body, boolean handleAmfBlock){
         byte[] response;
+        HttpRequest request;
+        if (type==RequestType.GET){
+            String uri = http + host + path;
+            HttpRequest.Builder builder = HttpRequest.newBuilder();
+            builder.GET().uri(URI.create(uri)).timeout(Duration.ofMillis(timeout));
+            addHeaders(builder);
+            request = builder.build();
+            
+        }else if (type==RequestType.POST_AMF){
+            String uri = http + host + amfPath;
+            HttpRequest.Builder builder = HttpRequest.newBuilder();
+            builder.POST(BodyPublishers.ofByteArray(body))
+            .uri(URI.create(uri))
+            .timeout(Duration.ofMillis(timeout));
+            addHeaders(builder);
+            request = builder.build();
+            
+        }else {
+            assert false;
+            return null;
+        }
         int retryCount = retryMaxCount;
         do {
-            response = sendOnePostAmf(body);
+            try {
+                response = send(request);
+            } catch (ConnectException e){
+                System.out.println("错误：连接通道关闭。");
+                if (httpClient==proxyClient) {
+                    System.out.print("可能由于代理未开启导致。");
+                    httpClient = directClient;
+                    System.out.println("已关闭代理。");
+                }
+                continue;
+            } catch (HttpTimeoutException e){
+                System.out.print("请求超时！");
+                response = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.print("请求失败！");
+                response = null;
+            } catch (InterruptedException e){
+                return null;
+            }
             if (response==null){
                 if (retryCount == 0){
                     System.out.println("请求失败！请检查网络设置。");
-                    return null;
+                    assert false;
                 }
                 else{
-                    System.out.printf("请求失败，将在%2d秒后重试最多%2d次\n", retryInterval/1000, retryCount);
+                    System.out.printf("将在%2d秒后重试最多%2d次\n", retryInterval/1000, retryCount);
                     delay(retryInterval);
                     retryCount--;
                     continue;
                 }
-            }
-            else if (response.equals(PROXY_ERR_NOTE)){
-                continue;
             }
             else if (is2441Block(response)){
                 System.out.print("拦");
@@ -253,13 +215,22 @@ public class Request {
                 delay(waitAmfTime);
                 // System.out.print("\b\b\b\b");
             }
+            else if (is302(response)){
+                System.out.println("服务器返回302。将在%d分钟后重试".formatted(wait302Time/60000));
+                delay(wait302Time);
+            }
+            else if (isCharlesReport(response)){
+                assert false;
+                continue;
+            }
             else{
                 break;
             }
         } while (true);
         return response;
+    
     }
-
+    
     /** to check if there is a rechapter block */
     private static boolean is2441Block(byte[] response){
         assert(response != null);
@@ -287,6 +258,29 @@ public class Request {
         && (Response.getExceptionDescription(body).equals("Exception:请不要操作过于频繁。")
         || Response.getExceptionDescription(body).equals("请不要操作过于频繁。")))
         {
+            return true;
+        }
+        return false;
+    }
+
+    /** to check if server return 302 busy */
+    private static boolean is302(byte[] response){
+        assert(response != null);
+        String body = new String(response);
+        if (body.indexOf("<head><title>302 Found</title></head>") != -1){
+            return true;
+        }
+        if (body.indexOf("302 Found") != -1){
+            return true;
+        }
+        return false;
+    }
+
+    /** to check if there is a rechapter block */
+    private static boolean isCharlesReport(byte[] response){
+        assert(response != null);
+        String body = new String(response);
+        if (body.indexOf("Charles Error Report") != -1){
             return true;
         }
         return false;
@@ -328,5 +322,8 @@ public class Request {
     }
     
     public static void main(String[] args) {
+        byte[] bytes= Util.readBytesFromFile("src/bytes");
+        // Util.printBytes(bytes);
+        System.out.println(new String(bytes));
     }
 }

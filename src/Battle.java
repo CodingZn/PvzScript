@@ -74,6 +74,10 @@ public class Battle {
             if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
                 return new SimpleEntry<Boolean,ASObject>(false, null);
             }
+            else if (exc.equals("Exception:僵尸已被其它人挑战了")){
+                delay(3000);
+                return new SimpleEntry<Boolean,ASObject>(true, null);
+            }
             else{
                 return new SimpleEntry<Boolean,ASObject>(true, null);
             }

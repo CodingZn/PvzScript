@@ -148,6 +148,9 @@ public class Util {
                 }
             });
             return res;
+        } catch (FileNotFoundException e) {
+            System.out.println("文件%s不存在！".formatted(filename));
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -164,6 +167,9 @@ public class Util {
             FileInputStream fInputStream = new FileInputStream(filename);
             //使用解析器生成Document实例
             return documentBuilder.parse(fInputStream);
+        } catch (FileNotFoundException e) {
+            System.out.println("文件%s不存在！".formatted(filename));
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -180,6 +186,9 @@ public class Util {
             FileInputStream fInputStream = new FileInputStream(file);
             //使用解析器生成Document实例
             return documentBuilder.parse(fInputStream);
+        } catch (FileNotFoundException e) {
+            System.out.println("文件%s不存在！".formatted(file.getName()));
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -369,6 +378,9 @@ public class Util {
             outputStream.writeObject(obj);
             outputStream.close();
             return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("文件%s不存在！".formatted(filename));
+            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
