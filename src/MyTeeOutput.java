@@ -17,5 +17,29 @@ public class MyTeeOutput extends OutputStream {
         oStream1.write(b);
         oStream2.write(b);
     }
+
+    @Override
+    public void write(byte[] b) throws IOException {
+        oStream1.write(b);
+        oStream2.write(b);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        oStream1.write(b, off, len);
+        oStream2.write(b, off, len);
+    }
+
+    @Override
+    public void flush() throws IOException {
+        oStream1.flush();
+        oStream2.flush();
+    }
+
+    @Override
+    public void close() throws IOException {
+        oStream1.close();
+        oStream2.close();
+    }
     
 }

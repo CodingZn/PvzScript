@@ -23,6 +23,10 @@ public class CommandResolver {
                     Cookie.resolver(cookieArgs);
                     return;
                 }
+                case "log" ->{
+                    Log.main(args);
+                    return;
+                }
                 case "request" ->{
                     Request.resolve(args);
                     return;

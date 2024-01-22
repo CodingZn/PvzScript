@@ -13,7 +13,6 @@ public class App {
             interact();
         }
         else if (args.length == 1){
-            Log.set(true, false);
             CommandResolver.resolveFile(args[0]);
         }
         else {
@@ -24,7 +23,7 @@ public class App {
 
     private static void interact(){
         System.out.println("Welcome to PvzScript!");
-        Log.set(true, true);
+        
         System.out.println("Command Mode:");
         Scanner scanner = new Scanner(System.in);
         while (true){
