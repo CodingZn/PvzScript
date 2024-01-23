@@ -46,7 +46,7 @@ public class Cave {
         LinkedHashMap<Integer, Friend> fMap = Friend.getFriendMap();
         for(Entry<Integer, Friend> entry : fMap.entrySet()){
             Friend friend = entry.getValue();
-            System.out.printf("resolving %s(%d,%d)...layer:", friend.name, friend.grade, friend.id_pvz);
+            Log.log("resolving %s(%d,%d)...layer:".formatted(friend.name, friend.grade, friend.id_pvz));
             if (friend.grade < least_grade) break;
 
             for (int l = 1; l <= 4; l++) {
@@ -62,11 +62,11 @@ public class Cave {
                         e.printStackTrace();
                         return false;
                     }
-                    System.out.printf("%d ",l);
+                    Log.print("%d ".formatted(l));
                 }
                 else break;
             }
-            System.out.println();
+            Log.println();
             
         }
         
@@ -108,7 +108,7 @@ public class Cave {
             // 遍历每个xml文件
             for (File file : xmlFiles) {
                 Document document = Util.parseXml(file);
-                System.out.println("extracting file %s".formatted(file.getName()));
+                Log.logln("extracting file %s".formatted(file.getName()));
                 NodeList hList = document.getElementsByTagName("h");
                 for (int j = 0; j < hList.getLength(); j++) {
                     if (hList.item(j).getNodeType()==Node.ELEMENT_NODE){
@@ -128,7 +128,7 @@ public class Cave {
         for (Integer cave_public_no : cave_public_nos) {
             String caveId = publicNo2Id(cave_public_no);
             Set<String> instances = caveInstance.get(caveId);
-            System.out.println("generating file public%d.txt".formatted(cave_public_no));
+            Log.logln("generating file public%d.txt".formatted(cave_public_no));
             Path outFile = rootPath.resolve("public%d.txt".formatted(cave_public_no));
             try {
                 outFile.toFile().createNewFile();

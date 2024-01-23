@@ -63,13 +63,12 @@ public class Battle {
     public static SimpleEntry<Boolean, ASObject> battle(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(caveid, hard_level, zhuli, paohui);
         byte[] response;
-        System.out.printf("刷洞%d: ",caveid);
-        System.out.print(resolveFighter(zhuli, paohui));
+        Log.log("刷洞%d: %s".formatted(caveid,resolveFighter(zhuli, paohui)));
         response = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(response);
         AMF0Body body= msg.getBody(0);
         if(Response.isOnStatusException(body, true)){
-            System.out.println();
+            Log.logln();
             String exc = Response.getExceptionDescription(body);
             if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
                 return new SimpleEntry<Boolean,ASObject>(false, null);
@@ -83,7 +82,7 @@ public class Battle {
             }
         }
         else{
-            System.out.printf("√ ");
+            Log.println("√ ");
             ASObject resObj = (ASObject)body.getValue();
             boolean res = getAward((String)resObj.get("awards_key"));
             return new SimpleEntry<Boolean,ASObject>(res, resObj);
@@ -93,7 +92,7 @@ public class Battle {
     /** 返回值代表是否继续 */
     public static boolean battleRepeat(List<Integer> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui){
         if (!BuXie.buxie(zhuli, paohui, true)){
-            System.out.println("战斗前补血失败！");
+            Log.logln("战斗前补血失败！");
             return false;
         }
         List<Integer> paohui_actual;
@@ -104,7 +103,7 @@ public class Battle {
         for (Integer c : caves) {
             paohui_actual = paohuiPool.getChosenPaohuis();
             if (!paohuiPool.hasValidPaohui()) {
-                System.out.println("炮灰均带级完成！");
+                Log.logln("炮灰均带级完成！");
                 return false;
             }
             SimpleEntry<Boolean,ASObject> resEntry = battle(c, hard_level, zhuli, paohui_actual);
@@ -117,7 +116,7 @@ public class Battle {
             // 请求仓库同步信息
             if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){
                 blindCount=0;
-                System.out.println("同步仓库信息...");
+                Log.logln("同步仓库信息...");
                 res = BuXie.buxie(zhuli, paohui, true)&&res;
                 paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, true);
             }
@@ -128,7 +127,7 @@ public class Battle {
                 paohuiPool.updateExcept(paohui_actual, attacked.getValue());
             }
             if (!paohuiPool.hasValidPaohui()) {
-                System.out.println("炮灰均带级完成！");
+                Log.logln("炮灰均带级完成！");
                 return false;
             }
             if (!res) return false;
@@ -164,12 +163,12 @@ public class Battle {
         }
         else if (args.length == 2 && args[0].equals("updatefreq")){
             setUpdateFreq(Integer.parseInt(args[1]));
-            System.out.printf("new update freq: %d\n", updateFreq);
+            Log.log("new update freq: %d\n".formatted(updateFreq));
             return;
         }
         else if (args.length == 2 && args[0].equals("maxlevel")){
             setMaxLevel(Integer.parseInt(args[1]));
-            System.out.printf("new maxLevel: %d\n", maxLevel);
+            Log.log("new maxLevel: %d\n".formatted(maxLevel));
             return;
         }
         else if (args.length == 2 && args[0].equals("book")){
@@ -181,6 +180,7 @@ public class Battle {
             else{
                 amount = Integer.parseInt(args[1]);
             }
+            if (amount==0) return;
             if (amount%5==0){
                 long chaAmount = MyTool.getTool(CHA_BOOK_TOOL_ID).getAmount();
                 long advAmount = MyTool.getTool(ADV_CHA_BOOK_TOOL_ID).getAmount();

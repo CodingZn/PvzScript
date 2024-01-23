@@ -46,14 +46,14 @@ public class Quality {
 
     public static SimpleEntry<Integer,String> qualityUp(int plantId, String iniQuality, String goal, int maximum){
         String now_quality=iniQuality;
-        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),now_quality));
+        Log.log("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),now_quality));
         int now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 0);
         final int goal_level = QNAME2LEVEL.getOrDefault(goal, 0);
         int total_use = 0;
         int currLevelUse = 0;
         byte[] body = getQualityUpAmf(plantId);
         while (now_quality_level<goal_level && total_use < maximum) {
-            System.out.print("+");
+            Log.print("+");
             byte[] resp = Request.sendPostAmf(body, true);
             total_use++;
             currLevelUse++;
@@ -61,16 +61,14 @@ public class Quality {
             if (tmpQ==null) continue;
             /** 升级了 */
             if (!tmpQ.equals(now_quality)){
-                System.out.printf("\n使用%d本刷新书，升级到 %s ".formatted(currLevelUse, tmpQ));
+                Log.println();
+                Log.log("使用%d本刷新书，升级到 %s ".formatted(currLevelUse, tmpQ));
                 now_quality = tmpQ;
                 now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 9999);
                 currLevelUse = 0;
             }
-            else{
-                // System.out.print("\b");
-            }
         }
-        System.out.println();
+        Log.logln();
 
         return new SimpleEntry<Integer,String>(total_use, now_quality);
     }

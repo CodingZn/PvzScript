@@ -44,10 +44,10 @@ public class Evolution implements Serializable{
     public static boolean evolve(int plantId, EvolRoute route){
         Integer[] thispath = route.toIntArr();
         
-        System.out.printf("当前: %s\n", Organism.getOrganism(plantId).toShortString());
+        Log.log("当前: %s\n".formatted(Organism.getOrganism(plantId).toShortString()));
         for (int i = 0; i < thispath.length; i++) {
             String path = getPath(plantId, thispath[i]);
-            System.out.printf("route %d ", thispath[i]);
+            Log.log("route %d ".formatted(thispath[i]));
             byte[] body = sendGetRequest(path);
             Document document = Util.parseXml(body);
             if (document==null){
@@ -56,11 +56,11 @@ public class Evolution implements Serializable{
             }
             String msg = Util.getXmlMessage(document);
             if (msg!=null){
-                System.out.println(msg);
+                Log.println(msg);
                 return false;
             }
             else{
-                System.out.println("-->%s".formatted(route.oridList.get(i+1).toShortString()));
+                Log.println("-->%s".formatted(route.oridList.get(i+1).toShortString()));
             }
         }
         return true;
@@ -79,7 +79,7 @@ public class Evolution implements Serializable{
             int route_number = Integer.parseInt(args[1]);
             EvolRoute route = EvolRoute.getRoute(route_number);
             if (route==null) {
-                System.out.println("无此路线！");
+                Log.logln("无此路线！");
                 return;
             }
             evolve(plantId, route);

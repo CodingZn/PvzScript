@@ -1,76 +1,99 @@
 package src;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.Calendar;
-import java.util.Date;
 
 public class Log {
 
-    private static PrintStream bothStream;
-    private static PrintStream nullStream;
+    public static void flogln(String str){
+        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.println(str);
+    }
 
+    public static void flog(String str){
+        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.print(str);
+    }
+
+    public static void flog(){
+        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+    }
+
+    public static void fprint(String str){
+        fileStream.print(str);
+    }
+
+    public static void fprintln(String str){
+        fileStream.println(str);
+    }
+
+    public static void logln(String str){
+        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.println(str);
+        System.out.println(str);
+    }
+
+    public static void logln(){
+        fileStream.println();
+        System.out.println();
+    }
+
+    public static void log(String str){
+        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.print(str);
+        System.out.print(str);
+    }
+
+    public static void print(String str){
+        fileStream.print(str);
+        System.out.print(str);
+    }
+
+    public static void println(String str){
+        fileStream.println(str);
+        System.out.println(str);
+    }
+
+    public static void println(){
+        fileStream.println();
+        System.out.println();
+    }
+
+
+    private static final PrintStream nullStream;
+    private static final PrintStream fStream;
     private static PrintStream fileStream;
-    private static PrintStream stdStream;
-
-    private static boolean toFile;
 
     static{
-        Date now = new Date();
-        Calendar noe = Calendar.getInstance();
-        noe.setTime(now);
-        Path filePath = Path.of("log/%4d%02d/%02d_%02d%02d%02d.log".formatted(
-            noe.get(Calendar.YEAR),
-            noe.get(Calendar.MONTH)+1,
-            noe.get(Calendar.DATE),
-            noe.get(Calendar.HOUR_OF_DAY),
-            noe.get(Calendar.MINUTE),
-            noe.get(Calendar.SECOND)));
+        Path filePath = Path.of("log/%s/%s.log".formatted(
+            Util.dateFormatNow("yyyyMM"),
+            Util.dateFormatNow("dd_HHmmss")
+        ));
         
         filePath.getParent().toFile().mkdirs();
-        stdStream = System.out;
         nullStream = new PrintStream(PrintStream.nullOutputStream());
+        PrintStream tmpfStream;
         try {
-            fileStream = new PrintStream(filePath.toFile());
+            tmpfStream = new PrintStream(filePath.toFile());
         } catch (IOException e) {
             System.out.println("创建日志文件失败！");
             e.printStackTrace();
-            fileStream = null;
+            tmpfStream = nullStream;
         }
-
-        OutputStream o2 = new MyTeeOutput(stdStream,fileStream);
-        bothStream = new PrintStream(o2, true);
-
-    }
-
-    public static PrintStream bothOut(){
-        if (toFile) return bothStream;
-        else return stdStream;
-    }
-
-    public static PrintStream stdOut(){
-        return stdStream;
-    }
-
-    public static PrintStream fileOut(){
-        if (toFile) return fileStream;
-        else return nullStream;
-    }
-   
-    public static void printHelp(){
-        System.out.println("args: on|off");
-        System.out.println("on|off: close or enable file log");
+        fStream = tmpfStream;
+        fileStream = fStream;
+        System.setErr(new PrintStream(new MyTeeOutput(fStream, System.out)));
     }
 
     public static void main(String[] args) {
         if (args.length==1 && args[0].equals("off")) {
-            toFile = false;
+            fileStream = nullStream;
         }else if (args.length==1 && args[0].equals("on")) {
-            toFile = true;
+            fileStream = fStream;
         }else {
-            printHelp();
+            System.out.println("args: on|off");
+            System.out.println("on|off: close or enable file log");
         }
     }
 }

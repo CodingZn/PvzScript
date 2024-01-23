@@ -20,13 +20,13 @@ public class StoneBattle {
         value[2] = hard_level;
         byte[] bytes = Util.encodeAMF("api.stone.challenge", "/1", value);
         byte[] response = Request.sendPostAmf(bytes, true);
-        System.out.printf("打宝石%d: ", caveid);
-        System.out.print(resolveFighter(zhuli, paohui));
+        Log.log("打宝石%d: ".formatted(caveid));
+        Log.print(resolveFighter(zhuli, paohui));
         AMF0Message msg = Util.decodeAMF(response);
         if(Response.isOnStatusException(msg.getBody(0), true)){
             return false;
         }
-        System.out.printf("√ ");
+        Log.println("√ ");
         ASObject resObj = (ASObject)msg.getBody(0).getValue();
         boolean res = getAward((String)resObj.get("awards_key"));
         res=BuXie.blindBuxie(resObj, zhuli, paohui) && res;
@@ -35,7 +35,7 @@ public class StoneBattle {
 
     public static boolean battleRepeat(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui, int n){
         if (!BuXie.buxie(zhuli, paohui, true)){
-            System.out.println("战斗前补血失败！");
+            Log.logln("战斗前补血失败！");
             return false;
         }
         boolean res = true;

@@ -42,9 +42,8 @@ public class Warehouse {
             Element wareEle = (Element)(warehouseDoc.getElementsByTagName("warehouse").item(0));
             now_grid_num = Integer.parseInt(wareEle.getAttribute("organism_grid_amount"));
         }
-        System.out.printf("当前格子数: %d\n", now_grid_num);
+        Log.log("当前格子数: %d\n".formatted(now_grid_num));
         if (now_grid_num>=goal) return true;
-        System.out.printf("opening...");
         do {
             byte[] response = Request.sendGetRequest(path);
             Document doc = Util.parseXml(response);
@@ -52,10 +51,10 @@ public class Warehouse {
             if (statusNode.getNodeType()==Node.ELEMENT_NODE && ((Element) statusNode).getTextContent().equals("success")){
                 Element warehouseEle = (Element)doc.getElementsByTagName("warehouse").item(0);
                 now_grid_num = Integer.parseInt(warehouseEle.getAttribute("organism"));
-                System.out.printf("当前格子数: %d\n", now_grid_num);
+                Log.logln("当前格子数: %d".formatted(now_grid_num));
             }
             else{
-                System.out.println(Util.getXmlMessage(doc));
+                Log.logln(Util.getXmlMessage(doc));
                 return false;
             }
             
@@ -78,18 +77,18 @@ public class Warehouse {
     public static boolean useTool(int toolid, int amount){
         Object[] value = new Object[]{toolid, amount};
         byte[] req = Util.encodeAMF("api.tool.useOf", "/1", value);
-        System.out.printf("使用%d个%s ", amount, Tool.getTool(toolid).name);
+        Log.log("使用%d个%s ".formatted(amount, Tool.getTool(toolid).name));
         byte[] response = Request.sendPostAmf(req, false);
         AMF0Body body = Util.decodeAMF(response).getBody(0);
         if (Response.isOnStatusException(body, true)){
-            System.out.println();
+            Log.println();
             return false;
         }
         else{
             ASObject asObj = (ASObject) body.getValue();
             int msgidx = obj2int(asObj.get("name"));
             int effect = obj2int(asObj.get("effect"));
-            System.out.println(TOOL_USE_MSG[msgidx].formatted(effect));
+            Log.println(TOOL_USE_MSG[msgidx].formatted(effect));
             return true;
         }
     }
@@ -97,13 +96,13 @@ public class Warehouse {
     public static boolean skillUp(int plantId, int ori_skill_id, int grade_by){
         int succ_count = 0;
         int now_skill_id = ori_skill_id;
-        System.out.printf("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),Skill.getSkill(now_skill_id).toShortString()));
+        Log.log("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),Skill.getSkill(now_skill_id).toShortString()));
         while (succ_count < grade_by) {
             byte[] req = Util.encodeAMF("api.apiorganism.skillUp", "/1", 
             new Object[]{plantId, now_skill_id});
             int use_count = 0;
             while (true) {
-                System.out.print("+");
+                Log.print("+");
                 byte[] resp = Request.sendPostAmf(req, true);
                 use_count++;
                 AMF0Message msg = Util.decodeAMF(resp);
@@ -117,16 +116,14 @@ public class Warehouse {
                     now_skill_id = now_id;
                     break;
                 }
-                else{
-                    // System.out.print("\b");
-                }
             }
             Skill newSkill = Skill.getSkill(now_skill_id);
-            System.out.printf("\n使用%d个%s，升级到%s "
+            Log.println();
+            Log.log("使用%d个%s，升级到%s "
             .formatted(use_count,newSkill.learn_tool.name,newSkill.toShortString()));
 
         }
-        System.out.println();
+        Log.println();
         return true;
     }
 
@@ -135,7 +132,7 @@ public class Warehouse {
             int plantId = Integer.parseInt(args[0]);
             Organism org = Organism.getOrganism(plantId);
             if (org==null){
-                System.out.println("plant %d doesn't exist!".formatted(plantId));
+                Log.logln("plant %d doesn't exist!".formatted(plantId));
                 return;
             }
             Skill oriSkill = org.getSkillByName(args[1]);
@@ -144,11 +141,11 @@ public class Warehouse {
                     int ori_skill_id = Integer.parseInt(args[1]);
                     oriSkill = org.getSkillById(ori_skill_id);
                     if (oriSkill==null){
-                        System.out.println("skill %s doesn't exist!".formatted(args[1]));
+                        Log.logln("skill %s doesn't exist!".formatted(args[1]));
                         return;
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("skill %s doesn't exist!".formatted(args[1]));
+                    Log.logln("skill %s doesn't exist!".formatted(args[1]));
                     return;
                 }
             }

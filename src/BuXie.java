@@ -37,13 +37,13 @@ public class BuXie {
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
         byte[] response = Request.sendPostAmf(reqAmf, false);
 
-        System.out.printf("%s 使用 %s", Organism.getOrganism(plantId).toShortString(), Tool.getTool(xiepingId).name);
+        Log.log("%s 使用 %s".formatted(Organism.getOrganism(plantId).toShortString(), Tool.getTool(xiepingId).name));
         Object obj = Util.decodeAMF(response).getBody(0).getValue();
         if (obj instanceof String){
-            System.out.printf(" hp=%s\n", obj);
+            Log.print(" hp=%s\n".formatted(obj));
             return true;
         }
-        System.out.printf(" failed\n");
+        Log.print(" failed\n");
         return !Response.isOnStatusException(Util.decodeAMF(response).getBody(0), true);
 
     }

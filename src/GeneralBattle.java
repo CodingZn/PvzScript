@@ -28,13 +28,12 @@ public class GeneralBattle {
         byte[] reqAmf = Util.encodeAMF("api.reward.lottery", "/1", new Object[]{award_key});
         byte[] response = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(response);
-        System.out.printf("award: ");
+        Log.log("award: ");
         if (Response.isOnStatusException(msg.getBody(0), true)){
-            System.out.print("x\n");
             return false;
         }else{
             String awardString = resolveAwardObj((ASObject)msg.getBody(0).getValue());
-            System.out.print("[%s]\n".formatted(awardString));
+            Log.println("[%s]".formatted(awardString));
             return true;
         }
     }

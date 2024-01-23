@@ -14,8 +14,7 @@ public class Response {
         ASObject obj = (ASObject)body.getValue(); 
         if (body.getTarget().equals("/1/onStatus")){
             if (printMsg){
-                System.out.print(obj.get("description"));
-                System.out.print(" ");
+                Log.println((String)obj.get("description"));
             }
             return true;
         }
@@ -23,8 +22,8 @@ public class Response {
             return false;
         }
         else{
-            System.out.println("未知响应：");
-            System.out.println(obj);
+            Log.println("未知响应：");
+            Log.println(obj.toString());
             return true;
         }
     }

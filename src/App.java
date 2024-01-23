@@ -42,9 +42,13 @@ public class App {
             }
             else{
                 if (mode == 0) {
+                    Log.flog(">>> ");
+                    Log.fprintln(cmd);
                     CommandResolver.resolve(cmd);
                 }
                 else if (mode == 1) {
+                    Log.flog("batch filename: ");
+                    Log.fprintln(cmd);
                     CommandResolver.resolveFile(cmd);
                 }
                 else {

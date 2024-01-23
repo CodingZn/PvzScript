@@ -25,7 +25,7 @@ public class FubenBattle {
         if (newStrategy>=0 && newStrategy<=2){
             strategy = newStrategy;
         }
-        System.out.printf("new strategy: %d\n", strategy);
+        Log.log("new strategy: %d\n".formatted(strategy));
         return strategy;
     }
 
@@ -37,15 +37,15 @@ public class FubenBattle {
         Set<Integer> participants = new HashSet<>(plantIds);
         value[1] = Util.integerArr2int(participants.toArray());
         byte[] reqAmf = Util.encodeAMF("api.fuben.challenge", "/1", value);
-        System.out.printf("打副本%d: ",caveid);
-        System.out.print(resolveFighter(plantIds));
+        Log.log("打副本%d: ".formatted(caveid));
+        Log.print(resolveFighter(plantIds));
         byte[] resp = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(resp);
         if (msg==null) return false;
         if(Response.isOnStatusException(msg.getBody(0), true)){
             return false;
         }
-        System.out.printf("√ ");
+        Log.println("√ ");
         ASObject resObj = (ASObject)msg.getBody(0).getValue();
         boolean res = getAward((String)resObj.get("awards_key"));
         res=BuXie.blindBuxie(resObj, plantIds, BuXie.EMPTY_LIST) && res;
@@ -58,12 +58,12 @@ public class FubenBattle {
         value[0] = fubenCaveId;
         value[1] = n;
         byte[] req= Util.encodeAMF("api.fuben.addCaveChallengeCount", "/1", value);
-        System.out.printf("对关卡 %d 使用 %d 个怀表: ", fubenCaveId, n);
+        Log.log("对关卡 %d 使用 %d 个怀表: ".formatted(fubenCaveId, n));
         byte[] res=sendPostAmf(req, true);
         AMF0Message msg = Util.decodeAMF(res);
         if (msg==null || Response.isOnStatusException(msg.getBody(0), true)) 
             return false;
-        System.out.println(" √");
+        Log.println(" √");
 
         return true;
     }
@@ -77,7 +77,7 @@ public class FubenBattle {
             if (!useFubenClock(caveid, times_n)) return false;
         }
         if (!BuXie.buxie(plantIds, new ArrayList<>(), true)){
-            System.out.println("战斗前补血失败！");
+            Log.logln("战斗前补血失败！");
             return false;
         }
         for (int i = 0; i < times_n; i++) {

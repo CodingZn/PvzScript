@@ -105,7 +105,7 @@ public class CommandResolver {
                 }
             }
         }
-        System.out.println("Error format!");
+        Log.logln("Error format!");
     }
 
     private static boolean isValid(String cmd){
@@ -123,14 +123,14 @@ public class CommandResolver {
         try (BufferedReader reader = new BufferedReader(new FileReader(scriptFile, Charset.forName("UTF-8")))) {
             cmds = reader.lines().toList();
         } catch (FileNotFoundException e) {
-            System.out.println("文件%s不存在！".formatted(filename));
+            Log.logln("文件%s不存在！".formatted(filename));
             return;
         } catch (IOException e){
             e.printStackTrace();
             return;
         }
         if (fileStack.contains(scriptFile)){
-            System.out.println("recursion call is forbidden!");
+            Log.logln("recursion call is forbidden!");
             return;
         }
         fileStack.push(scriptFile);
@@ -138,7 +138,7 @@ public class CommandResolver {
             if (isValid(c)){
                 printPrompt(c);
                 resolve(c);
-                System.out.println();
+                Log.println();
             }
         });
         fileStack.pop();
@@ -146,7 +146,7 @@ public class CommandResolver {
 
     private static void printPrompt(String cmd){
         int depth = fileStack.size();
-        System.out.printf("%s %s %s\n",">>>".repeat(depth), cmd, "<<<");
+        Log.log("%s %s %s\n".formatted(">>>".repeat(depth), cmd, "<<<"));
         return;
     }
 

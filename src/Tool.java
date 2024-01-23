@@ -62,16 +62,16 @@ public class Tool implements Serializable{
 
     public static boolean loadMap(){
         if (!loadMapBinary()){
-            System.out.println("重新加载xml文件...");
+            Log.logln("重新加载xml文件...");
             if (!loadToolXml()){
-                System.out.println("道具原型模块数据未加载！");
-                System.out.println("请将tool或tool.xml放在static目录下");
-                System.out.println("或使用命令手动加载。");
+                Log.print("道具原型模块数据未加载！");
+                Log.print("请将tool或tool.xml放在static目录下");
+                Log.println("或使用命令手动加载。");
                 return false;
             }
             else{
                 saveMapBinary();
-                System.out.println("已将原型信息存为二进制文件。");
+                Log.println("已将原型信息存为二进制文件。");
                 return true;
             }
         }
@@ -89,7 +89,6 @@ public class Tool implements Serializable{
                 Element item = (Element)node;
                 if (item.getTagName().equals("item")){
                     Tool tool = new Tool(item);
-                    // System.out.println(tool);
                     toolMap.put(tool.id, tool);
                 }
             }

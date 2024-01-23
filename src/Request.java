@@ -52,8 +52,8 @@ public class Request {
     static {
         host = realhost;
         if (Cookie.getCookie() == null){
-            System.out.println("读取data/cookie文件出错！");
-            System.out.println("请在运行前设置cookie！");
+            Log.logln("读取data/cookie文件出错！");
+            Log.print("请在运行前设置cookie！");
         }
         proxyPort = 8887;
         proxyClient = HttpClient.newBuilder()
@@ -176,47 +176,45 @@ public class Request {
             try {
                 response = send(request);
             } catch (ConnectException e){
-                System.out.println("错误：连接通道关闭。");
+                Log.logln("错误：连接通道关闭。");
                 if (httpClient==proxyClient) {
-                    System.out.print("可能由于代理未开启导致。");
+                    Log.print("可能由于代理未开启导致。");
                     httpClient = directClient;
-                    System.out.println("已关闭代理。");
+                    Log.println("已关闭代理。");
                 }
                 continue;
             } catch (HttpTimeoutException e){
-                System.out.print("请求超时！");
+                Log.print("请求超时！");
                 response = null;
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.print("请求失败！");
+                Log.print("请求失败！");
                 response = null;
             } catch (InterruptedException e){
                 return null;
             }
             if (response==null){
                 if (retryCount == 0){
-                    System.out.println("请求失败！请检查网络设置。");
+                    Log.println("请求失败！请检查网络设置。");
                     assert false;
                 }
                 else{
-                    System.out.printf("将在%2d秒后重试最多%2d次\n", retryInterval/1000, retryCount);
+                    Log.print("将在%2d秒后重试最多%2d次\n".formatted(retryInterval/1000, retryCount));
                     delay(retryInterval);
                     retryCount--;
                     continue;
                 }
             }
             else if (is2441Block(response)){
-                System.out.print("拦");
+                Log.print("拦");
                 delay(wait2441Time);
-                // System.out.print("\b\b");
             }
             else if(handleAmfBlock && isAmfBlock(response)){
-                System.out.print("繁");
+                Log.print("繁");
                 delay(waitAmfTime);
-                // System.out.print("\b\b\b\b");
             }
             else if (is302(response)){
-                System.out.println("服务器返回302。将在%d分钟后重试".formatted(wait302Time/60000));
+                Log.println("服务器返回302。将在%d分钟后重试".formatted(wait302Time/60000));
                 delay(wait302Time);
             }
             else if (isCharlesReport(response)){
@@ -300,7 +298,7 @@ public class Request {
             try {
                 int value = Integer.parseInt(args[1]);
                 setInterval(value);
-                System.out.printf("new interval: %d\n", Request.reqInterval);
+                Log.log("new interval: %d\n".formatted(Request.reqInterval));
                 return;
             } catch (Exception e) {
             }
@@ -310,7 +308,7 @@ public class Request {
                 int max_count = Integer.parseInt(args[1]);
                 int retry_interval = Integer.parseInt(args[2]);
                 setRetry(max_count, retry_interval);
-                System.out.printf("new retry interval: %d, maxCount: %d\n", Request.retryInterval, Request.retryMaxCount);
+                Log.log("new retry interval: %d, maxCount: %d\n".formatted(Request.retryInterval, Request.retryMaxCount));
                 return;
             } catch (Exception e) {
             }
@@ -321,9 +319,4 @@ public class Request {
         System.out.println("or  : retry max_count retry_interval(ms)");
     }
     
-    public static void main(String[] args) {
-        byte[] bytes= Util.readBytesFromFile("src/bytes");
-        // Util.printBytes(bytes);
-        System.out.println(new String(bytes));
-    }
 }

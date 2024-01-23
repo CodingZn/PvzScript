@@ -89,16 +89,16 @@ public class Orid implements Serializable{
 
     public static boolean loadMap(){
         if (!loadMapBinary()){
-            System.out.println("重新加载xml文件...");
+            Log.logln("重新加载xml文件...");
             if (!loadOridXml()){
-                System.out.println("植物原型模块数据未加载！");
-                System.out.println("请将organism或organism.xml放在static目录下");
-                System.out.println("或使用命令手动加载。");
+                Log.logln("植物原型模块数据未加载！");
+                Log.print("请将organism或organism.xml放在static目录下");
+                Log.print("或使用命令手动加载。");
                 return false;
             }
             else{
                 saveMapBinary();
-                System.out.println("已将原型信息存为二进制文件。");
+                Log.logln("已将原型信息存为二进制文件。");
                 return true;
             }
         }
@@ -116,7 +116,6 @@ public class Orid implements Serializable{
                 Element item = (Element)node;
                 if (item.getTagName().equals("item")){
                     Orid orid = new Orid(item);
-                    // System.out.println(orid);
                     oridMap.put(orid.id, orid);
                 }
             }

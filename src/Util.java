@@ -67,11 +67,11 @@ public class Util {
         try (FileInputStream fi = new FileInputStream(filename)) {
             return decodeAMF(fi.readAllBytes());
         } catch (FileNotFoundException e){
-            System.out.println("文件%s不存在！".formatted(filename));
+            Log.println("文件%s不存在！".formatted(filename));
             return null;
         }
          catch (IOException e) {
-            System.out.println("Error Decoding AMF file!");
+            Log.println("Error Decoding AMF file!");
             e.printStackTrace();
             return null;
         }
@@ -85,7 +85,7 @@ public class Util {
             MyAMF0Deserializer deserializer = new MyAMF0Deserializer(di);
             return deserializer.getAMFMessage();
         } catch (IOException e) {
-            System.out.println("Error Decoding AMF message!");
+            Log.println("Error Decoding AMF message!");
             Util.printBytes(bytes, System.out);
             e.printStackTrace();
             return null;
@@ -149,7 +149,7 @@ public class Util {
             });
             return res;
         } catch (FileNotFoundException e) {
-            System.out.println("文件%s不存在！".formatted(filename));
+            Log.println("文件%s不存在！".formatted(filename));
             return null;
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,7 +168,7 @@ public class Util {
             //使用解析器生成Document实例
             return documentBuilder.parse(fInputStream);
         } catch (FileNotFoundException e) {
-            System.out.println("文件%s不存在！".formatted(filename));
+            Log.println("文件%s不存在！".formatted(filename));
             return null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,7 +187,7 @@ public class Util {
             //使用解析器生成Document实例
             return documentBuilder.parse(fInputStream);
         } catch (FileNotFoundException e) {
-            System.out.println("文件%s不存在！".formatted(file.getName()));
+            Log.println("文件%s不存在！".formatted(file.getName()));
             return null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -270,7 +270,7 @@ public class Util {
             res = ((Long) number).intValue();
         }
         else{
-            System.out.println(number.getClass());
+            Log.println(number.getClass().toString());
             return null;
         }
         return res;
@@ -297,7 +297,7 @@ public class Util {
             res = ((Long) number);
         }
         else{
-            System.out.println(number.getClass());
+            Log.println(number.getClass().toString());
             return null;
         }
         return res;
@@ -329,7 +329,7 @@ public class Util {
             res = new BigInteger(tmp.toString());
         }
         else{
-            System.out.println(number.getClass());
+            Log.println(number.getClass().toString());
             return null;
         }
         return res;
@@ -355,10 +355,10 @@ public class Util {
             oInputStream.close();
             return readobj;
         } catch (InvalidClassException e){
-            System.out.println("类信息不一致。");
+            Log.println("类信息不一致。");
             return null;
         } catch (FileNotFoundException e) {
-            System.out.println("文件%s不存在！".formatted(filename));
+            Log.println("文件%s不存在！".formatted(filename));
             return null;
         } catch (IOException e) {
             e.printStackTrace();
@@ -379,7 +379,7 @@ public class Util {
             outputStream.close();
             return true;
         } catch (FileNotFoundException e) {
-            System.out.println("文件%s不存在！".formatted(filename));
+            Log.println("文件%s不存在！".formatted(filename));
             return false;
         } catch (IOException e) {
             e.printStackTrace();
