@@ -11,17 +11,21 @@ import flex.messaging.io.ASObject;
 
 public class GeneralBattle {
     
-    @SuppressWarnings({"unchecked"})
-    public static String resolveAwardObj(ASObject awardObj){
+    public static String resolveAwardObj(List<ASObject> awardArr, String tool_field, String amount_field){
         StringBuffer sb = new StringBuffer();
-        List<ASObject> toolList = (List<ASObject>) awardObj.get("tools");
-        for (ASObject object : toolList) {
-            int toolid = obj2int(object.get("id"));
-            int amount = obj2int(object.get("amount"));
+        for (ASObject object : awardArr) {
+            int toolid = obj2int(object.get(tool_field));
+            int amount = obj2int(object.get(amount_field));
             sb.append(Tool.getTool(toolid).toShortString(amount));
             sb.append(" ");
         }
         return sb.toString();
+    }
+    
+    @SuppressWarnings({"unchecked"})
+    public static String resolveAwardObj(ASObject awardObj, String field, String tool_field, String amount_field){
+        List<ASObject> toolList = (List<ASObject>) awardObj.get(field);
+        return resolveAwardObj(toolList, tool_field, amount_field);
     }
 
     public static boolean getAward(String award_key){
@@ -32,7 +36,7 @@ public class GeneralBattle {
         if (Response.isOnStatusException(msg.getBody(0), true)){
             return false;
         }else{
-            String awardString = resolveAwardObj((ASObject)msg.getBody(0).getValue());
+            String awardString = resolveAwardObj((ASObject)msg.getBody(0).getValue(), "tools", "id", "amount");
             Log.println("[%s]".formatted(awardString));
             return true;
         }

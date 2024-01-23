@@ -99,6 +99,10 @@ public class CommandResolver {
                     resolveFile(strs[1]);
                     return;
                 }
+                case "dailyreward"->{
+                    DailyReward.main(args);
+                    return;
+                }
             
                 default->{
                     break;
