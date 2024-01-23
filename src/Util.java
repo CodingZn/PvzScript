@@ -1,6 +1,7 @@
 package src;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -10,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
@@ -154,6 +156,21 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+    
+    public static boolean saveIntegersToFile(List<Integer> integers, String filename){
+        try (BufferedWriter bStream = new BufferedWriter(new FileWriter(filename))) {
+            for (Integer e : integers) {
+                bStream.write(String.valueOf(e));
+                bStream.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

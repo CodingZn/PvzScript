@@ -101,6 +101,7 @@ public class User {
         return me;
     }
 
+    /** 懒加载 */
     public static User getUser(){
         if (me==null){
             return loadUser();

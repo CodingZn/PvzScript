@@ -103,6 +103,10 @@ public class CommandResolver {
                     DailyReward.main(args);
                     return;
                 }
+                case "territory"->{
+                    Territory.main(args);
+                    return;
+                }
             
                 default->{
                     break;
