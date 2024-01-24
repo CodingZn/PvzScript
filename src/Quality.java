@@ -1,10 +1,5 @@
 package src;
-import static src.Util.dateFormatNow;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
@@ -82,7 +77,6 @@ public class Quality {
 
     
     public static void main(String[] args){
-        PrintStream printStream;
         if (args.length == 2 || args.length == 3){
             int plantId = Integer.parseInt(args[0]);
             String goalQuality = args[1];
@@ -92,19 +86,10 @@ public class Quality {
                 maximum = Integer.parseInt(args[2]);
             }
             SimpleEntry<Integer, String> res = qualityUp(plantId, iniQuality, goalQuality, maximum);
-            try {
-                File logDir = new File("log");
-                logDir.mkdirs();
-                printStream = new PrintStream(new FileOutputStream(
-                    "log/shuapin_%s.txt".formatted(dateFormatNow("yyyyMMdd")), 
-                true),true, Charset.forName("UTF-8")) ;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
-            printStream.printf("%s %s 使用%d本书从%s升级到了%s\n",dateFormatNow("HH:mm:ss"),
-                Organism.getOrganism(plantId).toShortString(), res.getKey(), iniQuality, res.getValue());
-            printStream.close();
+            
+            Log.logln("%s 总共使用%d本书从%s升级到了%s".formatted(
+                Organism.getOrganism(plantId).toShortString(), res.getKey(), 
+                iniQuality, res.getValue()));
             return;
         }
         System.out.println("args: plantid quality_name [max_usage]\n");
