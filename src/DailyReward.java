@@ -216,6 +216,145 @@ public class DailyReward {
     }
 
 
+    /** 8领取任务 */
+    @SuppressWarnings({"unchecked"})
+    public static boolean getDuty(){
+        byte[] req = Util.encodeAMF("api.duty.getAll", "/1", new Object[]{});
+        Log.log("查看每日任务 ");
+        byte[] response = Request.sendPostAmf(req, true);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            return false;
+        }
+        Log.println();
+        ASObject obj = (ASObject) body.getValue();
+        // 日常任务
+        List<ASObject> dailyTasks = (List<ASObject>) obj.get("dailyTask");
+        for (ASObject task : dailyTasks) {
+            int id = obj2int(task.get("id"));
+            int state = obj2int(task.get("state"));
+            if (state==1){
+                getReward(id,3, processStr(task.get("dis").toString()));
+            }
+        }
+        // 主线任务
+        List<ASObject> mainTask = (List<ASObject>) obj.get("mainTask");
+        for (ASObject task : mainTask) {
+            int id = obj2int(task.get("id"));
+            int state = obj2int(task.get("state"));
+            if (state==1){
+                getReward(id,1, processStr(task.get("dis").toString()));
+            }
+        }
+        // 支线任务
+        List<ASObject> sideTask = (List<ASObject>) obj.get("sideTask");
+        for (ASObject task : sideTask) {
+            int id = obj2int(task.get("id"));
+            int state = obj2int(task.get("state"));
+            if (state==1){
+                getReward(id,2, processStr(task.get("dis").toString()));
+            }
+        }
+        // 活动任务
+        List<ASObject> activeTask = (List<ASObject>) obj.get("activeTask");
+        for (ASObject task : activeTask) {
+            int id = obj2int(task.get("id"));
+            int state = obj2int(task.get("state"));
+            if (state==1){
+                getReward(id,4, processStr(task.get("dis").toString()));
+            }
+        }
+        return true;
+    }
+
+    private static String processStr(String str){
+        StringBuffer sb = new StringBuffer();
+        boolean write = true;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c=='<'){
+                write = false;
+            }else if (c=='>'){
+                write = true;
+            }else if (write){
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+    
+    private static boolean getReward(int i,int type, String desc){
+        int[] content = new int[]{i, type};
+        byte[] rewardAmf = Util.encodeAMF("api.duty.reward", "/1", content, AMF0Body.DATA_TYPE_ARRAY);
+        
+        byte[] response;
+        Log.log("领取任务 %s: ".formatted(desc));
+        response = Request.sendPostAmf(rewardAmf, true);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            return false;
+        }else{
+            Log.print("√ \n");
+            return true;
+        }
+        
+    }
+
+    /** 9花园挂机 */
+    public static boolean vipGuaji(){
+        byte[] req = Util.encodeAMF("api.vip.autoRewards", "/1", new Object[]{});
+        Log.log("查看花园挂机 ");
+        byte[] response = Request.sendPostAmf(req, true);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            return false;
+        }
+        Log.println();
+        if (body.getValue()!=null){
+            stopGuaji();
+        }
+        startGuaji();
+        return true;
+    }
+
+    public static boolean stopGuaji(){
+        byte[] req = Util.encodeAMF("api.vip.stopAuto", "/1", new Object[]{});
+        Log.log("停止花园挂机 ");
+        byte[] response = Request.sendPostAmf(req, true);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            return false;
+        }
+        if (body.getValue()!=null) {
+            ASObject obj = (ASObject) body.getValue();
+            ASObject reward = (ASObject)obj.get("reward");
+            int exp = obj2int(reward.get("user_exp"));
+            int money = obj2int(reward.get("money"));
+            Log.print("获得%d经验和%d金币 ".formatted(exp, money));
+            boolean is_up = (Boolean) obj.get("is_up");
+            if (is_up){
+                Log.print("升级啦！ ");
+            }
+        }
+        Log.println();
+        return true;
+    }
+
+    public static boolean startGuaji(){
+        byte[] req = Util.encodeAMF("api.vip.startAuto", "/1", new Object[]{});
+        Log.log("开始花园挂机 ");
+        byte[] response = Request.sendPostAmf(req, true);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            return false;
+        }
+        if (body.getValue()!=null) {
+            Log.print("成功");
+        }
+        Log.println();
+        return true;
+    }
+
     
     
     public static void main(String[] args) {
@@ -241,9 +380,15 @@ public class DailyReward {
             if (args[0].contains("7")) {
                 beatArena();
             }
+            if (args[0].contains("8")) {
+                getDuty();
+            }
+            if (args[0].contains("9")) {
+                vipGuaji();
+            }
             return;
         }
-        System.out.println("args: [1][2][3][4][5][6][7]");
-        System.out.println("1:签到 2:vip 3:世界树 4:登录奖 5:斗技场排名奖 6:矿坑 7:打斗技场");
+        System.out.println("args: [1][2][3][4][5][6][7][8][9]");
+        System.out.println("1:签到 2:vip 3:世界树 4:登录奖 5:斗技场排名奖 6:矿坑 7:打斗技场 8:领任务 9:花园挂机");
     }
 }
