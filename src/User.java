@@ -1,6 +1,7 @@
 package src;
 
 import static src.Util.obj2bigint;
+import static src.Util.obj2int;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,8 +13,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class User {
-    public final String user_id;
-    public final String id;
+    public final int user_id;
+    public final int id;
     public final String name;
 
     public final int grade;
@@ -32,8 +33,8 @@ public class User {
 
     public User(Document document){
         Element userEle = (Element) document.getElementsByTagName("user").item(0);
-        user_id = userEle.getAttribute("user_id");
-        id = userEle.getAttribute("id");
+        user_id = obj2int(userEle.getAttribute("user_id"));
+        id = obj2int(userEle.getAttribute("id"));
         name = userEle.getAttribute("name");
         // grade = Integer.parseInt(userEle.getAttribute("name"));
         money = obj2bigint(userEle.getAttribute("money"));
