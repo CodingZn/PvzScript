@@ -142,7 +142,7 @@ public class Organism {
     }
 
     public static boolean loadOrganisms(Document document){
-        organismMap.clear();
+        clear();
         Element organismsEle = (Element) document.getElementsByTagName("organisms").item(0);
         NodeList organismList = organismsEle.getChildNodes();
         for (int i = 0; i < organismList.getLength(); i++) {
@@ -155,6 +155,11 @@ public class Organism {
             
         }
         return true;
+    }
+
+    public static void clear(){
+        if (organismMap==null) organismMap = new LinkedHashMap<>();
+        else organismMap.clear();
     }
 
     private static LinkedHashMap<Integer, Organism> organismMap = new LinkedHashMap<>();

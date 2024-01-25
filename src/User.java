@@ -110,4 +110,9 @@ public class User {
         else return me;
     }
 
+    public static void clear(){
+        me=null;
+        Warehouse.clear();
+    }
+
 }

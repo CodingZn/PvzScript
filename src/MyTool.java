@@ -49,7 +49,7 @@ public class MyTool {
     }
 
     public static boolean loadTools(Document document){
-        toolsMap.clear();
+        clear();
         Element toolsEle = (Element) document.getElementsByTagName("tools").item(0);
         NodeList toolsList = toolsEle.getElementsByTagName("item");
         for (int i = 0; i < toolsList.getLength(); i++) {
@@ -61,6 +61,11 @@ public class MyTool {
             toolsMap.put(id, myTool);
         }
         return true;
+    }
+
+    public static void clear(){
+        if (toolsMap==null) toolsMap = new TreeMap<>();
+        else toolsMap.clear();
     }
 
     public static void main(String[] args) {

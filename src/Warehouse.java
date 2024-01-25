@@ -34,6 +34,12 @@ public class Warehouse {
         return res;
     }
 
+    public static void clear(){
+        warehouseDoc = null;
+        Organism.clear();
+        MyTool.clear();
+    }
+
     public static boolean openGrid(int goal){
         // if (goal>192) goal=192;
         String path = "/pvz/index.php/Warehouse/opengrid/type/organism/sig/c32812e07cebc02a9c37c0409328f8f0?"+Long.toString(new Date().getTime());

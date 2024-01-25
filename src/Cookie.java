@@ -13,6 +13,7 @@ public class Cookie {
     public static boolean loadCookie(String filename){
         try (FileInputStream reader = new FileInputStream(filename)) {
             currCookie = new String(reader.readAllBytes());
+            User.clear();
             return true;
         } catch (FileNotFoundException e){
             Log.logln("文件%s不存在！".formatted(filename));
@@ -33,6 +34,7 @@ public class Cookie {
 
     public static boolean setCookie(String newCookie){
         currCookie = newCookie;
+        User.clear();
         return true;
     }
 
