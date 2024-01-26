@@ -19,7 +19,7 @@ public class MyTool {
         amount += change;
     }
     
-    public MyTool(int toolid, long amount){
+    private MyTool(int toolid, long amount){
         toolOri = Tool.getTool(toolid);
         id = toolid;
         this.amount = amount;
@@ -45,7 +45,7 @@ public class MyTool {
         if (toolsMap==null || toolsMap.size()==0){
             Warehouse.loadWarehouse();
         }
-        return toolsMap.get(id);
+        return toolsMap.getOrDefault(id, new MyTool(id, 0));
     }
 
     public static boolean loadTools(Document document){
