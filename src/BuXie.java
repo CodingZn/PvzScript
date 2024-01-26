@@ -56,11 +56,38 @@ public class BuXie {
 
     /** 不获取仓库直接补血 */
     public static boolean blindBuxie(Collection<Integer> zhuli, Collection<Integer> paohui){
+
+        long diji = MyTool.getTool(DIJIXIE_ID).getAmount();
+        long zhongji = MyTool.getTool(ZHONGJIXIE_ID).getAmount();
+        long gaoji = MyTool.getTool(GAOJIXIE_ID).getAmount();
+
         for (Integer integer : paohui) {
-            if (!bu1xie(integer, DIJIXIE_ID)) return false;
+            if (diji > 0){
+                if (!bu1xie(integer, DIJIXIE_ID)) return false;
+                diji--;
+            }else if (zhongji > 0){
+                if (!bu1xie(integer, ZHONGJIXIE_ID)) return false;
+                zhongji--;
+            }else if (gaoji > 0){
+                if (!bu1xie(integer, GAOJIXIE_ID)) return false;
+                gaoji--;
+            }else{
+                return false;
+            }
         }
         for (Integer integer : zhuli) {
-            if (!bu1xie(integer, DIJIXIE_ID)) return false;
+            if (diji > 0){
+                if (!bu1xie(integer, DIJIXIE_ID)) return false;
+                diji--;
+            }else if (zhongji > 0){
+                if (!bu1xie(integer, ZHONGJIXIE_ID)) return false;
+                zhongji--;
+            }else if (gaoji > 0){
+                if (!bu1xie(integer, GAOJIXIE_ID)) return false;
+                gaoji--;
+            }else{
+                return false;
+            }
         }
         return true;
     }
