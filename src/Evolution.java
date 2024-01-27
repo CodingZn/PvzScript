@@ -1,6 +1,7 @@
 package src;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,12 +67,26 @@ public class Evolution implements Serializable{
         return true;
     }
 
+    public static boolean batchEvolve(List<Integer> plantList, EvolRoute route){
+        for (Integer plant : plantList) {
+            if (!evolve(plant, route)) return false;
+        }
+        return true;
+    }
+
     public static void main(String[] args){
         if (args.length == 3 && args[0].equals("file")){
             int plantId = Integer.parseInt(args[1]);
             EvolRoute route = EvolRoute.loadRoute(args[2]);
             if (route==null) return;
             evolve(plantId, route);
+            return;
+        }
+        else if (args.length == 3 && args[0].equals("batch")){
+            List<Integer> list = Util.readIntegersFromFile(args[1]);
+            EvolRoute route = EvolRoute.loadRoute(args[2]);
+            if (route==null) return;
+            batchEvolve(list, route);
             return;
         }
         else if (args.length == 2){
@@ -88,6 +103,7 @@ public class Evolution implements Serializable{
         
         System.out.println("args: <plantId> <route_number>");
         System.out.println("or  : file <plantId> <filename>");
+        System.out.println("or  : batch <plant_file> <route_file>");
     }
     
 }
