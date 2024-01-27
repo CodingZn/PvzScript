@@ -142,7 +142,7 @@ public class Util {
         try (BufferedReader bStream = new BufferedReader(new FileReader(filename))) {
             List<Integer> res = new ArrayList<>();
             bStream.lines().forEach(l->{
-                if (l.length()!=0){
+                if (l.length()!=0 && l.charAt(0)!='#'){
                     String[] strs = l.split("[\t ]");
                     for (int i = 0; i < strs.length; i++) {
                         res.add(Integer.parseInt(strs[i]));
