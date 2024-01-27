@@ -1,8 +1,8 @@
 package src;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.AbstractMap.SimpleEntry;
 
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
@@ -29,7 +29,7 @@ public class Quality {
     /** @return new quality name */
     public static String resolveResponseAmf(byte[] bytes){
         
-        AMF0Message message = Util.decodeAMF(bytes);
+        AMF0Message message = Util.tryDecodeAMF(bytes);
         if (message==null) return null;
         ASObject value = (ASObject) message.getBody(0).getValue();
         if (value.containsKey("quality_name")) {
@@ -39,7 +39,8 @@ public class Quality {
             return null;
     }
 
-    public static SimpleEntry<Integer,String> qualityUp(int plantId, String iniQuality, String goal, int maximum){
+    public static boolean qualityUp(int plantId, String goal, int maximum){
+        String iniQuality = getPlantQuality(plantId);
         String now_quality=iniQuality;
         Log.log("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),now_quality));
         int now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 0);
@@ -50,6 +51,9 @@ public class Quality {
         while (now_quality_level<goal_level && total_use < maximum) {
             Log.print("+");
             byte[] resp = Request.sendPostAmf(body, true);
+            if (Response.isOnStatusException(Util.tryDecodeAMF(resp).getBody(0), true)){
+                return false;
+            }
             total_use++;
             currLevelUse++;
             String tmpQ = resolveResponseAmf(resp);
@@ -65,7 +69,10 @@ public class Quality {
         }
         Log.logln();
 
-        return new SimpleEntry<Integer,String>(total_use, now_quality);
+        Log.logln("%s 总共使用%d本书从%s升级到了%s".formatted(
+            Organism.getOrganism(plantId).toShortString(), total_use, 
+            iniQuality, now_quality));
+        return true;
     }
 
     public static String getPlantQuality(int plantid){
@@ -75,23 +82,79 @@ public class Quality {
         return plant.quality;
     }
 
+    /** 使用魔神刷新书 */
+    public static boolean quality12Up(int plantId){
+        Organism plant = Organism.getOrganism(plantId);
+        Log.log("%s 当前 %s ".formatted(plant.toShortString(), plant.quality));
+        int total_use = 0;
+        byte[] body = getQualityUpAmf(plantId);
+        while (true) {
+            Log.print("*");
+            byte[] resp = Request.sendPostAmf(body, true);
+            if (Response.isOnStatusException(Util.tryDecodeAMF(resp).getBody(0), true)){
+                return false;
+            }
+            total_use++;
+            String tmpQ = resolveResponseAmf(resp);
+            if (tmpQ==null) continue;
+            /** 成功了 */
+            if (tmpQ.equals("魔神")){
+                Log.println();
+                Log.log("使用%d本魔神刷新书，升级到 魔神 ".formatted(total_use));
+                break;
+            }
+        }
+        Log.logln();
+        return true;
+    }
+
+    public static boolean batchQualityUp(String filename, String goal){
+        List<Integer> plantList = Util.readIntegersFromFile(filename);
+        for (Integer plant : plantList) {
+            boolean res = qualityUp(plant, goal, Integer.MAX_VALUE);
+            if (!res) return res;
+        }
+        return true;
+    }
+    
+    public static boolean batchQuality12Up(String filename){
+        List<Integer> plantList = Util.readIntegersFromFile(filename);
+        for (Integer plant : plantList) {
+            boolean res = quality12Up(plant);
+            if (!res) return res;
+        }
+        return true;
+    }
     
     public static void main(String[] args){
-        if (args.length == 2 || args.length == 3){
+        if (args.length==2 && args[0].equals("moshen")) {
+            int plantId = Integer.parseInt(args[1]);
+            quality12Up(plantId);
+            return;
+        }
+        else if (args.length==3 && args[0].equals("batch")) {
+            String goalQuality = args[2];
+            batchQualityUp(args[1], goalQuality);
+            return;
+        }
+        else if (args.length==2 && args[0].equals("mbatch")) {
+            batchQuality12Up(args[1]);
+            return;
+        }
+        else if (args.length == 2 || args.length == 3){
             int plantId = Integer.parseInt(args[0]);
             String goalQuality = args[1];
-            String iniQuality = getPlantQuality(plantId);
             int maximum = Integer.MAX_VALUE;
             if (args.length == 3){
                 maximum = Integer.parseInt(args[2]);
             }
-            SimpleEntry<Integer, String> res = qualityUp(plantId, iniQuality, goalQuality, maximum);
+            qualityUp(plantId, goalQuality, maximum);
             
-            Log.logln("%s 总共使用%d本书从%s升级到了%s".formatted(
-                Organism.getOrganism(plantId).toShortString(), res.getKey(), 
-                iniQuality, res.getValue()));
             return;
         }
-        System.out.println("args: plantid quality_name [max_usage]\n");
+        System.out.println("args: <plantid> <quality_name> [max_usage]\n");
+        System.out.println("or  : moshen <plantid>\n");
+        System.out.println("or  : batch <plant_file> <quality_name>\n");
+        System.out.println("or  : mbatch <plant_file>\n");
     }
 }
