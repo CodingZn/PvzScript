@@ -107,6 +107,10 @@ public class CommandResolver {
                     Territory.main(args);
                     return;
                 }
+                case "shop"->{
+                    Shop.main(args);
+                    return;
+                }
             
                 default->{
                     break;
