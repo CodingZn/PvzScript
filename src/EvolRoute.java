@@ -59,7 +59,7 @@ public class EvolRoute implements Serializable{
 
     public List<Integer> toIntList(){
         List<Integer> res = new ArrayList<>();
-        for (int i = 0; i < res.size(); i++) {
+        for (int i = 0; i < routeList.size(); i++) {
             res.add(routeList.get(i).id);
         }
         return res;
