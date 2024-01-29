@@ -145,7 +145,7 @@ public class PaohuiPool {
             return ;
         }
         for (Paohui pao : this.pool) {
-            if (fighters.contains(pao.plant_id) && !died.contains(pao.plant_id)){
+            if (fighters.contains(pao.plant_id) && !died.contains(pao.plant_id) && pao.getGradePredicate() <= maxLevel){
                 int newGrade = pao.upgrade();
                 Organism.setGrade(pao.plant_id, newGrade);
                 if (newGrade > maxLevel){

@@ -69,6 +69,7 @@ public class Evolution implements Serializable{
                 Log.println("-->%s".formatted(Orid.getOrid(orid).toShortString()));
             }
         }
+        Log.println();
         return true;
     }
 
