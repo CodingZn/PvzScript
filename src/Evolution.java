@@ -43,12 +43,15 @@ public class Evolution implements Serializable{
     }
 
     public static boolean evolve(int plantId, EvolRoute route){
-        Integer[] thispath = route.toIntArr();
-        
+        List<Integer> thispath = route.toIntList();
+        return evolve(plantId, thispath);
+    }
+
+    public static boolean evolve(int plantId, List<Integer> thispath){
         Log.log("当前: %s\n".formatted(Organism.getOrganism(plantId).toShortString()));
-        for (int i = 0; i < thispath.length; i++) {
-            String path = getPath(plantId, thispath[i]);
-            Log.log("route %d ".formatted(thispath[i]));
+        for (int i = 0; i < thispath.size(); i++) {
+            String path = getPath(plantId, thispath.get(i));
+            Log.log("route %d ".formatted(thispath.get(i)));
             byte[] body = sendGetRequest(path);
             Document document = Util.parseXml(body);
             if (document==null){
@@ -61,13 +64,15 @@ public class Evolution implements Serializable{
                 return false;
             }
             else{
-                Log.println("-->%s".formatted(route.oridList.get(i+1).toShortString()));
+                Element oridEle = (Element)(document.getElementsByTagName("picid").item(0));
+                int orid = Integer.parseInt(oridEle.getTextContent());
+                Log.println("-->%s".formatted(Orid.getOrid(orid).toShortString()));
             }
         }
         return true;
     }
 
-    public static boolean batchEvolve(List<Integer> plantList, EvolRoute route){
+    public static boolean batchEvolve(List<Integer> plantList, List<Integer> route){
         for (Integer plant : plantList) {
             if (!evolve(plant, route)) return false;
         }
@@ -77,14 +82,14 @@ public class Evolution implements Serializable{
     public static void main(String[] args){
         if (args.length == 3 && args[0].equals("file")){
             int plantId = Integer.parseInt(args[1]);
-            EvolRoute route = EvolRoute.loadRoute(args[2]);
+            List<Integer> route = Util.readIntegersFromFile(args[2]);
             if (route==null) return;
             evolve(plantId, route);
             return;
         }
         else if (args.length == 3 && args[0].equals("batch")){
             List<Integer> list = Util.readIntegersFromFile(args[1]);
-            EvolRoute route = EvolRoute.loadRoute(args[2]);
+            List<Integer> route = Util.readIntegersFromFile(args[2]);
             if (route==null) return;
             batchEvolve(list, route);
             return;

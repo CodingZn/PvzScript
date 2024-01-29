@@ -1,7 +1,5 @@
 package src;
 
-import static src.Util.saveObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +44,7 @@ public class EvolRoute implements Serializable{
         number = allGenerated.size();
         allGenerated.add(this);
     }
-    
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -59,10 +57,10 @@ public class EvolRoute implements Serializable{
         return sb.toString();
     }
 
-    public Integer[] toIntArr(){
-        Integer[] res = new Integer[this.routeList.size()];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = routeList.get(i).id;
+    public List<Integer> toIntList(){
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < res.size(); i++) {
+            res.add(routeList.get(i).id);
         }
         return res;
     }
@@ -130,7 +128,7 @@ public class EvolRoute implements Serializable{
             return false;
         }
         EvolRoute route = allGenerated.get(route_no);
-        return saveObject(route, defaultPath+route.defaultFileName());
+        return saveRoute(route_no, defaultPath+route.defaultFileName());
     }
 
     public static boolean saveRoute(int route_no, String filename){
@@ -138,11 +136,7 @@ public class EvolRoute implements Serializable{
             return false;
         }
         EvolRoute route = allGenerated.get(route_no);
-        return saveObject(route, filename);
-    }
-
-    public static EvolRoute loadRoute(String filename){
-        return (EvolRoute) Util.loadObject(filename);
+        return Util.saveIntegersToFile(route.toIntList(), filename);
     }
 
     public static void main(String[] args) {
