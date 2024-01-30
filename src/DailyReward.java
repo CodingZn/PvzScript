@@ -118,7 +118,7 @@ public class DailyReward {
                 return false;
             }
             Log.print("√ ");
-            List<ASObject> awardArr =(List<ASObject>) ((ASObject) body.getValue()).get("rank");
+            List<ASObject> awardArr =(List<ASObject>) ((ASObject) body.getValue()).get("award");
             for (ASObject award : awardArr) {
                 if (obj2int(award.get("award"))==1){
                     Log.print("获得 [%s]".formatted(resolveAwardObj(award, "tool", "id", "amount")));
