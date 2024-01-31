@@ -13,6 +13,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import src.Warehouse.SellType;
+
 import static src.Util.obj2long;
 public class Organism {
 
@@ -225,6 +227,10 @@ public class Organism {
         return;
     }
 
+    public static boolean sell(int id){
+        return Warehouse.sell(SellType.ORGANISM_TYPE, id, 1);
+    }
+
     public static void main(String[] args) {
         if ((args.length == 1 || args.length == 2) && args[0].equals("show")) {
             if (args.length==1){
@@ -236,12 +242,26 @@ public class Organism {
                 return;
             }
         }
-        else if ((args.length == 1 || args.length == 2) && args[0].equals("search")) {
+        else if ((args.length == 2) && args[0].equals("search")) {
             String str = args[1];
             show(true, str);
             return;
         }
+        else if ((args.length == 2) && args[0].equals("sell")) {
+            int id = Integer.parseInt(args[1]);
+            sell(id);
+            return;
+        }
+        else if ((args.length == 2) && args[0].equals("sellAll")) {
+            List<Integer> plants = Util.readIntegersFromFile(args[1]);
+            for (Integer plt : plants) {
+                sell(plt);
+            }
+            return;
+        }
         System.out.println("args: show [id]");
         System.out.println("or  : search <name>");
+        System.out.println("or  : sell <id>");
+        System.out.println("or  : sellall <filename>");
     }
 }

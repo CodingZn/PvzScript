@@ -7,6 +7,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import src.Warehouse.SellType;
+
 public class MyTool {
     public final int id;
     public final Tool toolOri;
@@ -68,6 +70,11 @@ public class MyTool {
         else toolsMap.clear();
     }
 
+    public static boolean sell(int id, int count){
+        return Warehouse.sell(SellType.TOOL_TYPE, id, count);
+    }
+
+
     public static void main(String[] args) {
         if (args.length == 1 && args[0].equals("show")){
             getTools().values().stream().forEach(t->{
@@ -84,7 +91,14 @@ public class MyTool {
             });
             return;
         }
+        else if ((args.length == 3) && args[0].equals("sell")) {
+            int id = Integer.parseInt(args[1]);
+            int count = Integer.parseInt(args[2]);
+            sell(id, count);
+            return;
+        }
         System.out.println("args: show");
         System.out.println("or  : search <name>");
+        System.out.println("or  : sell <id> <count>");
     }
 }

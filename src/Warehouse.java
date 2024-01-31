@@ -1,6 +1,7 @@
 package src;
 
 import static src.Util.obj2int;
+import static src.Util.obj2long;
 
 import java.util.Date;
 
@@ -167,6 +168,33 @@ public class Warehouse {
             return;
         }
         System.out.println("args: <plantId> <skillId>|<skillName> <upgradeCount>|(lv<targetLevel>)");
+    }
+
+    public enum SellType{
+        TOOL_TYPE, ORGANISM_TYPE
+    };
+
+    public static boolean sell(SellType type, int id, int count){
+        int ttype;
+        String msg;
+        if (type==SellType.TOOL_TYPE){
+            ttype = 1;
+            msg = "卖出%d个%s ".formatted(count, Tool.getTool(id).name);
+        }else{
+            ttype = 2;
+            Organism org = Organism.getOrganism(id);
+            msg = "卖出Lv.%d %s %s(%d) ".formatted(org.grade,org.orid.name,org.quality,org.id);
+        }
+        byte[] req = Util.encodeAMF("api.shop.sell", "/1", new Object[]{ttype,id,count});
+        Log.log(msg);
+        byte[] res = Request.sendPostAmf(req, true);
+        AMF0Body body = Util.decodeAMF(res).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            return false;
+        }
+        long price = obj2long(body.getValue());
+        Log.println("获得%d金币".formatted(price));
+        return true;
     }
 
     public static void main(String[] args) {
