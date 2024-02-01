@@ -1,8 +1,10 @@
 package src;
 
 import java.util.Map;
+import java.util.function.Predicate;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -33,6 +35,7 @@ public class Organism {
         this.miss = new BigInteger(element.getAttribute("new_miss"));
         this.precision = new BigInteger(element.getAttribute("new_precision"));
         this.quality = element.getAttribute("qu");
+        this.qualityLevel = Quality.QNAME2LEVEL.getOrDefault(quality, 0);
         this.fight = new BigInteger(element.getAttribute("fight"));
 
         List<Skill> tmp = new ArrayList<>();
@@ -131,6 +134,8 @@ public class Organism {
     public final BigInteger precision;
     /** 品质字符串 */
     public final String quality;
+    /** 品质等级 */
+    public final Integer qualityLevel;
     /** 战斗力 */
     public final BigInteger fight;
 
@@ -172,7 +177,7 @@ public class Organism {
 
     /** 懒加载 */
     public static Organism getOrganism(int id){
-        if (isEmpty()) {
+        if (isEmpty() || organismMap.get(id)==null) {
             Warehouse.loadWarehouse();
         }
         return organismMap.get(id);
@@ -185,6 +190,9 @@ public class Organism {
     }
 
     public static LinkedHashMap<Integer, Organism> getOrganisms(){
+        if (isEmpty()){
+            Warehouse.loadWarehouse();
+        }
         return organismMap;
     }
 
@@ -231,6 +239,206 @@ public class Organism {
         return Warehouse.sell(SellType.ORGANISM_TYPE, id, 1);
     }
 
+    private static List<List<Integer>> recordedList = new ArrayList<>();
+
+    private static Predicate<Organism> resolveFilter(String[] args){
+        Predicate<Organism> res = new Predicate<Organism>() {
+            @Override
+            public boolean test(Organism t) {
+                return true;
+            }
+        };
+
+        for (String condi : args) {
+            String attr = condi.substring(0, 2);
+            String opr = condi.substring(2,4);
+            String value = condi.substring(4);
+            switch (attr) {
+                case "nm":{
+                    if (opr.equals("==")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.orid.name.equals(value);
+                            }
+                        });
+                    }
+                    else if (opr.equals("={")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.orid.name.contains(value);
+                            }
+                        });
+                    }
+                    else return null;
+                    break;
+                }
+                case "gr":{
+                    int gvalue = Integer.parseInt(value);
+                    if (opr.equals("==")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.grade == gvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals(">=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.grade >= gvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("<=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.grade <= gvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("<<")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.grade < gvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals(">>")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.grade > gvalue;
+                            }
+                        });
+                    }
+                    else return null;
+                    break;
+                }
+                case "id":{
+                    
+                    int ivalue = Integer.parseInt(value);
+                    if (opr.equals("==")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.id == ivalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals(">=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.id >= ivalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("<=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.id <= ivalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("<<")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.id < ivalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals(">>")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.id > ivalue;
+                            }
+                        });
+                    }
+                    else return null;
+                    break;
+                }
+                case "ql":{
+                    Integer qvalue = Quality.QNAME2LEVEL.get(value);
+                    if (qvalue==null) {
+                        return null;
+                    }
+                    if (opr.equals("==")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.qualityLevel == qvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals(">=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.qualityLevel >= qvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("<=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.qualityLevel <= qvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("<<")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.qualityLevel < qvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals(">>")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.qualityLevel > qvalue;
+                            }
+                        });
+                    }
+                    else return null;
+
+                    break;
+                }
+                    
+            
+                default:{
+                    return null;
+                }
+            }
+        }
+        return res;
+    }
+
+    private static int record(Predicate<Organism> conditions){
+        List<Organism> organisms = new ArrayList<>(getNewestOrganisms().values().stream().
+        filter(conditions).toList());
+        List<Integer> ids = new ArrayList<>(organisms.stream().map(o->o.id).toList());
+        int no = recordedList.size();
+        recordedList.add(ids);
+        return no;
+    }
+
+    private static void show(List<Integer> ids){
+        for (Integer id : ids) {
+            Organism organism = Organism.getOrganism(id);
+            System.out.println(organism);
+        }
+    }
     public static void main(String[] args) {
         if ((args.length == 1 || args.length == 2) && args[0].equals("show")) {
             if (args.length==1){
@@ -259,9 +467,43 @@ public class Organism {
             }
             return;
         }
+        else if (args.length >= 2 && args[0].equals("filter")){
+            Predicate<Organism> predicate;
+            try {
+                predicate = resolveFilter(Arrays.copyOfRange(args, 1,args.length));
+            } catch (Exception e) {
+                predicate=null;
+            }
+            
+            if (predicate==null){
+                System.out.println("filters: nm == ={ <value>");
+                System.out.println("filters: gr == <= >= << >> <value>");
+                System.out.println("filters: id == <= >= << >> <value>");
+                System.out.println("filters: ql == <= >= << >> <stringvalue>");
+                return;
+            }
+            int no = record(predicate);
+            System.out.println("<------ Group %d ------>".formatted(no));
+            show(recordedList.get(no));
+            return;
+        }
+        else if (args.length==3 && args[0].equals("save")){
+            Integer no = Integer.parseInt(args[1]);
+            if (no<recordedList.size()){
+                Util.saveIntegersToFile(recordedList.get(no), args[2]);
+                return;
+            }
+        }
+        else if (args.length==2 && args[0].equals("showf")){
+            show(Util.readIntegersFromFile(args[1]));
+            return;
+        }
         System.out.println("args: show [id]");
         System.out.println("or  : search <name>");
         System.out.println("or  : sell <id>");
         System.out.println("or  : sellall <filename>");
+        System.out.println("or  : filter <conditions>...");
+        System.out.println("or  : save <group_no> <filename>");
+        System.out.println("or  : showf <filename>");
     }
 }
