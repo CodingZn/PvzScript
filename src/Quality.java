@@ -26,6 +26,11 @@ public class Quality {
         return Util.encodeAMF("api.apiorganism.qualityUp", "/1", value);
     }
     
+    public static byte[] getQuality12UpAmf(int plantId){
+        int[] value = {plantId};
+        return Util.encodeAMF("api.apiorganism.quality12Up", "/1", value);
+    }
+    
     /** @return new quality name */
     public static String resolveResponseAmf(byte[] bytes){
         
@@ -87,7 +92,7 @@ public class Quality {
         Organism plant = Organism.getOrganism(plantId);
         Log.log("%s 当前 %s ".formatted(plant.toShortString(), plant.quality));
         int total_use = 0;
-        byte[] body = getQualityUpAmf(plantId);
+        byte[] body = getQuality12UpAmf(plantId);
         while (true) {
             Log.print("*");
             byte[] resp = Request.sendPostAmf(body, true);
@@ -152,9 +157,9 @@ public class Quality {
             
             return;
         }
-        System.out.println("args: <plantid> <quality_name> [max_usage]\n");
-        System.out.println("or  : moshen <plantid>\n");
-        System.out.println("or  : batch <plant_file> <quality_name>\n");
-        System.out.println("or  : mbatch <plant_file>\n");
+        System.out.println("args: <plantid> <quality_name> [max_usage]");
+        System.out.println("or  : moshen <plantid>");
+        System.out.println("or  : batch <plant_file> <quality_name>");
+        System.out.println("or  : mbatch <plant_file>");
     }
 }

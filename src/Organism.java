@@ -316,6 +316,14 @@ public class Organism {
                             }
                         });
                     }
+                    else if (opr.equals("!=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.grade != gvalue;
+                            }
+                        });
+                    }
                     else return null;
                     break;
                 }
@@ -359,6 +367,14 @@ public class Organism {
                             @Override
                             public boolean test(Organism t) {
                                 return t.id > ivalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("!=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.id != ivalue;
                             }
                         });
                     }
@@ -407,6 +423,14 @@ public class Organism {
                             @Override
                             public boolean test(Organism t) {
                                 return t.qualityLevel > qvalue;
+                            }
+                        });
+                    }
+                    else if (opr.equals("!=")){
+                        res = res.and(new Predicate<Organism>() {
+                            @Override
+                            public boolean test(Organism t) {
+                                return t.qualityLevel != qvalue;
                             }
                         });
                     }
@@ -483,8 +507,9 @@ public class Organism {
                 return;
             }
             int no = record(predicate);
-            System.out.println("<------ Group %d ------>".formatted(no));
-            show(recordedList.get(no));
+            List<Integer> list = recordedList.get(no);
+            System.out.println("<------ Group %d ------>  共%d个".formatted(no,list.size()));
+            show(list);
             return;
         }
         else if (args.length==3 && args[0].equals("save")){
