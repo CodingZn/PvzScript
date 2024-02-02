@@ -457,6 +457,14 @@ public class Organism {
         return no;
     }
 
+    private static int record(List<Integer> uList, Predicate<Organism> conditions){
+        List<Organism> organisms = new ArrayList<>(uList.stream().map(id->getOrganism(id)).toList());
+        List<Integer> ids = new ArrayList<>(organisms.stream().map(o->o.id).toList());
+        int no = recordedList.size();
+        recordedList.add(ids);
+        return no;
+    }
+
     private static void show(List<Integer> ids){
         for (Integer id : ids) {
             Organism organism = Organism.getOrganism(id);
@@ -491,7 +499,7 @@ public class Organism {
             }
             return;
         }
-        else if (args.length >= 2 && args[0].equals("filter")){
+        else if (args.length >= 1 && args[0].equals("filter")){
             Predicate<Organism> predicate;
             try {
                 predicate = resolveFilter(Arrays.copyOfRange(args, 1,args.length));
@@ -499,18 +507,37 @@ public class Organism {
                 predicate=null;
             }
             
-            if (predicate==null){
-                System.out.println("filters: nm == ={ <value>");
-                System.out.println("filters: gr == <= >= << >> <value>");
-                System.out.println("filters: id == <= >= << >> <value>");
-                System.out.println("filters: ql == <= >= << >> <stringvalue>");
+            if (predicate!=null){
+                int no = record(predicate);
+                List<Integer> list = recordedList.get(no);
+                System.out.println("┌------ Group %d ------┐  共%d个".formatted(no,list.size()));
+                show(list);
+                System.out.println("└------ Group %d ------┘  共%d个".formatted(no,list.size()));
                 return;
             }
-            int no = record(predicate);
-            List<Integer> list = recordedList.get(no);
-            System.out.println("<------ Group %d ------>  共%d个".formatted(no,list.size()));
-            show(list);
-            return;
+        }
+        else if (args.length >= 2 && args[0].equals("filterp")){
+            int nold = Integer.parseInt(args[1]);
+            if (nold>=recordedList.size()){
+                System.out.println("Group %d don't exist!".formatted(nold));
+                return;
+            }
+
+            Predicate<Organism> predicate;
+            try {
+                predicate = resolveFilter(Arrays.copyOfRange(args, 2,args.length));
+            } catch (Exception e) {
+                predicate=null;
+            }
+            
+            if (predicate!=null){
+                int no = record(recordedList.get(nold), predicate);
+                List<Integer> list = recordedList.get(no);
+                System.out.println("┌------ Group %d ------┐  共%d个".formatted(no,list.size()));
+                show(list);
+                System.out.println("└------ Group %d ------┘  共%d个".formatted(no,list.size()));
+                return;
+            }
         }
         else if (args.length==3 && args[0].equals("save")){
             Integer no = Integer.parseInt(args[1]);
@@ -528,6 +555,11 @@ public class Organism {
         System.out.println("or  : sell <id>");
         System.out.println("or  : sellall <filename>");
         System.out.println("or  : filter <conditions>...");
+        System.out.println("or  : filterp <from_group> <conditions>...");
+        System.out.println("filters: nm == ={ <value>");
+        System.out.println("filters: gr == <= >= << >> <value>");
+        System.out.println("filters: id == <= >= << >> <value>");
+        System.out.println("filters: ql == <= >= << >> <stringvalue>");
         System.out.println("or  : save <group_no> <filename>");
         System.out.println("or  : showf <filename>");
     }
