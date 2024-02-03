@@ -82,13 +82,13 @@ public class Warehouse {
     };
 
     public static boolean useTool(int toolid, int amount){
+        if (amount==0) return true;
         Object[] value = new Object[]{toolid, amount};
         byte[] req = Util.encodeAMF("api.tool.useOf", "/1", value);
         Log.log("使用%d个%s ".formatted(amount, Tool.getTool(toolid).name));
         byte[] response = Request.sendPostAmf(req, false);
         AMF0Body body = Util.decodeAMF(response).getBody(0);
         if (Response.isOnStatusException(body, true)){
-            Log.println();
             return false;
         }
         else{

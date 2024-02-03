@@ -97,14 +97,18 @@ public class PaohuiPool {
     
     /** 构建炮灰池，支持-1 */
     public PaohuiPool(Collection<Integer> zhuli, List<Integer> paohui, int max_level, boolean kpFull){
-        int level_limit = max_level==0?Integer.MAX_VALUE:max_level;
-        maxLevel = level_limit;
+        int level_limit = max_level;
         keepFull = kpFull;
-        if (maxLevel==-1){
+        if (level_limit==-1){
             space=999;
             paohuiIdList = paohui;
+            maxLevel = level_limit;
             return;
+        }else if (level_limit==0){
+            level_limit = Integer.MAX_VALUE;
+            validPaohuiCount = 99999;
         }
+        maxLevel = level_limit;
         LinkedHashMap<Integer, Organism> organisms = Organism.getOrganisms();
         int zhuli_occupy = 0;
         for (Integer id : zhuli) {
