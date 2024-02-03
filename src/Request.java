@@ -29,7 +29,7 @@ public class Request {
     private static final String amfPath = "/pvz/amf/";
     // private static final String testhost = "pvzol.org";
 
-    private static final int leastInterval = 100;
+    private static final int leastInterval = 50;
     private static int reqInterval = 1000;
     private static Long lastSentTime = 0L;
 
@@ -40,9 +40,7 @@ public class Request {
     private static int retryInterval = 20000;
     private static int retryMaxCount = 10;
 
-    private static final HttpClient directClient;
-    private static final HttpClient proxyClient;
-    private static HttpClient httpClient;
+    private static boolean useProxy;
     private static int proxyPort;
 
     private enum RequestType{
@@ -56,22 +54,30 @@ public class Request {
             Log.print("请在运行前设置cookie！");
         }
         proxyPort = 8887;
-        proxyClient = HttpClient.newBuilder()
+        useProxy = true;
+    }
+
+    private static HttpClient getClient(){
+        if (useProxy) {
+            return getProxyClient();
+        }else {
+            return getDirectClient();
+        }
+    }
+
+    private static HttpClient getProxyClient(){
+        return HttpClient.newBuilder()
         .proxy(ProxySelector.of(new InetSocketAddress("127.0.0.1", proxyPort)))
         .build();
-        directClient = HttpClient.newHttpClient();
+    }
 
-        httpClient = proxyClient;
+    private static HttpClient getDirectClient(){
+        return HttpClient.newHttpClient();
     }
 
     public static boolean changeProxy(boolean on){
-        if (on){
-            httpClient = proxyClient;
-        }
-        else{
-            httpClient = directClient;
-        }
-        return httpClient!=null;
+        useProxy = on;
+        return true;
     }
 
     public static int setInterval(int interval){
@@ -137,7 +143,7 @@ public class Request {
     private static byte[] send(HttpRequest request) throws IOException, InterruptedException{
         sendIntervalBlock();
         HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
-        HttpResponse<InputStream> response = httpClient.send(request, bh);
+        HttpResponse<InputStream> response = getClient().send(request, bh);
         updateLastSend();
         Optional<String> s = response.headers().firstValue("Content-Encoding");
         if (s.isPresent() && s.get().toLowerCase().equals("gzip")) {
@@ -177,9 +183,9 @@ public class Request {
                 response = send(request);
             } catch (ConnectException e){
                 Log.logln("错误：连接通道关闭。");
-                if (httpClient==proxyClient) {
+                if (useProxy) {
                     Log.print("可能由于代理未开启导致。");
-                    httpClient = directClient;
+                    useProxy = false;
                     Log.println("已关闭代理。");
                 }
                 continue;
