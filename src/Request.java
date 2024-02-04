@@ -27,15 +27,14 @@ public class Request {
     private static final String realhost = "pvz-s1.youkia.com";
     private static final String http = "http://";
     private static final String amfPath = "/pvz/amf/";
-    // private static final String testhost = "pvzol.org";
 
     private static final int leastInterval = 50;
     private static int reqInterval = 1000;
     private static Long lastSentTime = 0L;
 
-    private static final int wait2441Time = 15000;
-    private static final int waitAmfTime = 10000;
-    private static final int wait302Time = 2*60*1000;
+    private static int wait2441Time = 15000;
+    private static int waitAmfTime = 10000;
+    private static int wait302Time = 2*60*1000;
     private static final int leastRetryInterval = 1000;
     private static int retryInterval = 20000;
     private static int retryMaxCount = 10;
@@ -53,7 +52,7 @@ public class Request {
             Log.logln("读取data/cookie文件出错！");
             Log.print("请在运行前设置cookie！");
         }
-        proxyPort = 8887;
+        setProxyPort(8887);
         useProxy = true;
     }
 
@@ -67,7 +66,7 @@ public class Request {
 
     private static HttpClient getProxyClient(){
         return HttpClient.newBuilder()
-        .proxy(ProxySelector.of(new InetSocketAddress("127.0.0.1", proxyPort)))
+        .proxy(ProxySelector.of(new InetSocketAddress("127.0.0.1", getProxyPort())))
         .build();
     }
 
@@ -79,6 +78,12 @@ public class Request {
         useProxy = on;
         return true;
     }
+
+    public static void setProxyPort(int port){
+        proxyPort = port;
+    }
+
+    private static int getProxyPort(){ return proxyPort; }
 
     public static int setInterval(int interval){
         if (interval < leastInterval){
@@ -179,6 +184,7 @@ public class Request {
         }
         int retryCount = retryMaxCount;
         do {
+            // 获得response
             try {
                 response = send(request);
             } catch (ConnectException e){
@@ -188,6 +194,7 @@ public class Request {
                     useProxy = false;
                     Log.println("已关闭代理。");
                 }
+                delay(reqInterval);
                 continue;
             } catch (HttpTimeoutException e){
                 Log.print("请求超时！");
@@ -197,12 +204,13 @@ public class Request {
                 Log.print("请求失败！");
                 response = null;
             } catch (InterruptedException e){
-                return null;
+                response = null;
             }
+            // 预处理 response
             if (response==null){
                 if (retryCount == 0){
                     Log.println("请求失败！请检查网络设置。");
-                    assert false;
+                    return null;
                 }
                 else{
                     Log.print("将在%2d秒后重试最多%2d次\n".formatted(retryInterval/1000, retryCount));
@@ -224,7 +232,7 @@ public class Request {
                 delay(wait302Time);
             }
             else if (isCharlesReport(response)){
-                assert false;
+                delay(reqInterval);
                 continue;
             }
             else{
@@ -280,7 +288,7 @@ public class Request {
         return false;
     }
 
-    /** to check if there is a rechapter block */
+    /** to check if there is a Charles error */
     private static boolean isCharlesReport(byte[] response){
         assert(response != null);
         String body = new String(response);
@@ -309,6 +317,37 @@ public class Request {
             } catch (Exception e) {
             }
         }
+        else if (args.length == 2 && args[0].equals("setblock")) {
+            try {
+                int value = Integer.parseInt(args[1]);
+                if (value >= leastRetryInterval){
+                    wait2441Time = value;
+                }
+                Log.log("new wait time: %d\n".formatted(Request.wait2441Time));
+                return;
+            } catch (Exception e) {
+            }
+        }
+        else if (args.length == 2 && args[0].equals("setamfblock")) {
+            try {
+                int value = Integer.parseInt(args[1]);
+                if (value >= leastRetryInterval){
+                    waitAmfTime = value;
+                }
+                Log.log("new amf wait time: %d\n".formatted(Request.waitAmfTime));
+                return;
+            } catch (Exception e) {
+            }
+        }
+        else if (args.length == 2 && args[0].equals("port")) {
+            try {
+                int value = Integer.parseInt(args[1]);
+                setProxyPort(value);
+                Log.log("new proxy port: %d\n".formatted(getProxyPort()));
+                return;
+            } catch (Exception e) {
+            }
+        }
         else if (args.length == 3 && args[0].equals("retry")){
             try {
                 int max_count = Integer.parseInt(args[1]);
@@ -321,7 +360,10 @@ public class Request {
         }
 
         System.out.println("args: proxy on|off");
+        System.out.println("or  : port <number>");
         System.out.println("or  : interval n(ms)");
+        System.out.println("or  : setblock n(ms)");
+        System.out.println("or  : setamfblock n(ms)");
         System.out.println("or  : retry max_count retry_interval(ms)");
     }
     
