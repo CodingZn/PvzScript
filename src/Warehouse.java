@@ -92,6 +92,7 @@ public class Warehouse {
             return false;
         }
         else{
+            MyTool.getTool(toolid).changeAmount(-amount);
             ASObject asObj = (ASObject) body.getValue();
             int msgidx = obj2int(asObj.get("name"));
             int effect = obj2int(asObj.get("effect"));

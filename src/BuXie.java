@@ -41,6 +41,7 @@ public class BuXie {
         Object obj = Util.decodeAMF(response).getBody(0).getValue();
         if (obj instanceof String){
             Log.print(" hp=%s\n".formatted(obj));
+            MyTool.getTool(xiepingId).changeAmount(-1);
             return true;
         }
         Log.print(" failed\n");
