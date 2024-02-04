@@ -48,13 +48,13 @@ public class BuXie {
 
     }
 
-    /** 不获取仓库直接补血 */
+    /** 不获取仓库，根据战斗情况补血 */
     public static boolean blindBuxie(ASObject fo, Collection<Integer> zhuli, Collection<Integer> paohui){
         SimpleEntry<Set<Integer>, Set<Integer>> res = BuXie.getAttacked(fo, zhuli, paohui);
         return BuXie.blindBuxie(res.getKey(), res.getValue());
     }
 
-    /** 不获取仓库直接补血 */
+    /** 对所有植物补血，炮灰补低血，主力预测 */
     public static boolean blindBuxie(Collection<Integer> zhuli, Collection<Integer> paohui){
 
         long diji = MyTool.getTool(DIJIXIE_ID).getAmount();
@@ -211,6 +211,27 @@ public class BuXie {
             }
         }
         return new SimpleEntry<Set<Integer>, Set<Integer>>(attacked_zhuli, attacked_paohui);
+    }
+
+    /** 仅获取被攻击死掉的炮灰 */
+    @SuppressWarnings({"unchecked"})
+    public static Set<Integer> getAttackedPaohui(ASObject fo, Collection<Integer> paohui){
+        Set<Integer> attacked_paohui = new HashSet<>();
+        // 分析每次攻击
+        for (ASObject process : (List<ASObject> )fo.get("proceses")) {
+            // 仅考虑己方被攻击的情况
+            String assailantType = (String) ((ASObject) process.get("assailant")).get("type");
+            if (assailantType.equals("assailant")) continue;
+            // 对被攻击的植物进行检查
+            for (ASObject defender : (List<ASObject> )process.get("defenders")) {
+                Integer id = obj2int(defender.get("id"));
+                BigInteger hp = obj2bigint(defender.get("hp"));
+                if (paohui.contains(id) && hp.equals(BigInteger.ZERO)){
+                    attacked_paohui.add(id);
+                }
+            }
+        }
+        return attacked_paohui;
     }
 
     public static void main(String[] args) {

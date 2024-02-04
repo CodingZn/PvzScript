@@ -46,7 +46,7 @@ public class GeneralBattle {
         StringBuffer sb = new StringBuffer();
         sb.append("参战[");
         for (Integer integer : plants) {
-            sb.append(Organism.getOrganism(integer).toShortString());
+            sb.append(Organism.getOrgShortStr(integer));
             sb.append(" ");
         }
         sb.append("] ");
@@ -57,12 +57,12 @@ public class GeneralBattle {
         StringBuffer sb = new StringBuffer();
         sb.append("主力[");
         for (Integer integer : zhuli) {
-            sb.append(Organism.getOrganism(integer).toShortString());
+            sb.append(Organism.getOrgShortStr(integer));
             sb.append(" ");
         }
         sb.append("] 炮灰[");
         for (Integer integer : paohui) {
-            sb.append(Organism.getOrganism(integer).toShortString());
+            sb.append(Organism.getOrgShortStr(integer));
             sb.append(" ");
         }
         sb.append("] ");

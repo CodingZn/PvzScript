@@ -175,6 +175,15 @@ public class Organism {
         return organismMap==null || organismMap.size()==0;
     }
 
+    /** 安全获取植物摘要（获取不到返回id） */
+    public static String getOrgShortStr(int id){
+        if (isEmpty()) {
+            Warehouse.loadWarehouse();
+        }
+        Organism o = organismMap.get(id);
+        return o==null?String.valueOf(id):o.toShortString();
+    }
+
     /** 懒加载 */
     public static Organism getOrganism(int id){
         if (isEmpty() || organismMap.get(id)==null) {
@@ -458,7 +467,7 @@ public class Organism {
     }
 
     private static int record(List<Integer> uList, Predicate<Organism> conditions){
-        List<Organism> organisms = new ArrayList<>(uList.stream().map(id->getOrganism(id)).toList());
+        List<Organism> organisms = new ArrayList<>(uList.stream().map(id->getOrganism(id)).filter(conditions).toList());
         List<Integer> ids = new ArrayList<>(organisms.stream().map(o->o.id).toList());
         int no = recordedList.size();
         recordedList.add(ids);
