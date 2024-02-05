@@ -339,6 +339,17 @@ public class Request {
             } catch (Exception e) {
             }
         }
+        else if (args.length == 2 && args[0].equals("timeout")) {
+            try {
+                int value = Integer.parseInt(args[1]);
+                if (value >= leastRetryInterval){
+                    timeout = value;
+                }
+                Log.log("new timeout: %d\n".formatted(Request.timeout));
+                return;
+            } catch (Exception e) {
+            }
+        }
         else if (args.length == 2 && args[0].equals("port")) {
             try {
                 int value = Integer.parseInt(args[1]);
