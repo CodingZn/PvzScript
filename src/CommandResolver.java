@@ -15,113 +15,116 @@ public class CommandResolver {
         if (!isValid(cmd)){
             return;
         }
-        else if (strs.length == 2) {
-            String[] args = strs[1].split(" ");
-            switch (strs[0].toLowerCase()) {
-                case "cookie" ->{
-                    String[] cookieArgs = strs[1].split(" ", 2);
-                    Cookie.resolver(cookieArgs);
-                    return;
-                }
-                case "log" ->{
-                    Log.main(args);
-                    return;
-                }
-                case "request" ->{
-                    Request.resolve(args);
-                    return;
-                }
-                case "ctrl" ->{
-                    Control.main(args);
-                    return;
-                }
-                case "organism"->{
-                    Organism.main(args);
-                    return;
-                }
-                case "mytool"->{
-                    MyTool.main(args);
-                    return;
-                }
-                case "orid"->{
-                    Orid.main(args);
-                    return;
-                }
-                case "tool"->{
-                    Tool.main(args);
-                    return;
-                }
-                case "skill"->{
-                    Skill.main(args);
-                    return;
-                }
-                case "warehouse"->{
-                    Warehouse.main(args);
-                    return;
-                }
-                case "friend"->{
-                    Friend.main(args);
-                    return;
-                }
-                case "cave"->{
-                    Cave.main(args);
-                    return;
-                }
-                case "evolution"->{
-                    Evolution.main(args);
-                    return;
-                }
-                case "route"->{
-                    EvolRoute.main(args);
-                    return;
-                }
-                case "quality"->{
-                    Quality.main(args);
-                    return;
-                }
-                case "skillup"->{
-                    Warehouse.skillUp(args);
-                    return;
-                }
-                case "buxie"->{
-                    BuXie.main(args);
-                    return;
-                }
-                case "battle"->{
-                    Battle.main(args);
-                    return;
-                }
-                case "stonebattle"->{
-                    StoneBattle.main(args);
-                    return;
-                }
-                case "fubenbattle"->{
-                    FubenBattle.main(args);
-                    return;
-                }
-                case "execfile"->{
-                    resolveFile(strs[1]);
-                    return;
-                }
-                case "dailyreward"->{
-                    DailyReward.main(args);
-                    return;
-                }
-                case "territory"->{
-                    Territory.main(args);
-                    return;
-                }
-                case "shop"->{
-                    Shop.main(args);
-                    return;
-                }
-            
-                default->{
-                    break;
-                }
+        String[] args;
+        if (strs.length == 2) {
+            args = strs[1].split(" ");
+        }
+        else {
+            args = new String[]{};
+        }
+        switch (strs[0].toLowerCase()) {
+            case "cookie" ->{
+                String[] cookieArgs = strs[1].split(" ", 2);
+                Cookie.resolver(cookieArgs);
+                return;
+            }
+            case "log" ->{
+                Log.main(args);
+                return;
+            }
+            case "request" ->{
+                Request.resolve(args);
+                return;
+            }
+            case "ctrl" ->{
+                Control.main(args);
+                return;
+            }
+            case "organism"->{
+                Organism.main(args);
+                return;
+            }
+            case "mytool"->{
+                MyTool.main(args);
+                return;
+            }
+            case "orid"->{
+                Orid.main(args);
+                return;
+            }
+            case "tool"->{
+                Tool.main(args);
+                return;
+            }
+            case "skill"->{
+                Skill.main(args);
+                return;
+            }
+            case "warehouse"->{
+                Warehouse.main(args);
+                return;
+            }
+            case "friend"->{
+                Friend.main(args);
+                return;
+            }
+            case "cave"->{
+                Cave.main(args);
+                return;
+            }
+            case "evolution"->{
+                Evolution.main(args);
+                return;
+            }
+            case "route"->{
+                EvolRoute.main(args);
+                return;
+            }
+            case "quality"->{
+                Quality.main(args);
+                return;
+            }
+            case "skillup"->{
+                Warehouse.skillUp(args);
+                return;
+            }
+            case "buxie"->{
+                BuXie.main(args);
+                return;
+            }
+            case "battle"->{
+                Battle.main(args);
+                return;
+            }
+            case "stonebattle"->{
+                StoneBattle.main(args);
+                return;
+            }
+            case "fubenbattle"->{
+                FubenBattle.main(args);
+                return;
+            }
+            case "execfile"->{
+                resolveFile(strs[1]);
+                return;
+            }
+            case "dailyreward"->{
+                DailyReward.main(args);
+                return;
+            }
+            case "territory"->{
+                Territory.main(args);
+                return;
+            }
+            case "shop"->{
+                Shop.main(args);
+                return;
+            }
+            default->{
+                Log.logln("Error format!");
+                return;
             }
         }
-        Log.logln("Error format!");
     }
 
     private static boolean isValid(String cmd){
