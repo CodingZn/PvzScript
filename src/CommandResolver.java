@@ -31,6 +31,10 @@ public class CommandResolver {
                     Request.resolve(args);
                     return;
                 }
+                case "ctrl" ->{
+                    Control.main(args);
+                    return;
+                }
                 case "organism"->{
                     Organism.main(args);
                     return;

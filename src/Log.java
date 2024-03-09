@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 
+@SuppressWarnings({"resource"})
 public class Log {
 
     public static void flogln(String str){
@@ -66,9 +67,10 @@ public class Log {
     private static PrintStream fileStream;
 
     static{
-        Path filePath = Path.of("log/%s/%s.log".formatted(
+        Path filePath = Path.of("log/%s/%s_%05d.log".formatted(
             Util.dateFormatNow("yyyyMM"),
-            Util.dateFormatNow("dd_HHmmss")
+            Util.dateFormatNow("dd_HHmmss"),
+            Util.getPid()
         ));
         
         filePath.getParent().toFile().mkdirs();

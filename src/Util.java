@@ -17,6 +17,7 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
 import java.math.BigInteger;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -364,6 +365,21 @@ public class Util {
         return sdf.format(new Date());
     }
 
+    /** yyyy-MM-dd hh:mm:ss */
+    public static Date parseDate(String date){
+        return parseDate("yyyy-MM-dd hh:mm:ss", date);
+    }
+
+    public static Date parseDate(String format, String date){
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        try {
+            return sdf.parse(date);
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
     public static Object loadObject(String filename){
         try {
             FileInputStream fInputStream = new FileInputStream(filename);
@@ -402,6 +418,12 @@ public class Util {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static int getPid(){
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String pid = name.split("@")[0];
+        return Integer.parseInt(pid);
     }
 
 }
