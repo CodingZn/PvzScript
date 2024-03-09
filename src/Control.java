@@ -9,6 +9,7 @@ public class Control {
     public static void main(String[] args) {
         if (args.length==2 && args[0].equals("wait")) {
             int seconds = Integer.parseInt(args[1]);
+            Log.logln("waiting...");
             delay(seconds*1000);
             return;
         }else if (args.length==2 && args[0].equals("waitto")) {
@@ -18,6 +19,7 @@ public class Control {
                 Date target = parseDate(targetStr);
                 if (target!=null){
                     long waitMs = Math.max(target.getTime()-new Date().getTime(), 0L);
+                    Log.logln("waiting...");
                     delay(waitMs);
                 }
                 return;
@@ -26,6 +28,7 @@ public class Control {
                 Date target = parseDate(targetStr);
                 if (target!=null){
                     long waitMs = Math.max(target.getTime()-new Date().getTime(), 0L);
+                    Log.logln("waiting...");
                     delay(waitMs);
                 }
                 return;

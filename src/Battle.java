@@ -44,6 +44,13 @@ public class Battle {
         return maxLevel;
     }
 
+    /** 可带级炮灰无法填满时，是否使用带级完成的炮灰填满战斗格子 */
+    private static boolean kpFull = true;
+    public static boolean setKeepFull(boolean f){
+        kpFull = f;
+        return kpFull;
+    }
+
     /** 无挑战次数时自动使用挑战书的个数。
      * n=0表示不使用挑战书。
      * 要求1<=n<=25
@@ -123,7 +130,7 @@ public class Battle {
         }
         List<Integer> paohui_actual;
 
-        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, true);
+        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
 
         int blindCount = 0;
         int expect_cha_count = User.loadUser().getCaveCha();
@@ -174,7 +181,7 @@ public class Battle {
                 blindCount=0;
                 Log.logln("同步仓库信息...");
                 res = BuXie.buxie(zhuli, paohui, true)&&res;
-                paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, true);
+                paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
             }
             // 继续盲打
             else{
@@ -241,6 +248,15 @@ public class Battle {
             Log.log("new maxLevel: %d\n".formatted(maxLevel));
             return;
         }
+        else if (args.length == 2 && args[0].equals("kpfull")){
+            if (args[1].equals("on")) {
+                setKeepFull(true);
+                return;
+            }else if (args[1].equals("off")) {
+                setKeepFull(false);
+                return;
+            }
+        }
         else if (args.length == 2 && args[0].equals("autobook")){
             setAutoBook(Integer.parseInt(args[1]));
             Log.log("new autobook: %d\n".formatted(autobook));
@@ -261,8 +277,9 @@ public class Battle {
 
         System.out.println("args: <cave_file> <hard_level> <zhuli_file> [<paohui_file>]");
         System.out.println("or  : repeat <count> <cave_id> <hard_level> <zhuli_file> [<paohui_file>]");
-        System.out.println("or  : maxlevel grade");
-        System.out.println("or  : updatefreq freq");
+        System.out.println("or  : maxlevel <grade>");
+        System.out.println("or  : kpfull on|off");
+        System.out.println("or  : updatefreq <freq>");
         System.out.println("or  : book <amount>|full");
         System.out.println("or  : autobook <amount>");
     }
