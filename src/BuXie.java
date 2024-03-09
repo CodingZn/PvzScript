@@ -24,9 +24,52 @@ public class BuXie {
     public static final int DIJIXIE_ID = 13;
     public static final int ZHONGJIXIE_ID = 14;
     public static final int GAOJIXIE_ID = 15;
+    
+    private static int low_reserve = 0;
+    private static int mid_reserve = 0;
+    private static int high_reserve = 0;
 
     public static double getThreshold(){
         return threshold;
+    }
+
+    /** 0 <= ratio <= 1 */
+    public static boolean setThreshold(double ratio){
+        if (ratio >= 0 && ratio <= 1) {
+            threshold = ratio;
+            Log.logln("new threshold: %.12f%%".formatted(threshold*100));
+            return true;
+        }
+        Log.logln("threshold unchanged: %.12f%%".formatted(threshold*100));
+        return false;
+    }
+
+    public static boolean setReserve(int low, int mid, int high){
+        boolean res = true;
+        if (low >= 0) low_reserve = low;
+        else res = false;
+        if (mid >= 0) mid_reserve = mid;
+        else res = false;
+        if (high >= 0) high_reserve = high;
+        else res = false;
+        Log.logln("reserve strategy: low=%d, mid=%d, high=%d".formatted(
+            low_reserve, mid_reserve, high_reserve
+        ));
+        return res;
+    }
+
+    /** type: 1|2|3 or 13|14|15 */
+    private static long getXiepingAmount(int type){
+        if (type==1||type==13) {
+            return MyTool.getTool(DIJIXIE_ID).getAmount() - low_reserve;
+        }
+        if (type==2||type==14) {
+            return MyTool.getTool(ZHONGJIXIE_ID).getAmount() - mid_reserve;
+        }
+        if (type==3||type==15) {
+            return MyTool.getTool(GAOJIXIE_ID).getAmount() - high_reserve;
+        }
+        return 0L;
     }
 
     public static final List<Integer> EMPTY_LIST = new ArrayList<>();
@@ -58,9 +101,9 @@ public class BuXie {
     /** 对所有植物补血，炮灰补低血，主力预测 */
     public static boolean blindBuxie(Collection<Integer> zhuli, Collection<Integer> paohui){
 
-        long diji = MyTool.getTool(DIJIXIE_ID).getAmount();
-        long zhongji = MyTool.getTool(ZHONGJIXIE_ID).getAmount();
-        long gaoji = MyTool.getTool(GAOJIXIE_ID).getAmount();
+        long diji = getXiepingAmount(DIJIXIE_ID);
+        long zhongji = getXiepingAmount(ZHONGJIXIE_ID);
+        long gaoji = getXiepingAmount(GAOJIXIE_ID);
 
         for (Integer integer : paohui) {
             if (diji > 0){
@@ -108,9 +151,9 @@ public class BuXie {
             return false;
         }
 
-        long diji = MyTool.getTool(DIJIXIE_ID).getAmount();
-        long zhongji = MyTool.getTool(ZHONGJIXIE_ID).getAmount();
-        long gaoji = MyTool.getTool(GAOJIXIE_ID).getAmount();
+        long diji = getXiepingAmount(DIJIXIE_ID);
+        long zhongji = getXiepingAmount(ZHONGJIXIE_ID);
+        long gaoji = getXiepingAmount(GAOJIXIE_ID);
 
         boolean res = true;
         
@@ -236,7 +279,12 @@ public class BuXie {
     }
 
     public static void main(String[] args) {
-        if (args.length == 2){
+        if (args.length == 2 && args[0].equals("threshold")){
+            double percent = Double.parseDouble(args[1]);
+            setThreshold(percent/100);
+            return;
+        }
+        else if (args.length == 2){
             int plantid = Integer.parseInt(args[0]);
             int xieping = Integer.parseInt(args[1]);
             if (xieping == 13 || xieping == 14 || xieping == 15){
@@ -248,7 +296,16 @@ public class BuXie {
                 return;
             }
         }
+        else if (args.length==4 && args[0].equals("reserve")){
+            int low = Integer.parseInt(args[1]);
+            int mid = Integer.parseInt(args[2]);
+            int high = Integer.parseInt(args[3]);
+            setReserve(low, mid, high);
+            return;
+        }
         System.out.println("args: plantid xiepingid|1|2|3");
         System.out.println("1|2|3 means xiepingid: 13|14|15");
+        System.out.println("or  : threshold <percent>");
+        System.out.println("or  : reserve <low_n> <mid_n> <high_n>");
     }
 }
