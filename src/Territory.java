@@ -69,13 +69,23 @@ public class Territory {
         }
         Object[] value = new Object[]{id, plantid, 1,0};
         byte[] req = Util.encodeAMF("api.territory.challenge", "/1", value);
-        Log.log("占领 %d 领地 使用植物%s ".formatted(id,plaString));
+        Log.log("使用植物[%s]占领 %d 领地 ".formatted(plaString,id));
         byte[] res = Request.sendPostAmf(req, true);
         AMF0Body body = Util.decodeAMF(res).getBody(0);
-        if (Response.isOnStatusException(body, false)){
+        if (Response.isOnStatusException(body, true)){
             return false;
         }
         ASObject resobj = (ASObject) body.getValue();
+        boolean is_fight = obj2int(resobj.get("is_fight"))==1;
+        if (is_fight){
+            Log.print("战斗");
+            ASObject fightObj = (ASObject) resobj.get("fight");
+            Log.print((Boolean)fightObj.get("is_winning")?"成功 ":"失败 ");
+        }
+        else{
+            Log.print("完成 ");
+        }
+        
         int cost = obj2int(resobj.get("cost_money"));
         int honor = obj2int(resobj.get("honor"));
         Log.println("花费%d金币 当前荣誉%d".formatted(cost,honor));
