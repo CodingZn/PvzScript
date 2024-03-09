@@ -3,6 +3,9 @@ package src;
 import java.util.Scanner;
 
 public class App {
+    private static final String APP_VERSION = "1.0.0";
+    private static final String RELEASE_TYPE = "public";
+    private static final String RELEASE_DATE = "2024.3.9";
     /**
      * mode 0: command mode
      * mode 1: file batch mode
@@ -22,14 +25,16 @@ public class App {
     }
 
     private static void interact(){
-        System.out.println("Welcome to PvzScript!");
-        
+        printInfo();
         System.out.println("Command Mode:");
         Scanner scanner = new Scanner(System.in);
         while (true){
             printPrompt();
             String cmd = scanner.nextLine();
-            if (cmd.equals("exit")){
+            if (cmd.equals("info")){
+                printInfo();
+            }
+            else if (cmd.equals("exit")){
                 break;
             }
             else if (cmd.equals("file")){
@@ -70,5 +75,12 @@ public class App {
         else {
             assert false;
         }
+    }
+
+    private static void printInfo(){
+        System.out.println("Welcome to PvzScript!");
+        System.out.print("Version: %s %s. ".formatted(APP_VERSION, RELEASE_TYPE));
+        System.out.println("Released at %s".formatted(RELEASE_DATE));
+        System.out.println("Powered by CodingZn@GitHub, ID: 陈年老榴莲@pvz-s1");
     }
 }
