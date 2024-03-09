@@ -3,3 +3,5 @@
 !/src
 !/static
 !.gitignore
+!/Makefile
+!MANIFEST.MF
