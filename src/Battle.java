@@ -99,18 +99,22 @@ public class Battle {
             Log.logln("挑战书不足以增加%d次挑战".formatted(amount));
             return false;
         }
+        boolean res = true;
         if (advAmount*5<=amount){
-            Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, (int)advAmount);
+            res = Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, (int)advAmount);
             amount -= advAmount*5;
         }
         else{
             int use = (int)amount/5;
-            Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, (int)use);
+            res = Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, (int)use);
             amount -= use*5;
         }
+        if (!res) {
+            return false;
+        }
         if (amount==0) return true;
-        Warehouse.useTool(CHA_BOOK_TOOL_ID, amount);
-        return true;
+        res = Warehouse.useTool(CHA_BOOK_TOOL_ID, amount);
+        return res;
     }
     /** 一次战斗，不包括领奖、补血 */
     public static AMF0Body battle(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
