@@ -501,7 +501,7 @@ public class Organism {
             sell(id);
             return;
         }
-        else if ((args.length == 2) && args[0].equals("sellAll")) {
+        else if ((args.length == 2) && args[0].equals("sellall")) {
             List<Integer> plants = Util.readIntegersFromFile(args[1]);
             for (Integer plt : plants) {
                 sell(plt);

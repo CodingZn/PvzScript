@@ -268,7 +268,7 @@ public class Battle {
         }
         else if (args.length == 2 && args[0].equals("book")){
             int amount;
-            if (args[1].toLowerCase().equals("full")) {
+            if (args[1].equals("full")) {
                 User me = User.loadUser();
                 amount = me.cave_cha_max - me.getCaveCha();
             }

@@ -3,9 +3,12 @@ package src;
 import java.util.Scanner;
 
 public class App {
-    private static final String APP_VERSION = "1.0.1";
+
     private static final String RELEASE_TYPE = "public";
-    private static final String RELEASE_DATE = "2024.3.10";
+
+    private static final String APP_VERSION = "1.0.2";
+    private static final String RELEASE_DATE = "2024.3.12";
+
     /**
      * mode 0: command mode
      * mode 1: file batch mode

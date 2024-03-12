@@ -11,7 +11,7 @@ import java.util.Stack;
 
 public class CommandResolver {
     public static void resolve(String cmd){
-        String[] strs = cmd.split(" ", 2);
+        String[] strs = cmd.toLowerCase().split(" ", 2);
         if (!isValid(cmd)){
             return;
         }
@@ -22,7 +22,7 @@ public class CommandResolver {
         else {
             args = new String[]{};
         }
-        switch (strs[0].toLowerCase()) {
+        switch (strs[0]) {
             case "cookie" ->{
                 String[] cookieArgs = strs[1].split(" ", 2);
                 Cookie.resolver(cookieArgs);
