@@ -33,8 +33,6 @@ public class Shop {
         if (Response.isOnStatusException(body, true)){
             return false;
         }
-        boolean status = (Boolean)((ASObject) body.getValue()).get("status");
-        Log.print(status?"成功 ":"失败 ");
         ASObject toolObj = (ASObject)((ASObject) body.getValue()).get("tool");
         // 购买的是道具
         if (toolObj!=null) {
