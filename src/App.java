@@ -6,8 +6,8 @@ public class App {
 
     private static final String RELEASE_TYPE = "public";
 
-    private static final String APP_VERSION = "1.0.2";
-    private static final String RELEASE_DATE = "2024.3.12";
+    private static final String APP_VERSION = "1.0.3";
+    private static final String RELEASE_DATE = "2024.3.13";
 
     /**
      * mode 0: command mode
