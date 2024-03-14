@@ -104,6 +104,10 @@ public class CommandResolver {
                 FubenBattle.main(args);
                 return;
             }
+            case "serverbattle"->{
+                ServerBattle.main(args);
+                return;
+            }
             case "execfile"->{
                 resolveFile(strs[1]);
                 return;

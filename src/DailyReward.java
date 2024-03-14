@@ -1,6 +1,5 @@
 package src;
 
-import static src.GeneralBattle.resolveAwardObj;
 import static src.Util.obj2int;
 
 import java.util.Date;
@@ -61,7 +60,7 @@ public class DailyReward {
         if (Response.isOnStatusException(body, true)){
             return false;
         }
-        Log.println("成功 获得%s".formatted(resolveAwardObj((List<ASObject>) body.getValue(), "tool_id", "amount")));
+        Log.println("成功 获得%s".formatted(GeneralBattle.resolveAwardListObj((List<ASObject>) body.getValue(), "tool_id", "amount")));
         
         return true;
     }
@@ -121,7 +120,7 @@ public class DailyReward {
             List<ASObject> awardArr =(List<ASObject>) ((ASObject) body.getValue()).get("award");
             for (ASObject award : awardArr) {
                 if (obj2int(award.get("award"))==1){
-                    Log.print("获得 [%s]".formatted(resolveAwardObj(award, "tool", "id", "amount")));
+                    Log.print("获得 [%s]".formatted(GeneralBattle.resolveAwardParentObj(award, "tool", "id", "amount")));
                     return true;
                 }
             }

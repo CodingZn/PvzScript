@@ -10,22 +10,31 @@ import com.exadel.flamingo.flex.amf.AMF0Message;
 import flex.messaging.io.ASObject;
 
 public class GeneralBattle {
+
+    /** 解析单个奖励对象 */
+    public static String resolveAwardObj(ASObject awardObj, String tool_field, String amount_field){
+        StringBuffer sb = new StringBuffer();
+        int toolid = obj2int(awardObj.get(tool_field));
+        int amount = obj2int(awardObj.get(amount_field));
+        sb.append(Tool.getTool(toolid).toShortString(amount));
+        sb.append(" ");
+        return sb.toString();
+    }
     
-    public static String resolveAwardObj(List<ASObject> awardArr, String tool_field, String amount_field){
+    /** 解析奖励列表 */
+    public static String resolveAwardListObj(List<ASObject> awardArr, String tool_field, String amount_field){
         StringBuffer sb = new StringBuffer();
         for (ASObject object : awardArr) {
-            int toolid = obj2int(object.get(tool_field));
-            int amount = obj2int(object.get(amount_field));
-            sb.append(Tool.getTool(toolid).toShortString(amount));
-            sb.append(" ");
+            sb.append(resolveAwardObj(object, tool_field, amount_field));
         }
         return sb.toString();
     }
     
+    /** obj中有属性 field，代表奖励列表 */
     @SuppressWarnings({"unchecked"})
-    public static String resolveAwardObj(ASObject awardObj, String field, String tool_field, String amount_field){
-        List<ASObject> toolList = (List<ASObject>) awardObj.get(field);
-        return resolveAwardObj(toolList, tool_field, amount_field);
+    public static String resolveAwardParentObj(ASObject obj, String field, String tool_field, String amount_field){
+        List<ASObject> toolList = (List<ASObject>) obj.get(field);
+        return resolveAwardListObj(toolList, tool_field, amount_field);
     }
 
     public static boolean getAward(String award_key){
@@ -36,7 +45,7 @@ public class GeneralBattle {
         if (Response.isOnStatusException(msg.getBody(0), true)){
             return false;
         }else{
-            String awardString = resolveAwardObj((ASObject)msg.getBody(0).getValue(), "tools", "id", "amount");
+            String awardString = resolveAwardParentObj((ASObject)msg.getBody(0).getValue(), "tools", "id", "amount");
             Log.println("[%s]".formatted(awardString));
             return true;
         }
