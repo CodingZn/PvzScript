@@ -20,8 +20,8 @@ public class StoneBattle {
         value[2] = hard_level;
         byte[] bytes = Util.encodeAMF("api.stone.challenge", "/1", value);
         Log.log("打宝石%d: ".formatted(caveid));
-        byte[] response = Request.sendPostAmf(bytes, true);
         Log.print(resolveFighter(zhuli, paohui));
+        byte[] response = Request.sendPostAmf(bytes, true);
         AMF0Message msg = Util.decodeAMF(response);
         if(Response.isOnStatusException(msg.getBody(0), true)){
             return false;
