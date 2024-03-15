@@ -365,9 +365,9 @@ public class Util {
         return sdf.format(new Date());
     }
 
-    /** yyyy-MM-dd hh:mm:ss */
+    /** yyyy-MM-dd HH:mm:ss */
     public static Date parseDate(String date){
-        return parseDate("yyyy-MM-dd hh:mm:ss", date);
+        return parseDate("yyyy-MM-dd HH:mm:ss", date);
     }
 
     public static Date parseDate(String format, String date){
