@@ -7,7 +7,7 @@ TARGET := pvzscript.jar
 CONFIG := MANIFEST.MF
 LIBS := ".\lib\amf-serializer-1.5.0.jar;.\lib\commons-beanutils-1.7.0.jar;.\lib\commons-logging-1.1.1.jar"
 
-.PHONY : target
+.PHONY : target update
 
 target : clean javac extract jar
 
@@ -30,4 +30,5 @@ extract :
 	&& cd $(OUTDIR) && jar -xf ../lib/commons-logging-1.1.1.jar && cd .. \
 	&& rmdir /q /s "target/META-INF"
 	
-
+update :
+	build.bat
