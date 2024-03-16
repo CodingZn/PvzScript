@@ -184,7 +184,7 @@ public class Request {
         }
         int retryCount = retryMaxCount;
         do {
-            // 获得response
+            // 获得response，已经完成gzip解码
             try {
                 response = send(request);
             } catch (ConnectException e){
@@ -246,17 +246,9 @@ public class Request {
     /** to check if there is a rechapter block */
     private static boolean is2441Block(byte[] response){
         assert(response != null);
-        if (response.length == 2441){
+        String body = new String(response);
+        if (body.indexOf("Your requests are too frequent!") != -1){
             return true;
-        }
-        else{
-            String body = new String(response);
-            if (body.indexOf("<script type=\"text/javascript\">") != -1){
-                return true;
-            }
-            if (body.indexOf("Your requests are too frequent!") != -1){
-                return true;
-            }
         }
         return false;
     }

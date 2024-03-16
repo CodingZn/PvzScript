@@ -73,7 +73,7 @@ public class ServerBattle {
             ASObject obj = (ASObject) body.getValue();
             int cost = obj2int(obj.get("cost"));
             int count = obj2int(obj.get("count"));
-            Log.println(" 花费%d金券，当前还有%d次".formatted(cost,count));
+            Log.println(" 当前还有%d次，下次将花费%d金券".formatted(count,cost));
         }
         return true;
     }
