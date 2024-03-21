@@ -24,15 +24,26 @@ public class Friend {
         grade = Integer.parseInt(friEle.getAttribute("grade"));
     }
 
-    private static LinkedHashMap<Integer, Friend> friendMap = new LinkedHashMap<>();
+    private static String localFriendFile = null;
 
+    private static LinkedHashMap<Integer, Friend> friendMap;
+
+    /** 懒加载 */
     public static LinkedHashMap<Integer, Friend> getFriendMap(){
+        if (friendMap==null) {
+            loadFriends();
+        }
         return friendMap;
     }
 
-    public static boolean saveFriendsToFile(String filename){
+    public static byte[] getMyFriends(){
         String path = "/pvz/index.php/user/friends/page/1/sig/807a46a7269ca3d84a1b980f9d47265a?4068335279559=";
-        byte[] response = Request.sendGetRequest(path);
+        Log.println("远程获取好友列表...");
+        return Request.sendGetRequest(path);
+    }
+
+    public static boolean saveFriendsToFile(String filename){
+        byte[] response = getMyFriends();
         Path filePath = Path.of(filename);
         Path dirPath = filePath.getParent();
         if (dirPath!=null){
@@ -40,6 +51,7 @@ public class Friend {
         }
         File oFile = filePath.toFile();
         try {
+            Log.println("保存好友信息到文件...");
             oFile.createNewFile();
             FileOutputStream fStream = new FileOutputStream(oFile);
             fStream.write(response);
@@ -52,10 +64,17 @@ public class Friend {
         
     }
 
-    public static boolean loadFriends(String filename){
-        friendMap.clear();
-        Document document = Util.parseXml(filename);
-        if (document==null) return false;
+    public static boolean loadFriends(){
+        friendMap = new LinkedHashMap<>();
+        Document document=null;
+        if (localFriendFile!=null) {
+            Log.logln("本地加载好友文件...");
+            document = Util.parseXml(localFriendFile);
+        }
+        if (document==null) {
+            byte[] response = getMyFriends();
+            document = Util.parseXml(response);
+        }
         Element friendsEle =(Element) document.getElementsByTagName("friends").item(0);
         NodeList fList = friendsEle.getChildNodes();
         for (int i = 0; i < fList.getLength(); i++) {
@@ -74,12 +93,14 @@ public class Friend {
                 saveFriendsToFile(args[1]);
                 return;
             }
-            if (args[0].equals("load")){
-                loadFriends(args[1]);
+            if (args[0].equals("loadby")){
+                if (args[1].equals("remote")) localFriendFile = null;
+                else localFriendFile = args[1];
                 return;
             }
 
         }
-        System.out.println("args: save|load filename");
+        System.out.println("args: save <filename>");
+        System.out.println("or  : loadby remote|<filename>");
     }
 }

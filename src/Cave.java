@@ -190,7 +190,7 @@ public class Cave {
         // 暗洞1层
         if (minNo<=9){
             Log.log("提取暗洞1层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 2, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 2, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);
@@ -199,7 +199,7 @@ public class Cave {
         // 暗洞2层
         if (minNo<=18 && maxNo >= 10){
             Log.log("提取暗洞2层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 4, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 4, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);
@@ -208,7 +208,7 @@ public class Cave {
         // 暗洞3层
         if (maxNo >= 19){
             Log.log("提取暗洞3层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 6, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 6, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);
@@ -230,7 +230,7 @@ public class Cave {
         // 个洞1层
         if (minNo<=12){
             Log.log("提取个洞1层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 1, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 1, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);
@@ -239,7 +239,7 @@ public class Cave {
         // 个洞2层
         if (minNo<=24 && maxNo >= 13){
             Log.log("提取个洞2层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 3, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 3, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);
@@ -248,7 +248,7 @@ public class Cave {
         // 个洞3层
         if (minNo<=36 && maxNo >= 25){
             Log.log("提取个洞3层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 5, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 5, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);
@@ -257,7 +257,7 @@ public class Cave {
         // 个洞4层
         if (maxNo >= 37){
             Log.log("提取个洞4层... ");
-            byte[] lay1 = getCaveInfo(User.loadUser().id, 7, true);
+            byte[] lay1 = getCaveInfo(User.getUser().id, 7, true);
             Document document = Util.parseXml(lay1);
             List<Integer> ois = extractCavesById(document, take);
             res.addAll(ois);

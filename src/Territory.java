@@ -47,7 +47,7 @@ public class Territory {
     }
 
     public static boolean getAllAward(){
-        User user = User.loadUser();
+        User user = User.getUser();
         List<ASObject> territoryList = getTerritoryInfo(user.id, user.name);
         for (ASObject terrObj : territoryList) {
             int uid = obj2int(terrObj.get("user_id"));
@@ -94,7 +94,7 @@ public class Territory {
 
     @SuppressWarnings({"unchecked"})
     public static boolean keep(List<Integer> userids, List<Integer> plants){
-        User user = User.loadUser();
+        User user = User.getUser();
         List<ASObject> territoryList = getTerritoryInfo(user.id, user.name);
         Set<Integer> occupiedUser = new HashSet<>();
         Set<Integer> occupiedOrg = new HashSet<>();
@@ -126,7 +126,7 @@ public class Territory {
 
     @SuppressWarnings({"unchecked"})
     public static boolean save(String userFile, String plantFile){
-        User user = User.loadUser();
+        User user = User.getUser();
         List<ASObject> territoryList = getTerritoryInfo(user.id, user.name);
         List<Integer> occupiedUser = new ArrayList<>();
         List<Integer> occupiedOrg = new ArrayList<>();

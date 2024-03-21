@@ -13,7 +13,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class User {
+    /** 平台id */
     public final int user_id;
+    /** pvz游戏id */
     public final int id;
     public final String name;
 
@@ -94,6 +96,7 @@ public class User {
 
     private static User me;
 
+    /** 加载最新用户信息 */
     public static User loadUser(){
         String url = "/pvz/index.php/default/user/sig/e5bf533f2151a47642b38ba33ae21953?"+Long.toString(new Date().getTime());
         byte[] response = Request.sendGetRequest(url);

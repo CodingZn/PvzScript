@@ -108,6 +108,10 @@ public class CommandResolver {
                 ServerBattle.main(args);
                 return;
             }
+            case "garden"->{
+                Garden.main(args);
+                return;
+            }
             case "execfile"->{
                 resolveFile(strs[1]);
                 return;
