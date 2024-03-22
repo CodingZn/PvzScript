@@ -173,8 +173,8 @@ public class Orid implements Serializable{
             });
         }
         else {
-            System.out.println("args: orid show id");
-            System.out.println("or  : orid search name");
+            System.out.println("args: orid show <id>");
+            System.out.println("or  : orid search <name>");
         }
     }
 }

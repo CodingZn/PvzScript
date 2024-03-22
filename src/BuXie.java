@@ -303,7 +303,7 @@ public class BuXie {
             setReserve(low, mid, high);
             return;
         }
-        System.out.println("args: plantid xiepingid|1|2|3");
+        System.out.println("args: <plantid> <xiepingid>|1|2|3");
         System.out.println("1|2|3 means xiepingid: 13|14|15");
         System.out.println("or  : threshold <percent>");
         System.out.println("or  : reserve <low_n> <mid_n> <high_n>");

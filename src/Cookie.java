@@ -57,7 +57,7 @@ public class Cookie {
             }
             
         }
-        System.out.println("args: load filename");
-        System.out.println("or  : set cookieString");
+        System.out.println("args: load <filename>");
+        System.out.println("or  : set <cookieString>");
     }
 }

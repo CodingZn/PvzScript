@@ -20,7 +20,7 @@ public class FubenBattle {
      * <HR/>
      * 策略2：刷前一次性使用副本书和怀表
      */
-    private static int strategy = 2;
+    private static int strategy = 0;
     public static int setStrategy(int newStrategy){
         if (newStrategy>=0 && newStrategy<=2){
             strategy = newStrategy;
@@ -100,7 +100,7 @@ public class FubenBattle {
             return;
         }
 
-        System.out.println("args: caveid plantFile count_n");
-        System.out.println("or  : strategy number");
+        System.out.println("args: <caveid> <plantFile> <count_n>");
+        System.out.println("or  : strategy <number>");
     }
 }

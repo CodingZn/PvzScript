@@ -566,9 +566,9 @@ public class Organism {
         System.out.println("or  : filter <conditions>...");
         System.out.println("or  : filterp <from_group> <conditions>...");
         System.out.println("filters: nm == ={ <value>");
-        System.out.println("filters: gr == <= >= << >> <value>");
-        System.out.println("filters: id == <= >= << >> <value>");
-        System.out.println("filters: ql == <= >= << >> <stringvalue>");
+        System.out.println("filters: gr == <= >= << >> != <value>");
+        System.out.println("filters: id == <= >= << >> != <value>");
+        System.out.println("filters: ql == <= >= << >> != <stringvalue>");
         System.out.println("or  : save <group_no> <filename>");
         System.out.println("or  : showf <filename>");
     }

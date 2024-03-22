@@ -24,7 +24,11 @@ public class CommandResolver {
         }
         switch (strs[0]) {
             case "cookie" ->{
-                String[] cookieArgs = strs[1].split(" ", 2);
+                String[] cookieArgs;
+                if (args.length==0)
+                    cookieArgs = args;
+                else 
+                    cookieArgs = strs[1].split(" ", 2);
                 Cookie.resolver(cookieArgs);
                 return;
             }

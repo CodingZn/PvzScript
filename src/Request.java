@@ -364,10 +364,10 @@ public class Request {
 
         System.out.println("args: proxy on|off");
         System.out.println("or  : port <number>");
-        System.out.println("or  : interval n(ms)");
-        System.out.println("or  : setblock n(ms)");
-        System.out.println("or  : setamfblock n(ms)");
-        System.out.println("or  : retry max_count retry_interval(ms)");
+        System.out.println("or  : interval <ms>");
+        System.out.println("or  : setblock <ms>");
+        System.out.println("or  : setamfblock <ms>");
+        System.out.println("or  : retry <max_count> <interval_ms>");
     }
     
 }

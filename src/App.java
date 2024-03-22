@@ -22,8 +22,8 @@ public class App {
             CommandResolver.resolveFile(args[0]);
         }
         else {
-            System.out.println("args: NO ARGS --for-interact");
-            System.out.println("or  : filename --for-execute-one-file");
+            System.out.println("args: (NO ARGS) --for-interact");
+            System.out.println("or  : <filename> --for-execute-one-file");
         }
     }
 

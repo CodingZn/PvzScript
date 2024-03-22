@@ -209,7 +209,7 @@ public class Warehouse {
             return;
         }
 
-        System.out.println("args: open goal");
+        System.out.println("args: open [<goal>]");
         System.out.println("goal: target organism grids number (<=192)");
 
     }

@@ -95,7 +95,6 @@ public class Log {
             fileStream = fStream;
         }else {
             System.out.println("args: on|off");
-            System.out.println("on|off: close or enable file log");
         }
     }
 }

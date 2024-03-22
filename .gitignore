@@ -5,4 +5,4 @@
 !.gitignore
 !/Makefile
 !MANIFEST.MF
-!build.bat
+!README.md
