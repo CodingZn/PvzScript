@@ -171,7 +171,7 @@ public class Battle {
                     ci--;
                     if (!useTimesand(c)) return false;
                 }
-                delay(5000);
+                delay(9000);
                 continue;
             }
             // 正常打洞后续处理
