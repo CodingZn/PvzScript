@@ -24,6 +24,13 @@ public class Friend {
         grade = Integer.parseInt(friEle.getAttribute("grade"));
     }
 
+    public Friend(User user){
+        id_pvz = user.id;
+        id_platform = user.user_id;
+        name = user.name;
+        grade = user.grade;
+    }
+
     private static String localFriendFile = null;
 
     private static LinkedHashMap<Integer, Friend> friendMap;

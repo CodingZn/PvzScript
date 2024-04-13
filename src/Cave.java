@@ -61,11 +61,13 @@ public class Cave {
             layerDirs[i].toFile().mkdir();
         }
         LinkedHashMap<Integer, Friend> fMap = Friend.getFriendMap();
+        fMap.put(User.getUser().id, new Friend(User.getUser()));
         for(Entry<Integer, Friend> entry : fMap.entrySet()){
             Friend friend = entry.getValue();
-            Log.log("resolving %s(%d,%d)...layer:".formatted(friend.name, friend.grade, friend.id_pvz));
-            if (friend.grade < least_grade) break;
+            if (friend.grade < least_grade) continue;
 
+            Log.log("resolving %s(%d,%d)...layer:".formatted(friend.name, friend.grade, friend.id_pvz));
+            
             for (int l = 1; l <= 4; l++) {
                 if (friend.grade >= LAYERS_GRADE[l-1]){
                     byte[] bytes = getCaveInfo(friend.id_pvz, l, false);
