@@ -31,4 +31,4 @@ extract :
 	&& rmdir /q /s "target/META-INF"
 
 update :
-	build.sh
+	powershell ./build.sh
