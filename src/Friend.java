@@ -31,6 +31,11 @@ public class Friend {
         grade = user.grade;
     }
 
+    @Override
+    public String toString() {
+        return "%s(%d, lv%d)".formatted(this.name, this.id_pvz, this.grade);
+    }
+
     private static String localFriendFile = null;
 
     private static LinkedHashMap<Integer, Friend> friendMap;

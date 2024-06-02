@@ -8,9 +8,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -22,6 +24,42 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Cave {
+
+    /** 实例唯一id */
+    public final Integer oi;
+    /** 全洞口类型编号hid */
+    public final Integer cave_no;
+    /** 暗xx 个xx 公xx */
+    public final String cave_no_name;
+    
+    public final Integer cave_min_grade;
+    public Long last_battle_time;
+    public String last_battler;
+    public Friend owner;
+
+    public Cave(Element h, Friend fri){
+        cave_no = Integer.parseInt(h.getAttribute("id"));
+        cave_no_name=CAVE_ID_2_NAME.getOrDefault(cave_no, "错0");
+        String oistr = ((Element)h.getElementsByTagName("oi").item(0)).getTextContent();
+        oi=Integer.parseInt(oistr);
+        String ogstr = ((Element)h.getElementsByTagName("og").item(0)).getTextContent();
+        cave_min_grade=Integer.parseInt(ogstr);
+        Element la = ((Element)h.getElementsByTagName("la").item(0));
+        if (la != null){
+            this.last_battle_time = Long.parseLong(((Element)la.getElementsByTagName("ti").item(0)).getTextContent());
+            if (this.last_battle_time != 0){
+                this.last_battler = ((Element)la.getElementsByTagName("nk").item(0)).getTextContent();
+            }
+        }
+        this.owner = fri;
+    }
+
+    @Override
+    public String toString() {
+        return "%d(%s, last=%s %d, owner=%s)".formatted(this.oi, this.cave_no_name,this.last_battler,
+        this.last_battle_time,this.owner.toString());
+    }
+
     public static final int[] LAYERS_GRADE = new int[]{1,54,90,116};
 
     public static final int[] PUBLIC_CAVE_ID = new int[]{0,
@@ -43,6 +81,20 @@ public class Cave {
         58,59,60,61,62,63,64,65,66,
         124,125,126,127,128,129,130,131,132
     };
+
+    public static Map<Integer, String> CAVE_ID_2_NAME = new HashMap<>();
+
+    static{
+        for (int no=1; no<ANYE_CAVE_ID.length; no++) {
+            CAVE_ID_2_NAME.put(ANYE_CAVE_ID[no], "暗%d".formatted(no));
+        }
+        for (int no=1; no<GEREN_CAVE_ID.length; no++) {
+            CAVE_ID_2_NAME.put(GEREN_CAVE_ID[no], "个%d".formatted(no));
+        }
+        for (int no=1; no<PUBLIC_CAVE_ID.length; no++) {
+            CAVE_ID_2_NAME.put(PUBLIC_CAVE_ID[no], "公%d".formatted(no));
+        }
+    }
 
     public static byte[] getCaveInfo(int pvz_id, int layer, boolean is_private){
         String type = is_private?"private":"public";
@@ -269,6 +321,24 @@ public class Cave {
         Log.logln("保存成功！");
         return true;
         
+    }
+
+    /** 实时获取某一页公洞信息 */
+    public static List<Cave> getPublicCavePage(Friend friend, int layer){
+        int pvz_id = friend.id_pvz;
+        byte[] resp = getCaveInfo(pvz_id, layer, false);
+        Document document = Util.parseXml(resp);
+        List<Cave> res = new ArrayList<>();
+        if (document != null){
+            NodeList hList = document.getElementsByTagName("h");
+            for (int j = 0; j < hList.getLength(); j++) {
+                if (hList.item(j).getNodeType()==Node.ELEMENT_NODE){
+                    Element h = (Element)hList.item(j);
+                    res.add(new Cave(h, friend));
+                }
+            }
+        }
+        return res;
     }
 
     public static void main(String[] args) {
