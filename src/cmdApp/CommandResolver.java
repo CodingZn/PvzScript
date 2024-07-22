@@ -1,4 +1,4 @@
-package src.api;
+package src.cmdApp;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,6 +8,31 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Stack;
+
+import src.api.Battle;
+import src.api.BuXie;
+import src.api.Cave;
+import src.api.Control;
+import src.api.Cookie;
+import src.api.DailyReward;
+import src.api.EvolRoute;
+import src.api.Evolution;
+import src.api.Friend;
+import src.api.FubenBattle;
+import src.api.Garden;
+import src.api.Log;
+import src.api.MyTool;
+import src.api.Organism;
+import src.api.Orid;
+import src.api.Quality;
+import src.api.Request;
+import src.api.ServerBattle;
+import src.api.Shop;
+import src.api.Skill;
+import src.api.StoneBattle;
+import src.api.Territory;
+import src.api.Tool;
+import src.api.Warehouse;
 
 public class CommandResolver {
     public static void resolve(String cmd){

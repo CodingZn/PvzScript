@@ -1,6 +1,8 @@
-package src.api;
+package src.cmdApp;
 
 import java.util.Scanner;
+
+import src.api.Log;
 
 public class App {
 

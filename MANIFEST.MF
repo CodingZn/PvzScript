@@ -1,3 +1,3 @@
 Mainvest-Version: 1
-Main-Class: src.App
+Main-Class: src.cmdApp.App
 Class-Path: lib/amf-serializer-1.5.0.jar lib/amf-serializer-1.5.0.jar lib/commons-beanutils-1.7.0.jar

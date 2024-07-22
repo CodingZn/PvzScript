@@ -1,4 +1,4 @@
-SOURCES := $(wildcard src/*.java lib/*.java) # 源文件：src lib
+SOURCES := $(wildcard src/**/*.java lib/*.java) # 源文件：src lib
 LIB := $(wildcard lib/*.jar) # jar 包
 empty :=
 space :=$(empty) $(empty)
