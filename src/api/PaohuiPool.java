@@ -1,9 +1,9 @@
 package src.api;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class PaohuiPool {
@@ -109,20 +109,23 @@ public class PaohuiPool {
             validPaohuiCount = 99999;
         }
         maxLevel = level_limit;
-        LinkedHashMap<Integer, Organism> organisms = Organism.getOrganisms();
         int zhuli_occupy = 0;
         for (Integer id : zhuli) {
-            zhuli_occupy += new Paohui(organisms.get(id)).occupy;
+            zhuli_occupy += new Paohui(Organism.getOrganism(id)).occupy;
         }
         space = 10 - zhuli_occupy;
         this.pool = new ArrayList<>( paohui.stream().map(id->{
-            Paohui ph = new Paohui(organisms.get(id));
+            Organism phOrg=Organism.getOrganism(id);
+            if (phOrg==null || phOrg.hp_now.equals(BigInteger.ZERO)) {return null;}
+            if (phOrg.gardenId!=0) {return null;}
+            Paohui ph = new Paohui(phOrg);
             now_occupy += ph.occupy;
             if (ph.grade_ini <= maxLevel){
                 validPaohuiCount++;
             }
             return ph;
-        }).toList());
+        })
+        .filter(s->s!=null).toList());
         this.removeHigherLevel();
     }
 
@@ -164,5 +167,18 @@ public class PaohuiPool {
             return true;
         }
         return validPaohuiCount>0;
+    }
+
+    protected void removePaohui(Collection<Integer> toRemove){
+        for (Integer integer : toRemove) {
+            Organism.getOrganism(integer).hp_now=BigInteger.ZERO;
+        }
+
+        this.pool.removeIf(p->{
+            if (toRemove.contains(p.plant_id)){
+                return true;
+            }
+            return false;
+        });
     }
 }

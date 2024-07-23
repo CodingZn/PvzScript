@@ -1,5 +1,6 @@
 package src.api;
 
+import static src.api.GeneralBattle.*;
 import static src.api.Request.sendPostAmf;
 
 import java.util.ArrayList;
@@ -10,8 +11,6 @@ import java.util.Set;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
-
-import static src.api.GeneralBattle.*;
 
 public class FubenBattle {
     /** 策略0：不使用副本书

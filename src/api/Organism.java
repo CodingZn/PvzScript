@@ -2,6 +2,9 @@ package src.api;
 
 import java.util.Map;
 import java.util.function.Predicate;
+
+import static src.api.Util.obj2long;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +19,6 @@ import org.w3c.dom.NodeList;
 
 import src.interf.OrganismGradeSort;
 import src.api.Warehouse.SellType;
-
-import static src.api.Util.obj2long;
 public class Organism {
 
     public Organism(Element element){
@@ -37,7 +38,7 @@ public class Organism {
         this.quality = element.getAttribute("qu");
         this.qualityLevel = Quality.QNAME2LEVEL.getOrDefault(quality, 0);
         this.fight = new BigInteger(element.getAttribute("fight"));
-
+        this.gardenId = Integer.parseInt(element.getAttribute("gi"));
         List<Skill> tmp = new ArrayList<>();
         Element skillsEle = (Element) element.getElementsByTagName("sk").item(0);
         NodeList skillList = skillsEle.getElementsByTagName("item");
@@ -49,11 +50,12 @@ public class Organism {
     }
 
     public String toShortString(){
+        String flag=this.gardenId==0?"":"*";
         if (this.grade_pre > this.grade){
-            return "Lv%d %s(%d)".formatted(this.grade_pre, this.orid.name, this.id);
+            return "Lv%d %s%s(%d)".formatted(this.grade_pre, this.orid.name,flag, this.id);
         }
         else{
-            return "Lv.%d %s(%d)".formatted(this.grade, this.orid.name, this.id);
+            return "Lv.%d %s%s(%d)".formatted(this.grade, this.orid.name,flag, this.id);
         }
     }
 
@@ -70,6 +72,9 @@ public class Organism {
         .append("闪避=\t%d\n".formatted(this.miss))
         .append("命中=\t%d\n".formatted(this.precision))
         .append("速度=\t%d\n".formatted(this.speed));
+        if (gardenId!=0) {
+            sb.append("在%s家光合作用\n".formatted(Friend.getFriend(gardenId)));
+        }
         for (int i=0; i<skills.size(); i++) {
             sb.append(skills.get(i).toShortString());
             if (i%2==0){
@@ -106,6 +111,14 @@ public class Organism {
         return null;
     }
 
+    public void setQuality(String newQuality){
+        Integer l = Quality.QNAME2LEVEL.get(newQuality);
+        if (l != null){
+            this.quality = newQuality;
+            this.qualityLevel = l;
+        }
+    }
+
     /** 植物id */
     public final int id;
     /** 原型id */
@@ -133,13 +146,15 @@ public class Organism {
     /** 命中 */
     public final BigInteger precision;
     /** 品质字符串 */
-    public final String quality;
+    public String quality;
     /** 品质等级 */
-    public final Integer qualityLevel;
+    public Integer qualityLevel;
     /** 战斗力 */
     public final BigInteger fight;
 
     public final List<Skill> skills;
+
+    public Integer gardenId;
 
     public static LinkedHashMap<Integer, Organism> getNewestOrganisms(){
         if (Warehouse.loadWarehouse()){
@@ -198,7 +213,7 @@ public class Organism {
         organismMap.put(id, plant);
     }
 
-    public static LinkedHashMap<Integer, Organism> getOrganisms(){
+    private static LinkedHashMap<Integer, Organism> getOrganisms(){
         if (isEmpty()){
             Warehouse.loadWarehouse();
         }

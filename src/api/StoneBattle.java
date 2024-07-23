@@ -1,5 +1,7 @@
 package src.api;
 
+import static src.api.GeneralBattle.*;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -9,8 +11,6 @@ import java.util.AbstractMap.SimpleEntry;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
-
-import static src.api.GeneralBattle.*;
 
 public class StoneBattle {
 

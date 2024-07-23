@@ -8,17 +8,17 @@ import java.nio.file.Path;
 public class Log {
 
     public static void flogln(String str){
-        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.print(Util.dateFormatNow("HH:mm:ss.SSS "));
         fileStream.println(str);
     }
 
     public static void flog(String str){
-        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.print(Util.dateFormatNow("HH:mm:ss.SSS "));
         fileStream.print(str);
     }
 
     public static void flog(){
-        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        fileStream.print(Util.dateFormatNow("HH:mm:ss.SSS "));
     }
 
     public static void fprint(String str){
@@ -30,7 +30,8 @@ public class Log {
     }
 
     public static void logln(String str){
-        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        str = Util.dateFormatNow("HH:mm:ss.SSS ")+str;
+        // fileStream.print();
         fileStream.println(str);
         System.out.println(str);
     }
@@ -41,7 +42,8 @@ public class Log {
     }
 
     public static void log(String str){
-        fileStream.print(Util.dateFormatNow("HH:mm:ss "));
+        // fileStream.print(Util.dateFormatNow("HH:mm:ss.SSS "));
+        str = Util.dateFormatNow("HH:mm:ss.SSS ")+str;
         fileStream.print(str);
         System.out.print(str);
     }

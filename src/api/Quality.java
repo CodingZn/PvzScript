@@ -44,16 +44,18 @@ public class Quality {
             return null;
     }
 
+    /** 不自动获取最新仓库植物 */
     public static boolean qualityUp(int plantId, String goal, int maximum){
-        String iniQuality = getPlantQuality(plantId);
-        String now_quality=iniQuality;
-        Log.log("%s 当前 %s ".formatted(Organism.getOrganism(plantId).toShortString(),now_quality));
-        int now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 0);
+        // String now_quality=iniQuality;
+        Organism org = Organism.getOrganism(plantId);
+        String iniQuality = org.quality;
+        Log.log("%s 当前 %s ".formatted(org.toShortString(),org.quality));
+        // int now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 0);
         final int goal_level = QNAME2LEVEL.getOrDefault(goal, 0);
         int total_use = 0;
         int currLevelUse = 0;
         byte[] body = getQualityUpAmf(plantId);
-        while (now_quality_level<goal_level && total_use < maximum) {
+        while (org.qualityLevel<goal_level && total_use < maximum) {
             Log.print("+");
             byte[] resp = Request.sendPostAmf(body, true);
             if (Response.isOnStatusException(Util.tryDecodeAMF(resp).getBody(0), true)){
@@ -64,19 +66,18 @@ public class Quality {
             String tmpQ = resolveResponseAmf(resp);
             if (tmpQ==null) continue;
             /** 升级了 */
-            if (!tmpQ.equals(now_quality)){
+            if (!tmpQ.equals(org.quality)){
                 Log.println();
                 Log.log("使用%d本刷新书，升级到 %s ".formatted(currLevelUse, tmpQ));
-                now_quality = tmpQ;
-                now_quality_level = QNAME2LEVEL.getOrDefault(now_quality, 9999);
+                org.setQuality(tmpQ);
                 currLevelUse = 0;
             }
         }
-        Log.logln();
+        // Log.logln();
 
         Log.logln("%s 总共使用%d本书从%s升级到了%s".formatted(
-            Organism.getOrganism(plantId).toShortString(), total_use, 
-            iniQuality, now_quality));
+            org.toShortString(), total_use, 
+            iniQuality, org.quality));
         return true;
     }
 
@@ -106,6 +107,7 @@ public class Quality {
             if (tmpQ.equals("魔神")){
                 Log.println();
                 Log.log("使用%d本魔神刷新书，升级到 魔神 ".formatted(total_use));
+                plant.setQuality(tmpQ);
                 break;
             }
         }

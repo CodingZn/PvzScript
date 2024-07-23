@@ -23,6 +23,7 @@ public class Warehouse {
     private static Document warehouseDoc = null;
 
     public static boolean loadWarehouse() {
+        Log.logln("同步仓库信息...");
         byte[] response = Request.sendGetRequest(Warehouse.getPath());
         Document document = Util.parseXml(response);
         if (document == null){

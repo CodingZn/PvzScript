@@ -140,15 +140,8 @@ public class BuXie {
      * @param requestWare 是否请求仓库最新信息
      */
     public static boolean buxie(Collection<Integer> zhuli, Collection<Integer> paohui, boolean requestWare){
-        Map<Integer, Organism> organisms;
-        if(requestWare && Warehouse.loadWarehouse()){
-            organisms = Organism.getOrganisms();
-        }
-        else if (!requestWare){
-            organisms = Organism.getOrganisms();
-        }
-        else{
-            return false;
+        if(requestWare){
+            Warehouse.loadWarehouse();
         }
 
         long diji = getXiepingAmount(DIJIXIE_ID);
@@ -158,7 +151,7 @@ public class BuXie {
         boolean res = true;
         
         for (Integer plantid : paohui) {
-            Organism plant = organisms.get(plantid); 
+            Organism plant = Organism.getOrganism(plantid); 
             if (plant.hp_now.compareTo(BigInteger.ZERO)>0){
                 continue;
             }else if (diji > 0){
@@ -177,7 +170,7 @@ public class BuXie {
         }
 
         for (Integer plantid : zhuli) {
-            Organism plant = organisms.get(plantid); 
+            Organism plant = Organism.getOrganism(plantid); 
             double now_percent = plant.hp_now.doubleValue() / plant.hp_max.doubleValue();
             if (now_percent >= threshold){
                 continue;

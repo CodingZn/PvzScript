@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,15 +34,44 @@ public class Cave {
     public final String cave_no_name;
     
     public final Integer cave_min_grade;
+    /* 上次打洞的时间戳秒数 */
     public Long last_battle_time;
     public String last_battler;
     public Friend owner;
 
-    public Cave(Element h, Friend fri){
+    public static Cave getCave(Element h, Friend fri){
+        Cave c = new Cave(h, fri);
+        if (c.oi==0) return null;
+        return c;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { //判断一下如果是同一个对象直接返回true，提高效率
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) { //如果传进来的对象为null或者二者为不同类，直接返回false
+            return false;
+        }
+        Cave other = (Cave) obj;
+        if (other.oi==this.oi) {
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.oi);
+    }
+
+    private Cave(Element h, Friend fri){
         cave_no = Integer.parseInt(h.getAttribute("id"));
         cave_no_name=CAVE_ID_2_NAME.getOrDefault(cave_no, "错0");
         String oistr = ((Element)h.getElementsByTagName("oi").item(0)).getTextContent();
-        oi=Integer.parseInt(oistr);
+        if (oistr==null || oistr=="") {
+            oi=0;
+        }
+        else oi=Integer.parseInt(oistr);
         String ogstr = ((Element)h.getElementsByTagName("og").item(0)).getTextContent();
         cave_min_grade=Integer.parseInt(ogstr);
         Element la = ((Element)h.getElementsByTagName("la").item(0));
@@ -54,13 +84,29 @@ public class Cave {
         this.owner = fri;
     }
 
-    @Override
-    public String toString() {
-        return "%d(%s, last=%s %d, owner=%s)".formatted(this.oi, this.cave_no_name,this.last_battler,
-        this.last_battle_time,this.owner.toString());
+    private Cave(int id){
+        this.oi = id;
+        this.cave_no = null;
+        this.cave_no_name = "";
+        this.cave_min_grade = null;
+        
     }
 
-    public static final int[] LAYERS_GRADE = new int[]{1,54,90,116};
+    public static Cave fCave(int id){
+        return new Cave(id);
+    }
+
+    @Override
+    public String toString() {
+        if (this.owner==null){
+            return "%d".formatted(this.oi);
+        }
+        // return "%d(%s, last=%s %d, owner=%s)".formatted(this.oi, this.cave_no_name,this.last_battler,
+        return "%d(%s, owner=%s)".formatted(this.oi, this.cave_no_name,this.owner.toString());
+    }
+
+    /** 0,1,54,90,116 */
+    public static final int[] LAYERS_GRADE = new int[]{0,1,54,90,116};
 
     public static final int[] PUBLIC_CAVE_ID = new int[]{0,
         1,2,3,4,5,6,7,8,9,10,11,12,
@@ -121,7 +167,7 @@ public class Cave {
             Log.log("resolving %s(%d,%d)...layer:".formatted(friend.name, friend.grade, friend.id_pvz));
             
             for (int l = 1; l <= 4; l++) {
-                if (friend.grade >= LAYERS_GRADE[l-1]){
+                if (friend.grade >= LAYERS_GRADE[l]){
                     byte[] bytes = getCaveInfo(friend.id_pvz, l, false);
                     Path file = layerDirs[l-1].resolve("lv%03d_%d_%d.xml".
                     formatted(friend.grade, friend.id_pvz, l));
@@ -326,15 +372,20 @@ public class Cave {
     /** 实时获取某一页公洞信息 */
     public static List<Cave> getPublicCavePage(Friend friend, int layer){
         int pvz_id = friend.id_pvz;
+        List<Cave> res = new ArrayList<>();
+        if (friend.grade < Cave.LAYERS_GRADE[layer]) {
+            return res;
+        }
+        Log.logln("查看%s的第%d层公洞".formatted(friend,layer));
         byte[] resp = getCaveInfo(pvz_id, layer, false);
         Document document = Util.parseXml(resp);
-        List<Cave> res = new ArrayList<>();
         if (document != null){
             NodeList hList = document.getElementsByTagName("h");
             for (int j = 0; j < hList.getLength(); j++) {
                 if (hList.item(j).getNodeType()==Node.ELEMENT_NODE){
                     Element h = (Element)hList.item(j);
-                    res.add(new Cave(h, friend));
+                    Cave c = getCave(h, friend);
+                    if (c != null) res.add(c);
                 }
             }
         }

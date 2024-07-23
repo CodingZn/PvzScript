@@ -31,6 +31,7 @@ public class User {
     private int cave_cha_amount;
     private int honor;
     private int fuben_cha;
+    /** 不全，仅有第一页！ */
     public final List<Friend> friends;
 
     public User(Document document){
@@ -62,11 +63,11 @@ public class User {
 
         Element friendsEle = (Element) userEle.getElementsByTagName("friends").item(0);
         NodeList fList = friendsEle.getElementsByTagName("item");
-        List<Friend> tmpList = new ArrayList<>();
+        friends = new ArrayList<>();
+        friends.add(new Friend(this.id,this.user_id,this.grade,this.name));
         for (int i = 0; i < fList.getLength(); i++) {
-            tmpList.add(new Friend((Element) fList.item(i)));
+            friends.add(new Friend((Element) fList.item(i)));
         }
-        friends = tmpList;
 
     }
 
@@ -86,7 +87,9 @@ public class User {
     public void changeTreeDone(boolean new_done){ tree_done=new_done; }
 
     public int getCaveCha(){ return cave_cha_amount; }
-    public void changeCaveCha(int amount){ cave_cha_amount+=amount; }
+    public void changeCaveCha(int amount){ 
+        cave_cha_amount+=amount; 
+    }
 
     public int getHonor(){ return honor; }
     public void changeHonor(int amount){ honor+=amount; }
@@ -99,12 +102,18 @@ public class User {
     /** 加载最新用户信息 */
     public static User loadUser(){
         String url = "/pvz/index.php/default/user/sig/e5bf533f2151a47642b38ba33ae21953?"+Long.toString(new Date().getTime());
+        Log.logln("加载用户信息...");
         byte[] response = Request.sendGetRequest(url);
         Document document = Util.parseXml(response);
         if (document == null) {
             return null;
         }
-        me = new User(document);
+        try {
+            me = new User(document);
+        } catch (Exception e) {
+            // e.printStackTrace();
+            me=null;
+        }
         return me;
     }
 
@@ -119,6 +128,20 @@ public class User {
     public static void clear(){
         me=null;
         Warehouse.clear();
+    }
+
+    public static boolean savePic(int plat_id,String filename){
+        byte[] response = Request.sendGetWWWRequest("/attach/picture/%d/%d/face64.jpg".formatted(
+            plat_id/10000+1,plat_id
+        ));
+        return Util.saveBytesToFile(response, filename);
+    }
+
+    public static boolean savePic(String filename){
+        if (User.getUser()!=null) {
+            return savePic(User.getUser().user_id,filename);
+        }
+        return false;
     }
 
 }

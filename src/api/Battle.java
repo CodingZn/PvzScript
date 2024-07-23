@@ -1,9 +1,10 @@
 package src.api;
 
 
-import static src.api.Util.delay;
-
 import java.util.AbstractMap.SimpleEntry;
+
+import static src.api.GeneralBattle.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,8 +15,6 @@ import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
-
-import static src.api.GeneralBattle.*;
 
 
 public class Battle {
@@ -56,11 +55,18 @@ public class Battle {
      * 要求1<=n<=25
     */
     protected static int autobook = 0;
+    protected static int autoAdvBook = 0;
     public static int setAutoBook(int newa){
         if (newa>=0 && newa <= 25){
             autobook = newa;
         }
         return autobook;
+    }
+    public static int setAutoAdvBook(int newa){
+        if (newa>=0 && newa <= 5){
+            autoAdvBook = newa;
+        }
+        return autoAdvBook;
     }
 
     public static final Integer CHA_BOOK_TOOL_ID = 6;
@@ -87,59 +93,101 @@ public class Battle {
         if (Response.isOnStatusException(body, true)){
             return false;
         }
-        Log.logln("成功");
+        Log.print("成功");
         return true;
     }
 
-    public static boolean addChallengeCave(int amount){
-        if (amount==0) return true;
-        long chaAmount = MyTool.getTool(CHA_BOOK_TOOL_ID).getAmount();
-        long advAmount = MyTool.getTool(ADV_CHA_BOOK_TOOL_ID).getAmount();
-        if (chaAmount + advAmount*5 < amount){
-            Log.logln("挑战书不足以增加%d次挑战".formatted(amount));
-            return false;
-        }
+    /** 先使用挑战书后使用高挑 */
+    public static boolean addChallengeCave(int book, int advbook){
         boolean res = true;
-        if (advAmount*5<=amount){
-            res = Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, (int)advAmount);
-            amount -= advAmount*5;
+        if (book>0) { // 挑战书
+            long chaAmount = MyTool.getTool(CHA_BOOK_TOOL_ID).getAmount();
+            if (chaAmount < book){
+                Log.logln("挑战书不足以增加%d次挑战".formatted(book));
+                return false;
+            }
+            res = Warehouse.useTool(CHA_BOOK_TOOL_ID, book);
+            if (!res) {
+                User u = User.loadUser();
+                return u.getCaveCha() > 0;
+            }
+            User.getUser().changeCaveCha(book);
+            MyTool.getTool(CHA_BOOK_TOOL_ID).changeAmount(-book);
         }
-        else{
-            int use = (int)amount/5;
-            res = Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, (int)use);
-            amount -= use*5;
+
+        if (advbook>0) { // 高级挑战书
+            long advAmount = MyTool.getTool(ADV_CHA_BOOK_TOOL_ID).getAmount();
+            if (advAmount < advbook){
+                Log.logln("高级挑战书不足d个".formatted(advbook));
+                return false;
+            }
+            res = Warehouse.useTool(ADV_CHA_BOOK_TOOL_ID, advbook);
+            if (!res) {
+                User u = User.loadUser();
+                return u.getCaveCha() > 0;
+            }
+            User.getUser().changeCaveCha(advbook*5);
+            MyTool.getTool(ADV_CHA_BOOK_TOOL_ID).changeAmount(-advbook);
         }
-        if (!res) {
-            return false;
-        }
-        if (amount==0) return true;
-        res = Warehouse.useTool(CHA_BOOK_TOOL_ID, amount);
         return res;
     }
+
     /** 一次战斗，不包括领奖、补血 */
-    public static AMF0Body battle(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
-        byte[] reqAmf = shuaDongAmf(caveid, hard_level, zhuli, paohui);
+    public static AMF0Body battle(Cave cave, int hard_level, List<Integer> zhuli, List<Integer> paohui){
+        byte[] reqAmf = shuaDongAmf(cave.oi, hard_level, zhuli, paohui);
         byte[] response;
-        Log.log("刷洞%d: %s".formatted(caveid,resolveFighter(zhuli, paohui)));
+        Log.log("刷洞%s: %s".formatted(cave.toString(),resolveFighter(zhuli, paohui)));
         response = Request.sendPostAmf(reqAmf, true);
         AMF0Message msg = Util.decodeAMF(response);
         return msg.getBody(0);
     }
+  
+    /** 抢洞 */
+    public static AMF0Body battleForce(Cave cave, int hard_level, List<Integer> zhuli, List<Integer> paohui){
+        byte[] reqAmf = shuaDongAmf(cave.oi, hard_level, zhuli, paohui);
+        byte[] response=null;
+        Log.log("抢洞%s: %s".formatted(cave.toString(),resolveFighter(zhuli, paohui)));
+        for (int i = 0; i < 50; i++) {
+            Log.print("try%d ".formatted(i));
+            response = Request.sendForcePostAmf(reqAmf);
+            String excp = Response.getExceptionDescription(response);
+            if ("Exception:给洞口主人留点机会，等保护时间过后再来吧。".equals(excp)){
+                continue;
+            }
+            else if("Exception:僵尸已被其它人挑战了".equals(excp)){
+                return Util.decodeAMF(response).getBody(0);
+            }
+            else if (excp==null){
+                Log.println("成功!");
+                return Util.decodeAMF(response).getBody(0);
+            }
+            else if (Request.isAmfBlock(response)){
+                continue;
+            }
+        }
+        return Util.decodeAMF(response).getBody(0);
+    }
 
+    protected static int blindCount = 0;
     /** 一批战斗 */
     public static boolean battleRepeat(List<Integer> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean useSand){
-        if (!BuXie.buxie(zhuli, paohui, true)){
+        List<Cave> cs = new ArrayList<>(caves.stream().map(i->{
+            return Cave.fCave(i);
+        }).toList());
+        return battleRepeatC(cs, hard_level, zhuli, paohui, useSand, true);
+    }
+    /** 一批战斗 */
+    public static boolean battleRepeatC(List<Cave> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean useSand, boolean loadWare){
+
+        if (!BuXie.buxie(zhuli, paohui, loadWare)){
             Log.logln("战斗前补血失败！");
             return false;
         }
         List<Integer> paohui_actual;
 
         PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
-
-        int blindCount = 0;
-        int expect_cha_count = User.loadUser().getCaveCha();
         for (int ci=0; ci<caves.size(); ci++) {
-            Integer c = caves.get(ci);
+            Cave c = caves.get(ci);
             boolean res = true;
             // 获取炮灰信息
             paohui_actual = paohuiPool.getChosenPaohuis();
@@ -148,42 +196,39 @@ public class Battle {
                 return false;
             }
             // 处理挑战次数和时之沙
-            if (expect_cha_count == 0 && autobook > 0){
-                res = addChallengeCave(autobook) && res;
+            if (User.getUser().getCaveCha() == 0 && autobook+autoAdvBook > 0){
+                res = addChallengeCave(autobook,autoAdvBook) && res;
                 if (!res) return false;
-                expect_cha_count += autobook;
             }
             if (useSand && ci!=0) {
-                useTimesand(c);
+                useTimesand(c.oi);
             }
             // 战斗
             AMF0Body body = battle(c, hard_level, zhuli, paohui_actual); 
             if (Response.isOnStatusException(body, true)){
                 String exc = Response.getExceptionDescription(body);
                 if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
-                    if (autobook==0) return false;
-                    res = addChallengeCave(autobook) && res;
+                    User.getUser().changeCaveCha(-User.getUser().getCaveCha());
+                    if (autobook+autoAdvBook==0) return false;
+                    res = addChallengeCave(autobook,autoAdvBook) && res;
                     if (!res) return false;
                     ci--;
-                    expect_cha_count++;
                 }
                 else if (exc.equals("Exception:僵尸已被其它人挑战了") && useSand){
                     ci--;
-                    if (!useTimesand(c)) return false;
+                    if (!useTimesand(c.oi)) return false;
                 }
-                delay(9000);
                 continue;
             }
             // 正常打洞后续处理
             Log.println("√ ");
-            expect_cha_count--;
+            User.getUser().changeCaveCha(-1);
             ASObject resObj = (ASObject)body.getValue();
             res = getAward((String)resObj.get("awards_key")) && res;
             blindCount++;
             // 请求仓库同步信息
             if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){
                 blindCount=0;
-                Log.logln("同步仓库信息...");
                 res = BuXie.buxie(zhuli, paohui, true)&&res;
                 paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
             }
@@ -195,7 +240,69 @@ public class Battle {
             }
             
             if (!res) return false;
-            delay(1000);
+        }
+        return true;
+    }
+
+    /** 一批战斗不补血 */
+    public static boolean battleNoBuxie(List<Cave> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean force){
+
+        List<Integer> paohui_actual;
+
+        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
+
+        // int blindCount = 0;
+        for (int ci=0; ci<caves.size(); ci++) {
+            Cave c = caves.get(ci);
+            boolean res = true;
+            // 获取炮灰信息
+            paohui_actual = paohuiPool.getChosenPaohuis();
+            // if (!paohuiPool.hasValidPaohui()) {
+            //     Log.logln("炮灰均带级完成！");
+            //     return false;
+            // }
+            // 处理挑战次数和时之沙
+            if (User.getUser().getCaveCha() <= 0 && autobook+autoAdvBook > 0){
+                res = addChallengeCave(autobook,autoAdvBook) && res;
+                if (!res) return false;
+            }
+            // 战斗
+            AMF0Body body;
+            if (!force) body = battle(c, hard_level, zhuli, paohui_actual); 
+            else body=battleForce(c, hard_level, zhuli, paohui_actual);
+            if (Response.isOnStatusException(body, true)){
+                String exc = Response.getExceptionDescription(body);
+                if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
+                    User.getUser().changeCaveCha(-User.getUser().getCaveCha());
+                    if (autobook+autoAdvBook==0) return false;
+                    res = addChallengeCave(autobook,autoAdvBook) && res;
+                    if (!res) return false;
+                    ci--;
+                }
+                continue;
+            }
+            // 正常打洞后续处理
+            Log.println("√ ");
+            User.getUser().changeCaveCha(-1);
+            ASObject resObj = (ASObject)body.getValue();
+            res = getAward((String)resObj.get("awards_key")) && res;
+            blindCount++;
+            // 请求仓库同步信息
+            if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){
+                blindCount=0;
+                Warehouse.loadWarehouse();
+                // res = BuXie.buxie(zhuli, paohui, true)&&res;
+                paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
+            }
+            // 继续盲打
+            else{
+                SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, zhuli, paohui);
+                // res = BuXie.blindBuxie(attacked.getKey(), attacked.getValue())&&res;
+                paohuiPool.removePaohui(attacked.getValue());
+                paohuiPool.updateExcept(paohui_actual, attacked.getValue());
+            }
+            
+            if (!res) return false;
         }
         return true;
     }
@@ -266,6 +373,11 @@ public class Battle {
             Log.log("new autobook: %d\n".formatted(autobook));
             return;
         }
+        else if (args.length == 2 && args[0].equals("autoadv")){
+            setAutoAdvBook(Integer.parseInt(args[1]));
+            Log.log("new autoAdvbook: %d\n".formatted(autoAdvBook));
+            return;
+        }
         else if (args.length == 2 && args[0].equals("book")){
             int amount;
             if (args[1].equals("full")) {
@@ -275,7 +387,13 @@ public class Battle {
             else{
                 amount = Integer.parseInt(args[1]);
             }
-            addChallengeCave(amount);
+            addChallengeCave(amount,0);
+            return;
+        }
+        else if (args.length == 2 && args[0].equals("advbook")){
+            int amount;
+            amount = Integer.parseInt(args[1]);
+            addChallengeCave(0,amount);
             return;
         }
 
@@ -284,7 +402,9 @@ public class Battle {
         System.out.println("or  : maxlevel <grade>");
         System.out.println("or  : kpfull on|off");
         System.out.println("or  : updatefreq <freq>");
+        System.out.println("or  : advbook <amount>");
         System.out.println("or  : book <amount>|full");
         System.out.println("or  : autobook <amount>");
+        System.out.println("or  : autoadv <amount>");
     }
 }

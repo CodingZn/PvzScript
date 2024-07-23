@@ -23,9 +23,37 @@ import com.exadel.flamingo.flex.amf.AMF0Message;
 
 public class Request {
     protected static int timeout = 40000;
-    private static String host;
-    private static final String realhost = "pvz-s1.youkia.com";
+    private static String host= "pvz-s1.youkia.com";
+    private static int serverNo=1;
+    public static void setServer(int server){
+        if (server>=1 && server<=46){
+            serverNo=server;
+            updateHostname();
+        }
+    }
+    public static void setServer(String serverstr){
+        int server=0;
+        try {
+            server = Integer.parseInt(serverstr);
+        } catch (Exception e) {}
+        if (server>=1 && server<=46){
+            serverNo=server;
+            updateHostname();
+        }
+    }
+    public static int getServer(){
+        return serverNo;
+    }
+    private static void updateHostname(){
+        if (serverNo>=1 && serverNo<=11) {
+            host= "pvz-s%d.youkia.com".formatted(serverNo);
+        }
+        else if (serverNo>= 12 && serverNo<=46){
+            host= "s%d.youkia.pvz.youkia.com".formatted(serverNo);
+        }
+    }
     private static final String http = "http://";
+    private static final String youkiaHost = "www.youkia.com";
     private static final String amfPath = "/pvz/amf/";
 
     protected static final int leastInterval = 50;
@@ -43,15 +71,14 @@ public class Request {
     protected static int proxyPort;
 
     private enum RequestType{
-        GET, POST_AMF
+        GET, POST_AMF, GET_WWW
     }
     
     static {
-        host = realhost;
-        if (Cookie.getCookie() == null){
-            Log.logln("读取data/cookie文件出错！");
-            Log.print("请在运行前设置cookie！");
-        }
+        // if (Cookie.getCookie() == null){
+        //     Log.logln("读取data/cookie文件出错！");
+        //     Log.print("请在运行前设置cookie！");
+        // }
         setProxyPort(8887);
         useProxy = true;
     }
@@ -116,6 +143,13 @@ public class Request {
         return timeout;
     }
 
+    public static int set302Wait(int value){
+        if (value >= leastRetryInterval){
+            wait302Time=value;
+        }
+        return wait302Time;
+    }
+
     public static int setRetry(int max_count, int retry_interval){
         if (retry_interval < leastRetryInterval){
             Request.retryInterval = leastRetryInterval;
@@ -156,18 +190,41 @@ public class Request {
         lastSentTime = System.currentTimeMillis();
     }
 
+
+    /** @return valid body of response, null if exception */
+    public static byte[] sendGetWWWRequest(String path){
+        return sendOneRequest(RequestType.GET_WWW, path, null, false,false);
+    }
+
     /** @return valid body of response, null if exception */
     public static byte[] sendGetRequest(String path){
-        return sendOneRequest(RequestType.GET, path, null, false);
+        return sendOneRequest(RequestType.GET, path, null, false,false);
     }
 
     /** @return valid amf body of response, 2441 block handled */
     public static byte[] sendPostAmf(byte[] body, boolean handleAmfBlock){
-        return sendOneRequest(RequestType.POST_AMF, null, body, handleAmfBlock);
+        while (true) {
+            byte[] resp = sendOneRequest(RequestType.POST_AMF, null, body, handleAmfBlock, false);
+            AMF0Message msg=Util.tryDecodeAMF(resp);
+            if (msg==null || msg.getBodyCount()<1){
+                continue;
+            }
+            try {
+                msg.getBody(0);
+            } catch (Exception e) {
+                continue;
+            }
+            return resp;
+        }
     }
 
-    private static byte[] send(HttpRequest request) throws IOException, InterruptedException{
-        sendIntervalBlock();
+    /** @return 2441 block handled, flood send, amf may not handle */
+    public static byte[] sendForcePostAmf(byte[] body){
+        return sendOneRequest(RequestType.POST_AMF, null, body, false, true);
+    }
+
+    private static byte[] send(HttpRequest request, boolean block) throws IOException, InterruptedException{
+        if (block) sendIntervalBlock();
         HttpResponse.BodyHandler<InputStream> bh = HttpResponse.BodyHandlers.ofInputStream();
         HttpResponse<InputStream> response = getClient().send(request, bh);
         updateLastSend();
@@ -179,8 +236,8 @@ public class Request {
         return response.body().readAllBytes();
     }
 
-    /** type=0: get; type=1: postAmf; return valid response */
-    private static byte[] sendOneRequest(RequestType type, String path, byte[] body, boolean handleAmfBlock){
+    /** type=0: get; type=1: postAmf; type=2: get www. return valid response */
+    private static byte[] sendOneRequest(RequestType type, String path, byte[] body, boolean handleAmfBlock, boolean flood){
         byte[] response;
         HttpRequest request;
         if (type==RequestType.GET){
@@ -199,7 +256,14 @@ public class Request {
             addHeaders(builder);
             request = builder.build();
             
-        }else {
+        }else if (type==RequestType.GET_WWW){
+            String uri = http + youkiaHost + path;
+            HttpRequest.Builder builder = HttpRequest.newBuilder();
+            builder.GET().uri(URI.create(uri)).timeout(Duration.ofMillis(timeout));
+            addHeaders(builder);
+            request = builder.build();
+            
+        }else{
             assert false;
             return null;
         }
@@ -207,7 +271,7 @@ public class Request {
         do {
             // 获得response，已经完成gzip解码
             try {
-                response = send(request);
+                response = send(request, !flood);
             } catch (ConnectException e){
                 Log.logln("错误：连接通道关闭。");
                 if (useProxy) {
@@ -249,7 +313,7 @@ public class Request {
                 delay(waitAmfTime);
             }
             else if (is302(response)){
-                Log.println("服务器返回302。将在%d分钟后重试".formatted(wait302Time/60000));
+                Log.println("服务器返回302。将在%d秒后重试".formatted(wait302Time/1000));
                 delay(wait302Time);
             }
             else if (isCharlesReport(response)){
@@ -275,7 +339,7 @@ public class Request {
     }
 
     /** to check if amf block is traggered */
-    private static boolean isAmfBlock(byte[] response){
+    protected static boolean isAmfBlock(byte[] response){
         AMF0Message msg = Util.tryDecodeAMF(response);
         if (msg == null) return false;
         AMF0Body body = msg.getBody(0);

@@ -56,11 +56,14 @@ public class Util {
     // }
 
     public static boolean delay(long ms){
+        if (ms <= 0) {
+            return true;
+        }
         try {
             Thread.sleep(ms);
             return true;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return false;
         }
     }
@@ -267,6 +270,26 @@ public class Util {
         }
     }
 
+    
+    public static boolean saveBytesToFile(byte[] response, String filename){
+        Path filePath = Path.of(filename);
+        Path dirPath = filePath.getParent();
+        if (dirPath!=null){
+            dirPath.toFile().mkdirs();
+        }
+        File oFile = filePath.toFile();
+        try {
+            oFile.createNewFile();
+            FileOutputStream fStream = new FileOutputStream(oFile);
+            fStream.write(response);
+            fStream.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static Integer obj2int(Object number){
         Integer res;
         if (number instanceof String){
@@ -353,21 +376,21 @@ public class Util {
         return res;
     }
 
-    /** format as yyyy-MM-dd HH:mm:ss */
+    /** format as yyyy-MM-dd HH:mm:ss.SSS */
     public static String dateFormat(Date date, String format){
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(date);
     }
 
-    /** format as yyyy-MM-dd HH:mm:ss */
+    /** format as yyyy-MM-dd HH:mm:ss.SSS */
     public static String dateFormatNow(String format){
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(new Date());
     }
 
-    /** yyyy-MM-dd HH:mm:ss */
+    /** yyyy-MM-dd HH:mm:ss.SSS */
     public static Date parseDate(String date){
-        return parseDate("yyyy-MM-dd HH:mm:ss", date);
+        return parseDate("yyyy-MM-dd HH:mm:ss.SSS", date);
     }
 
     public static Date parseDate(String format, String date){
@@ -381,6 +404,10 @@ public class Util {
     }
 
     public static Object loadObject(String filename){
+        return loadObject(filename, true);
+    }
+
+    public static Object loadObject(String filename, boolean notify){
         try {
             FileInputStream fInputStream = new FileInputStream(filename);
             ObjectInputStream oInputStream = new ObjectInputStream(fInputStream);
@@ -388,10 +415,10 @@ public class Util {
             oInputStream.close();
             return readobj;
         } catch (InvalidClassException e){
-            Log.println("类信息不一致。");
+            if (notify) Log.println("类信息不一致。");
             return null;
         } catch (FileNotFoundException e) {
-            Log.println("文件%s不存在！".formatted(filename));
+            if (notify) Log.println("文件%s不存在！".formatted(filename));
             return null;
         } catch (IOException e) {
             e.printStackTrace();
@@ -403,6 +430,10 @@ public class Util {
     }
 
     public static boolean saveObject(Object obj, String filename){
+        return saveObject(obj, filename, true);
+    }
+
+    public static boolean saveObject(Object obj, String filename, boolean notify){
         try {
             Path fileDir = Path.of(filename);
             if (fileDir.getParent()!=null) fileDir.getParent().toFile().mkdirs();
@@ -412,7 +443,7 @@ public class Util {
             outputStream.close();
             return true;
         } catch (FileNotFoundException e) {
-            Log.println("文件%s不存在！".formatted(filename));
+            if (notify) Log.println("文件%s不存在！".formatted(filename));
             return false;
         } catch (IOException e) {
             e.printStackTrace();
@@ -424,6 +455,27 @@ public class Util {
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String pid = name.split("@")[0];
         return Integer.parseInt(pid);
+    }
+
+    public static String readText(String filename, boolean notify){
+        try (FileInputStream reader = new FileInputStream(filename)) {
+            return new String(reader.readAllBytes());
+        } catch (FileNotFoundException e){
+            if (notify) Log.logln("文件%s不存在！".formatted(filename));
+            return null;
+        } catch (Exception e) {
+            // e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void writeText(String filename, String content, boolean notify){
+        try (FileOutputStream printer = new FileOutputStream(filename,false)) {
+            printer.write(content.getBytes());
+        } catch (Exception e) {
+            if (notify) Log.logln("写入到%s失败！".formatted(filename));
+            return;
+        }
     }
 
 }

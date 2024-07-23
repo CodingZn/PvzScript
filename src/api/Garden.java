@@ -132,7 +132,7 @@ public class Garden {
 
     public static boolean gardenBattleRepeat(int count){
         User me = User.getUser();
-        List<Friend> friendList = me.friends;
+        List<Friend> friendList = Friend.getFriendList();
         Document myGarden = lookGarden(me.grade,me.id, me.name);
         remainBeatCount = getRemainBeatCount(myGarden);
         if (count==-1) remainToBeat=remainBeatCount;

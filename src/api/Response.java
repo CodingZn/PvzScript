@@ -28,6 +28,15 @@ public class Response {
         }
     }
 
+    /** nullable if not exception */
+    public static String getExceptionDescription(byte[] response){
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (isOnStatusException(body, false)){
+            return getExceptionDescription(body);
+        }
+        return null;
+    }
+
     public static String getExceptionDescription(AMF0Body body){
         return (String) ((ASObject)body.getValue()).get("description");
     }

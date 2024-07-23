@@ -1,12 +1,11 @@
 package src.api;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static src.api.Request.sendGetRequest;
 
 public class Evolution implements Serializable{
 
@@ -52,7 +51,7 @@ public class Evolution implements Serializable{
         for (int i = 0; i < thispath.size(); i++) {
             String path = getPath(plantId, thispath.get(i));
             Log.log("route %d ".formatted(thispath.get(i)));
-            byte[] body = sendGetRequest(path);
+            byte[] body = Request.sendGetRequest(path);
             Document document = Util.parseXml(body);
             if (document==null){
                 i--;
