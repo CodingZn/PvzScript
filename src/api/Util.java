@@ -478,4 +478,21 @@ public class Util {
         }
     }
 
+    public static String bigInt2String(BigInteger value){
+        BigInteger yi_min = new BigInteger("100000000");
+        BigInteger cifang_min = new BigInteger("1000000000000");
+        if (value.compareTo(yi_min) <0) {
+            return value.toString();
+        }
+        else if (value.compareTo(yi_min)>=0 && value.compareTo(cifang_min)<0) {
+            double vl = value.doubleValue();
+            return "%.2f亿".formatted(vl/100000000);
+        }
+        else {
+            int len = value.toString().length();
+            return "%s.%s×10^%d亿".formatted(value.toString().substring(0,1)
+            ,value.toString().substring(1,3),len-9);
+        }
+
+    }
 }
