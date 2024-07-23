@@ -23,7 +23,7 @@ public class Battle {
     /** 战斗后同步仓库信息的频率。
      * 0表示不同步，1表示每次都同步，n>=1表示每打n次后同步一次 
      * */
-    private static int updateFreq = 10;
+    protected static int updateFreq = 10;
     public static int setUpdateFreq(int newFreq){
         if (newFreq>=0){
             updateFreq = newFreq;
@@ -36,7 +36,7 @@ public class Battle {
      * n==0表示没有阈值，可以无限带级。
      * n>=1表示设定有效炮灰的最大等级，超过该等级则不会上场。
     */
-    private static int maxLevel = 0;
+    protected static int maxLevel = 0;
     public static int setMaxLevel(int newl){
         if (newl>=-1){
             maxLevel = newl;
@@ -45,7 +45,7 @@ public class Battle {
     }
 
     /** 可带级炮灰无法填满时，是否使用带级完成的炮灰填满战斗格子 */
-    private static boolean kpFull = true;
+    protected static boolean kpFull = true;
     public static boolean setKeepFull(boolean f){
         kpFull = f;
         return kpFull;
@@ -55,7 +55,7 @@ public class Battle {
      * n=0表示不使用挑战书。
      * 要求1<=n<=25
     */
-    private static int autobook = 0;
+    protected static int autobook = 0;
     public static int setAutoBook(int newa){
         if (newa>=0 && newa <= 25){
             autobook = newa;

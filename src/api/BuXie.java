@@ -25,9 +25,9 @@ public class BuXie {
     public static final int ZHONGJIXIE_ID = 14;
     public static final int GAOJIXIE_ID = 15;
     
-    private static int low_reserve = 0;
-    private static int mid_reserve = 0;
-    private static int high_reserve = 0;
+    protected static int low_reserve = 0;
+    protected static int mid_reserve = 0;
+    protected static int high_reserve = 0;
 
     public static double getThreshold(){
         return threshold;

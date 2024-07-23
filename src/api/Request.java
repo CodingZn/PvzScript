@@ -22,25 +22,25 @@ import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 public class Request {
-    private static int timeout = 40000;
+    protected static int timeout = 40000;
     private static String host;
     private static final String realhost = "pvz-s1.youkia.com";
     private static final String http = "http://";
     private static final String amfPath = "/pvz/amf/";
 
-    private static final int leastInterval = 50;
-    private static int reqInterval = 1000;
+    protected static final int leastInterval = 50;
+    protected static int reqInterval = 1000;
     private static Long lastSentTime = 0L;
 
-    private static int wait2441Time = 15000;
-    private static int waitAmfTime = 10000;
-    private static int wait302Time = 2*60*1000;
-    private static final int leastRetryInterval = 1000;
-    private static int retryInterval = 20000;
-    private static int retryMaxCount = 10;
+    protected static int wait2441Time = 15000;
+    protected static int waitAmfTime = 10000;
+    protected static int wait302Time = 2*60*1000;
+    protected static final int leastRetryInterval = 1000;
+    protected static int retryInterval = 20000;
+    protected static int retryMaxCount = 10;
 
-    private static boolean useProxy;
-    private static int proxyPort;
+    protected static boolean useProxy;
+    protected static int proxyPort;
 
     private enum RequestType{
         GET, POST_AMF
@@ -93,6 +93,27 @@ public class Request {
             Request.reqInterval = interval;
         }
         return Request.reqInterval;
+    }
+
+    public static int setBlockTime(int value){
+        if (value >= leastRetryInterval){
+            wait2441Time = value;
+        }
+        return wait2441Time;
+    }
+
+    public static int setAMFBlockTime(int value){
+        if (value >= leastRetryInterval){
+            waitAmfTime = value;
+        }
+        return waitAmfTime;
+    }
+
+    public static int setTimeout(int value){
+        if (value >= leastRetryInterval){
+            timeout = value;
+        }
+        return timeout;
     }
 
     public static int setRetry(int max_count, int retry_interval){
@@ -312,9 +333,7 @@ public class Request {
         else if (args.length == 2 && args[0].equals("setblock")) {
             try {
                 int value = Integer.parseInt(args[1]);
-                if (value >= leastRetryInterval){
-                    wait2441Time = value;
-                }
+                setBlockTime(value);
                 Log.log("new wait time: %d\n".formatted(Request.wait2441Time));
                 return;
             } catch (Exception e) {
@@ -323,9 +342,7 @@ public class Request {
         else if (args.length == 2 && args[0].equals("setamfblock")) {
             try {
                 int value = Integer.parseInt(args[1]);
-                if (value >= leastRetryInterval){
-                    waitAmfTime = value;
-                }
+                setAMFBlockTime(value);
                 Log.log("new amf wait time: %d\n".formatted(Request.waitAmfTime));
                 return;
             } catch (Exception e) {
@@ -334,9 +351,7 @@ public class Request {
         else if (args.length == 2 && args[0].equals("timeout")) {
             try {
                 int value = Integer.parseInt(args[1]);
-                if (value >= leastRetryInterval){
-                    timeout = value;
-                }
+                setTimeout(value);
                 Log.log("new timeout: %d\n".formatted(Request.timeout));
                 return;
             } catch (Exception e) {

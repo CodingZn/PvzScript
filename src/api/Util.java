@@ -224,9 +224,9 @@ public class Util {
             //使用解析器生成Document实例
             return documentBuilder.parse(bInputStream);
         } catch (Exception e) {
-            Util.printBytes(byteArray, System.out);
-            System.out.println(byteArray);
-            e.printStackTrace();
+            // Util.printBytes(byteArray, System.out);
+            // System.out.println(byteArray);
+            // e.printStackTrace();
             return null;
         }
     }

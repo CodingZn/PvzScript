@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import src.interf.OrganismGradeSort;
 import src.api.Warehouse.SellType;
 
 import static src.api.Util.obj2long;
@@ -205,21 +205,20 @@ public class Organism {
         return organismMap;
     }
 
+    public static List<Organism> getOrganismList(boolean byGrade){
+        List<Organism> orgList = new ArrayList<>(getOrganisms().values());
+        if (byGrade) {
+            Collections.sort(orgList, new OrganismGradeSort());
+        }
+        return orgList;
+    }
+
     private static void show(boolean byGrade, String filter){
         if (Warehouse.loadWarehouse()){
             LinkedHashMap<Integer, Organism> map = getOrganisms();
             if (byGrade){
                 List<Organism> orgList = new ArrayList<>(map.values());
-                Collections.sort(orgList, new Comparator<Organism>() {
-                    @Override
-                    public int compare(Organism o1, Organism o2) {
-                        if (o1.grade > o2.grade){
-                            return -1;
-                        }else if (o1.grade == o2.grade && o1.id < o2.id){
-                            return -1;
-                        }else return 1;
-                    }
-                });
+                Collections.sort(orgList, new OrganismGradeSort());
 
                 if (filter==null) {
                     for (Organism organism : orgList) {

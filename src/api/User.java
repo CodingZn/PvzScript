@@ -101,6 +101,9 @@ public class User {
         String url = "/pvz/index.php/default/user/sig/e5bf533f2151a47642b38ba33ae21953?"+Long.toString(new Date().getTime());
         byte[] response = Request.sendGetRequest(url);
         Document document = Util.parseXml(response);
+        if (document == null) {
+            return null;
+        }
         me = new User(document);
         return me;
     }
