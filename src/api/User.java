@@ -12,6 +12,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import src.interf.UserChangeCallback;
+
 public class User {
     /** 平台id */
     public final int user_id;
@@ -77,30 +79,34 @@ public class User {
     }
 
     public BigInteger getMoney(){ return money; }
-    public void changeMoney(long amount){ money.add(new BigInteger(Long.toString(amount))); }
+    public void changeMoney(long amount){ 
+        money.add(new BigInteger(Long.toString(amount)));
+        doCallback(); 
+    }
 
     public int getRmbMoney(){ return rmb_money; }
-    public void changeRmbMoney(int amount){ rmb_money+=amount; }
+    public void changeRmbMoney(int amount){ rmb_money+=amount;doCallback(); }
 
     public int getStoneCha(){ return stone_cha_count; }
-    public void changeStoneCha(int amount){ stone_cha_count+=amount; }
+    public void changeStoneCha(int amount){ stone_cha_count+=amount;doCallback(); }
 
     public int getTreeHeight(){ return tree_height; }
-    public void changeTreeHeight(int amount){ tree_height+=amount; }
+    public void changeTreeHeight(int amount){ tree_height+=amount;doCallback(); }
 
     public boolean getTreeDone(){ return tree_done; }
-    public void changeTreeDone(boolean new_done){ tree_done=new_done; }
+    public void changeTreeDone(boolean new_done){ tree_done=new_done;doCallback(); }
 
     public int getCaveCha(){ return cave_cha_amount; }
     public void changeCaveCha(int amount){ 
         cave_cha_amount+=amount; 
+        doCallback();
     }
 
     public int getHonor(){ return honor; }
-    public void changeHonor(int amount){ honor+=amount; }
+    public void changeHonor(int amount){ honor+=amount;doCallback(); }
 
     public int getFubenCha(){ return fuben_cha; }
-    public void changeFubenCha(int amount){ fuben_cha+=amount; }
+    public void changeFubenCha(int amount){ fuben_cha+=amount;doCallback(); }
 
     private static User me;
 
@@ -152,6 +158,17 @@ public class User {
             return savePic(User.getUser().user_id,filename);
         }
         return false;
+    }
+
+    /** 信息展示回调 */
+    private UserChangeCallback callback;
+    private void doCallback(){
+        if (callback!=null) {
+            callback.onCallback(User.getUser());
+        }
+    }
+    public void setCallback(UserChangeCallback cbk){
+        this.callback=cbk;
     }
 
 }
