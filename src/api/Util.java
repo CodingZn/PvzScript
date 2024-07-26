@@ -469,6 +469,18 @@ public class Util {
         }
     }
 
+    public static String readText(String filename, boolean notify, String charset){
+        try (FileInputStream reader = new FileInputStream(filename)) {
+            return new String(reader.readAllBytes(), charset);
+        } catch (FileNotFoundException e){
+            if (notify) Log.logln("文件%s不存在！".formatted(filename));
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static void writeText(String filename, String content, boolean notify){
         try (FileOutputStream printer = new FileOutputStream(filename,false)) {
             printer.write(content.getBytes());
@@ -495,4 +507,45 @@ public class Util {
         }
 
     }
+    /** 获取账户文件夹名，从api模块里获取信息，返回可能为null */ 
+    public static final String getAccountDirName(){
+        try {
+            int server=Request.getServer();
+            int id = User.getUser().id;
+            return getAccountDirName(server, id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    /** 获取账户文件夹名，允许null输入，返回可能为null */
+    public static final String getAccountDirName(Integer server, Integer id){
+        try {
+            return "%02d_%d".formatted(server,id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    /** 获取所有子文件夹名 */
+    public static List<String> getSubDirs(String dir){
+        List<String> dirs = new ArrayList<>();
+        File folder = new File(dir); // 指定当前文件夹路径
+        File[] files = folder.listFiles(); // 获取当前文件夹下的所有文件和文件夹
+        for (File file : files) {
+            if (file.isDirectory()) { // 判断是否为文件夹
+                String fileName = file.getName(); 
+                dirs.add(fileName);
+            }
+        }
+        return dirs;
+    }
+    /** 在一大串字符串中截取两个字符串中间的字符串。 */
+    public static String findStrBetween(String str, String bg, String ed){
+        int begin = str.indexOf(bg);
+        int end = str.indexOf(ed);
+        if (begin==-1 || end==-1){
+            return null;
+        }
+        return str.substring(begin+bg.length(), end);
+    }
+
 }
