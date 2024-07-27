@@ -2,12 +2,14 @@ package src.api;
 
 import static src.api.GeneralBattle.*;
 import static src.api.Request.sendPostAmf;
+import static src.api.Util.obj2int;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.exadel.flamingo.flex.amf.AMF0Body;
 import com.exadel.flamingo.flex.amf.AMF0Message;
 
 import flex.messaging.io.ASObject;
@@ -117,6 +119,25 @@ public class FubenBattle {
         return true;
     }
 
+    public static boolean openFuben(int id){
+        byte[] req = Util.encodeAMF("api.fuben.openCave", "/1", new Object[]{id});
+        byte[] response = Request.sendPostAmf(req, true);
+        AMF0Body body = Util.decodeAMF(response).getBody(0);
+        if (Response.isOnStatusException(body, true)){
+            if (Response.getExceptionDescription(body).equals("Exception:此关卡已经开启")){
+                return true;
+            }
+            return false;
+        }
+        ASObject obj = ((ASObject)body.getValue());
+        if (obj2int(obj.get("cave_id"))==id){
+            Log.logln("成功开启%d-%s".formatted(id,(String)obj.get("name")));
+            return true;
+        }
+        Log.logln("未知错误！");
+        return false;
+    }
+
     public static void main(String[] args) {
         if (args.length == 3){
             int caveid = Integer.parseInt(args[0]);
@@ -136,11 +157,16 @@ public class FubenBattle {
             int n = Integer.parseInt(args[1]);
             useFubenBook(n);
             return;
+        }else if (args.length == 2 && args[0].equals("open")){
+            int n = Integer.parseInt(args[1]);
+            openFuben(n);
+            return;
         }
 
         System.out.println("args: <caveid> <plantFile> <count_n>");
         System.out.println("or  : strategy <number>");
         System.out.println("or  : autofbbook <number>");
         System.out.println("or  : usebook <number>");
+        System.out.println("or  : open <number>");
     }
 }
