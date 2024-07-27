@@ -5,7 +5,7 @@ public class Cookie {
 
     public static boolean isValidCookie(String str){
         if (str==null) return false;
-        return str.matches("^[A-Za-z0-9_;= %/,\\+\\*\\.\\w]+$");
+        return str.matches("^[A-Za-z0-9_;= %/,\\+\\*\\.\\w\\n]+$");
     }
 
     public static boolean loadCookie(String filename){
@@ -34,6 +34,7 @@ public class Cookie {
             if (!str.equals(currCookie)) {
                 User.clear();
             }
+            str=str.replaceAll("\\n", "");
             currCookie = str;
         }
         else{
