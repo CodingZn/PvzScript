@@ -111,7 +111,7 @@ public class Quality {
                 break;
             }
         }
-        Log.logln();
+        Log.println();
         return true;
     }
 

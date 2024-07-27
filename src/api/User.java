@@ -71,6 +71,11 @@ public class User {
 
     }
 
+    @Override
+    public String toString() {
+        return "s%d-%s".formatted(Request.getServer(),this.name);
+    }
+
     public BigInteger getMoney(){ return money; }
     public void changeMoney(long amount){ money.add(new BigInteger(Long.toString(amount))); }
 
@@ -114,6 +119,11 @@ public class User {
             // e.printStackTrace();
             me=null;
         }
+        return me;
+    }
+
+    /** 不加载，可能为null */
+    public static User getMe(){
         return me;
     }
 
