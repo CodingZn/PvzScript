@@ -18,6 +18,8 @@ public class GeneralBattle {
         int amount = obj2int(awardObj.get(amount_field));
         sb.append(Tool.getTool(toolid).toShortString(amount));
         sb.append(" ");
+        // 增加数量
+        MyTool.getTool(toolid).changeAmount(amount);
         return sb.toString();
     }
     

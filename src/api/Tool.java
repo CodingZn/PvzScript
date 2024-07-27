@@ -113,6 +113,15 @@ public class Tool implements Serializable{
         }
     }
 
+    public static Tool findToolByName(String fullname){
+        for (Tool tool : toolMap.values()) {
+            if (tool.name.equals(fullname)){
+                return tool;
+            }
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         if (args.length==2 && args[0].equals("show")){
             System.out.println(getToolMap().get(Integer.parseInt(args[1])));

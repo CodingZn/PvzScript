@@ -47,7 +47,12 @@ public class MyTool {
         if (toolsMap==null || toolsMap.size()==0){
             Warehouse.loadWarehouse();
         }
-        return toolsMap.getOrDefault(id, new MyTool(id, 0));
+        MyTool res = toolsMap.get(id);
+        if (res==null) {
+            res = new MyTool(id, 0);
+            toolsMap.put(id, res);
+        }
+        return res;
     }
 
     public static boolean loadTools(Document document){

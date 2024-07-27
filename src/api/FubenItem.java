@@ -10,14 +10,13 @@ import flex.messaging.io.ASObject;
 
 public class FubenItem {
     
-    int caveid;
-    String name;
-    int scene;
+    public final int caveid;
+    public final String name;
+    public final int scene;
 
     private FubenItem(ASObject obj, int sc){
         caveid = Util.obj2int(obj.get("cave_id"));
-        name = (String)(obj.get("name"));
-        name = name.replaceAll("\\n", "");
+        name = ((String)obj.get("name")).replaceAll("\\n", "");
         scene = sc;
     }
     @Override

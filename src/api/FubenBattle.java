@@ -28,6 +28,15 @@ public class FubenBattle {
         return strategy;
     }
 
+    private static int autoFBbook = 0;
+    public static int setAutoFBbook(int newValue){
+        if (newValue>=0){
+            autoFBbook = newValue;
+        }
+        Log.log("new autoFBbook: %d\n".formatted(autoFBbook));
+        return autoFBbook;
+    }
+
     public static final int FUBEN_BOOK_ID = 612;
 
     public static boolean battle(int caveid, List<Integer> plantIds){
@@ -35,21 +44,43 @@ public class FubenBattle {
         value[0] = caveid;
         Set<Integer> participants = new HashSet<>(plantIds);
         value[1] = Util.integerArr2int(participants.toArray());
-        byte[] reqAmf = Util.encodeAMF("api.fuben.challenge", "/1", value);
-        Log.log("打副本%d: ".formatted(caveid));
-        Log.print(resolveFighter(plantIds));
-        byte[] resp = Request.sendPostAmf(reqAmf, true);
-        AMF0Message msg = Util.decodeAMF(resp);
-        if (msg==null) return false;
-        if(Response.isOnStatusException(msg.getBody(0), true)){
-            return false;
+        if (autoFBbook>0 && User.getUser().getFubenCha()<=0){
+            if (!useFubenBook(autoFBbook)) return false;
         }
+        AMF0Message msg = null;
+        do {
+            byte[] reqAmf = Util.encodeAMF("api.fuben.challenge", "/1", value);
+            Log.log("打副本%d: ".formatted(caveid));
+            Log.print(resolveFighter(plantIds));
+            byte[] resp = Request.sendPostAmf(reqAmf, true);
+            msg = Util.decodeAMF(resp);
+            if (msg==null) return false;
+            if(Response.isOnStatusException(msg.getBody(0), true)){
+                String exc = Response.getExceptionDescription(msg.getBody(0));
+                if (exc.equals("Exception:副本挑战次数不够")){
+                    if (autoFBbook>0 && useFubenBook(autoFBbook)){
+                        continue;
+                    }
+                }
+                return false;
+            }
+            break;
+        } while (true);
         Log.println("√ ");
+        User.getUser().changeFubenCha(-1);
         ASObject resObj = (ASObject)msg.getBody(0).getValue();
         boolean res = getAward((String)resObj.get("awards_key"));
         res=BuXie.blindBuxie(resObj, plantIds, BuXie.EMPTY_LIST) && res;
         return res;
         
+    }
+
+    public static boolean useFubenBook(int n){
+        boolean res = Warehouse.useTool(FUBEN_BOOK_ID,n);
+        if (res) {
+            User.getUser().changeFubenCha(n);
+        }
+        return res;
     }
 
     public static boolean useFubenClock(int fubenCaveId, int n){
@@ -97,9 +128,19 @@ public class FubenBattle {
             int newStrategy = Integer.parseInt(args[1]);
             setStrategy(newStrategy);
             return;
+        }else if (args.length == 2 && args[0].equals("autofbbook")){
+            int newStrategy = Integer.parseInt(args[1]);
+            setAutoFBbook(newStrategy);
+            return;
+        }else if (args.length == 2 && args[0].equals("usebook")){
+            int n = Integer.parseInt(args[1]);
+            useFubenBook(n);
+            return;
         }
 
         System.out.println("args: <caveid> <plantFile> <count_n>");
         System.out.println("or  : strategy <number>");
+        System.out.println("or  : autofbbook <number>");
+        System.out.println("or  : usebook <number>");
     }
 }
