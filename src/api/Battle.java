@@ -176,7 +176,7 @@ public class Battle {
         }).toList());
         return battleRepeatC(cs, hard_level, zhuli, paohui, useSand, true);
     }
-    /** 一批战斗 */
+    /** 一批战斗，显示洞口信息 */
     public static boolean battleRepeatC(List<Cave> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean useSand, boolean loadWare){
 
         if (!BuXie.buxie(zhuli, paohui, loadWare)){
@@ -191,7 +191,8 @@ public class Battle {
             boolean res = true;
             // 获取炮灰信息
             paohui_actual = paohuiPool.getChosenPaohuis();
-            if (!paohuiPool.hasValidPaohui()) {
+            // 仅开启补血时，会对炮灰进行有效带级
+            if (BuXie.isEnabled() && !paohuiPool.hasValidPaohui()) {
                 Log.logln("炮灰均带级完成！");
                 return false;
             }
@@ -236,69 +237,8 @@ public class Battle {
             else{
                 SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, zhuli, paohui);
                 res = BuXie.blindBuxie(attacked.getKey(), attacked.getValue())&&res;
-                paohuiPool.updateExcept(paohui_actual, attacked.getValue());
-            }
-            
-            if (!res) return false;
-        }
-        return true;
-    }
-
-    /** 一批战斗不补血 */
-    public static boolean battleNoBuxie(List<Cave> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean force){
-
-        List<Integer> paohui_actual;
-
-        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
-
-        // int blindCount = 0;
-        for (int ci=0; ci<caves.size(); ci++) {
-            Cave c = caves.get(ci);
-            boolean res = true;
-            // 获取炮灰信息
-            paohui_actual = paohuiPool.getChosenPaohuis();
-            // if (!paohuiPool.hasValidPaohui()) {
-            //     Log.logln("炮灰均带级完成！");
-            //     return false;
-            // }
-            // 处理挑战次数和时之沙
-            if (User.getUser().getCaveCha() <= 0 && autobook+autoAdvBook > 0){
-                res = addChallengeCave(autobook,autoAdvBook) && res;
-                if (!res) return false;
-            }
-            // 战斗
-            AMF0Body body;
-            if (!force) body = battle(c, hard_level, zhuli, paohui_actual); 
-            else body=battleForce(c, hard_level, zhuli, paohui_actual);
-            if (Response.isOnStatusException(body, true)){
-                String exc = Response.getExceptionDescription(body);
-                if (exc.equals("Exception:今日狩猎场挑战次数已达上限，明天再来吧")){
-                    User.getUser().changeCaveCha(-User.getUser().getCaveCha());
-                    if (autobook+autoAdvBook==0) return false;
-                    res = addChallengeCave(autobook,autoAdvBook) && res;
-                    if (!res) return false;
-                    ci--;
-                }
-                continue;
-            }
-            // 正常打洞后续处理
-            Log.println("√ ");
-            User.getUser().changeCaveCha(-1);
-            ASObject resObj = (ASObject)body.getValue();
-            res = getAward((String)resObj.get("awards_key")) && res;
-            blindCount++;
-            // 请求仓库同步信息
-            if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){
-                blindCount=0;
-                Warehouse.loadWarehouse();
-                // res = BuXie.buxie(zhuli, paohui, true)&&res;
-                paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
-            }
-            // 继续盲打
-            else{
-                SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, zhuli, paohui);
-                // res = BuXie.blindBuxie(attacked.getKey(), attacked.getValue())&&res;
-                paohuiPool.removePaohui(attacked.getValue());
+                // 若没有启用补血，则丢弃所有被攻击的炮灰
+                if (!BuXie.isEnabled()) paohuiPool.removePaohui(attacked.getValue());
                 paohuiPool.updateExcept(paohui_actual, attacked.getValue());
             }
             

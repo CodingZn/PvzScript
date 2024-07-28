@@ -23,6 +23,7 @@ public class Settings implements Serializable {
     public int update_freq;
 
     // BuXie
+    public boolean buxie_enable;
     public double buxie_threshold;
     public int xp_di;
     public int xp_gao;
@@ -60,8 +61,10 @@ public class Settings implements Serializable {
         Battle.setAutoAdvBook(data.auto_advbook);
         Battle.setUpdateFreq(data.update_freq);
 
-        BuXie.setThreshold(data.buxie_threshold);
-        BuXie.setReserve(data.xp_di, data.xp_zhong, data.xp_gao);
+        if (data.buxie_enable){
+            BuXie.setThreshold(data.buxie_threshold);
+            BuXie.setReserve(data.xp_di, data.xp_zhong, data.xp_gao);
+        }
     }
 
     public static void clear(){
@@ -88,6 +91,7 @@ public class Settings implements Serializable {
         res.auto_advbook=Battle.autoAdvBook;
         res.update_freq=Battle.updateFreq;
         
+        res.buxie_enable=BuXie.isEnabled();
         res.buxie_threshold=BuXie.getThreshold();
         res.xp_di=BuXie.low_reserve;
         res.xp_gao=BuXie.high_reserve;

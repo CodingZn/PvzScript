@@ -29,6 +29,8 @@ public class BuXie {
     protected static int mid_reserve = 0;
     protected static int high_reserve = 0;
 
+    private static boolean enable=true;
+
     public static double getThreshold(){
         return threshold;
     }
@@ -58,6 +60,11 @@ public class BuXie {
         return res;
     }
 
+    public static void setEnable(boolean enable_){
+        enable=enable_;
+    }
+    public static boolean isEnabled(){return enable;}
+
     /** type: 1|2|3 or 13|14|15 */
     private static long getXiepingAmount(int type){
         if (type==1||type==13) {
@@ -75,7 +82,7 @@ public class BuXie {
     public static final List<Integer> EMPTY_LIST = new ArrayList<>();
 
     /** second arg: 13, 14, 15 */
-    public static boolean bu1xie(int plantId, int xiepingId){
+    private static boolean bu1xie(int plantId, int xiepingId){
         int[] value = new int[]{plantId, xiepingId};
         byte[] reqAmf = Util.encodeAMF("api.apiorganism.refreshHp", "/1", value);
         byte[] response = Request.sendPostAmf(reqAmf, false);
@@ -100,7 +107,7 @@ public class BuXie {
 
     /** 对所有植物补血，炮灰补低血，主力预测 */
     public static boolean blindBuxie(Collection<Integer> zhuli, Collection<Integer> paohui){
-
+        if (!enable) return true;
         long diji = getXiepingAmount(DIJIXIE_ID);
         long zhongji = getXiepingAmount(ZHONGJIXIE_ID);
         long gaoji = getXiepingAmount(GAOJIXIE_ID);
@@ -138,11 +145,13 @@ public class BuXie {
 
     /** 主力使用最少的血瓶补到阈值以上；炮灰保证有血
      * @param requestWare 是否请求仓库最新信息
+     * 若disable 仍可能请求仓库。
      */
     public static boolean buxie(Collection<Integer> zhuli, Collection<Integer> paohui, boolean requestWare){
         if(requestWare){
             Warehouse.loadWarehouse();
         }
+        if (!enable) return true;
 
         long diji = getXiepingAmount(DIJIXIE_ID);
         long zhongji = getXiepingAmount(ZHONGJIXIE_ID);
@@ -296,8 +305,18 @@ public class BuXie {
             setReserve(low, mid, high);
             return;
         }
+        else if (args.length==1){
+            if (args[0].equals("enable")){
+                setEnable(true);
+                return;
+            }else if (args[0].equals("disable")){
+                setEnable(false);
+                return;
+            }
+        }
         System.out.println("args: <plantid> <xiepingid>|1|2|3");
         System.out.println("1|2|3 means xiepingid: 13|14|15");
+        System.out.println("or  : enable|disable");
         System.out.println("or  : threshold <percent>");
         System.out.println("or  : reserve <low_n> <mid_n> <high_n>");
     }
