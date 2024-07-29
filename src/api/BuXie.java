@@ -88,14 +88,25 @@ public class BuXie {
         byte[] response = Request.sendPostAmf(reqAmf, false);
 
         Log.log("%s 使用 %s".formatted(Organism.getOrganism(plantId).toShortString(), Tool.getTool(xiepingId).name));
-        Object obj = Util.decodeAMF(response).getBody(0).getValue();
-        if (obj instanceof String){
-            Log.print(" hp=%s\n".formatted(obj));
-            MyTool.getTool(xiepingId).changeAmount(-1);
+        String exception = Response.getExceptionDescription(response);
+        if (exception==null){
+            Object obj = Util.decodeAMF(response).getBody(0).getValue();
+            if (obj instanceof String){
+                Log.print(" hp=%s\n".formatted(obj));
+                MyTool.getTool(xiepingId).changeAmount(-1);
+                return true;
+            }
+            else return false;
+        }
+        else if (exception.equals("Exception:该植物血量已满")){
+            Log.println(exception);
             return true;
         }
-        Log.print(" failed\n");
-        return !Response.isOnStatusException(Util.decodeAMF(response).getBody(0), true);
+        else{
+            Log.println(exception);
+            return false;
+        }
+        
 
     }
 
