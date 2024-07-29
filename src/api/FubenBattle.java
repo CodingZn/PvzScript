@@ -52,7 +52,7 @@ public class FubenBattle {
         AMF0Message msg = null;
         do {
             byte[] reqAmf = Util.encodeAMF("api.fuben.challenge", "/1", value);
-            Log.log("打副本%d: ".formatted(caveid));
+            Log.log("打副本%s: ".formatted(FubenItem.map.get(caveid)));
             Log.print(resolveFighter(plantIds));
             byte[] resp = Request.sendPostAmf(reqAmf, true);
             msg = Util.decodeAMF(resp);
@@ -90,7 +90,7 @@ public class FubenBattle {
         value[0] = fubenCaveId;
         value[1] = n;
         byte[] req= Util.encodeAMF("api.fuben.addCaveChallengeCount", "/1", value);
-        Log.log("对关卡 %d 使用 %d 个怀表: ".formatted(fubenCaveId, n));
+        Log.log("对关卡 %s 使用 %d 个怀表: ".formatted(FubenItem.map.get(fubenCaveId), n));
         byte[] res=sendPostAmf(req, true);
         AMF0Message msg = Util.decodeAMF(res);
         if (msg==null || Response.isOnStatusException(msg.getBody(0), true)) 
