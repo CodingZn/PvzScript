@@ -96,12 +96,12 @@ public class PaohuiPool {
     }
     
     /** 构建炮灰池，支持-1 */
-    public PaohuiPool(Collection<Integer> zhuli, List<Integer> paohui, int max_level, boolean kpFull){
+    public PaohuiPool(Collection<Integer> zhuli, Collection<Integer> paohui, int max_level, boolean kpFull){
         int level_limit = max_level;
         keepFull = kpFull;
         if (level_limit==-1){
             space=999;
-            paohuiIdList = paohui;
+            paohuiIdList = new ArrayList<Integer>(paohui);
             maxLevel = level_limit;
             return;
         }else if (level_limit==0){

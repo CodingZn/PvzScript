@@ -6,6 +6,7 @@ import java.util.AbstractMap.SimpleEntry;
 import static src.api.GeneralBattle.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -73,7 +74,7 @@ public class Battle {
     public static final Integer ADV_CHA_BOOK_TOOL_ID = 7;
 
     
-    private static byte[] shuaDongAmf(int caveid, int hard_level, List<Integer> zhuli, List<Integer> paohui){
+    private static byte[] shuaDongAmf(int caveid, int hard_level, Collection<Integer> zhuli, Collection<Integer> paohui){
         Object[] value = new Object[3];
         value[0] = caveid;
         Set<Integer> participants = new HashSet<>(paohui);
@@ -133,7 +134,7 @@ public class Battle {
     }
 
     /** 一次战斗，不包括领奖、补血 */
-    public static AMF0Body battle(Cave cave, int hard_level, List<Integer> zhuli, List<Integer> paohui){
+    public static AMF0Body battle(Cave cave, int hard_level, Collection<Integer> zhuli, Collection<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(cave.oi, hard_level, zhuli, paohui);
         byte[] response;
         Log.log("刷洞%s: %s".formatted(cave.toString(),resolveFighter(zhuli, paohui)));
@@ -143,7 +144,7 @@ public class Battle {
     }
   
     /** 抢洞 */
-    public static AMF0Body battleForce(Cave cave, int hard_level, List<Integer> zhuli, List<Integer> paohui){
+    public static AMF0Body battleForce(Cave cave, int hard_level, Collection<Integer> zhuli, Collection<Integer> paohui){
         byte[] reqAmf = shuaDongAmf(cave.oi, hard_level, zhuli, paohui);
         byte[] response=null;
         Log.log("抢洞%s: %s".formatted(cave.toString(),resolveFighter(zhuli, paohui)));
@@ -170,14 +171,14 @@ public class Battle {
 
     protected static int blindCount = 0;
     /** 一批战斗 */
-    public static boolean battleRepeat(List<Integer> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean useSand){
+    public static boolean battleRepeat(List<Integer> caves, int hard_level, Collection<Integer> zhuli, Collection<Integer> paohui, boolean useSand){
         List<Cave> cs = new ArrayList<>(caves.stream().map(i->{
             return Cave.fCave(i);
         }).toList());
         return battleRepeatC(cs, hard_level, zhuli, paohui, useSand, true);
     }
     /** 一批战斗，显示洞口信息 */
-    public static boolean battleRepeatC(List<Cave> caves, int hard_level, List<Integer> zhuli, List<Integer> paohui, boolean useSand, boolean loadWare){
+    public static boolean battleRepeatC(List<Cave> caves, int hard_level, Collection<Integer> zhuli, Collection<Integer> paohui, boolean useSand, boolean loadWare){
 
         if (!BuXie.buxie(zhuli, paohui, loadWare)){
             Log.logln("战斗前补血失败！");
