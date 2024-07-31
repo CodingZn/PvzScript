@@ -489,7 +489,7 @@ public class Util {
             return;
         }
     }
-
+    
     public static String bigInt2String(BigInteger value){
         BigInteger yi_min = new BigInteger("100000000");
         BigInteger cifang_min = new BigInteger("1000000000000");

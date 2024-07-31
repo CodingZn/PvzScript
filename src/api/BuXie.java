@@ -92,7 +92,7 @@ public class BuXie {
         if (exception==null){
             Object obj = Util.decodeAMF(response).getBody(0).getValue();
             if (obj instanceof String){
-                Log.print(" hp=%s\n".formatted(obj));
+                Log.println(" hp=%s".formatted(obj));
                 MyTool.getTool(xiepingId).changeAmount(-1);
                 return true;
             }

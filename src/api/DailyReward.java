@@ -293,7 +293,7 @@ public class DailyReward {
         if (Response.isOnStatusException(body, true)){
             return false;
         }else{
-            Log.print("√ \n");
+            Log.println("√");
             return true;
         }
         

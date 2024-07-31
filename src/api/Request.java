@@ -298,7 +298,7 @@ public class Request {
                     return null;
                 }
                 else{
-                    Log.print("将在%2d秒后重试最多%2d次\n".formatted(retryInterval/1000, retryCount));
+                    Log.println("将在%2d秒后重试最多%2d次".formatted(retryInterval/1000, retryCount));
                     delay(retryInterval);
                     retryCount--;
                     continue;

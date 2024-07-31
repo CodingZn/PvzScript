@@ -47,7 +47,7 @@ public class Evolution implements Serializable{
     }
 
     public static boolean evolve(int plantId, List<Integer> thispath){
-        Log.log("当前: %s\n".formatted(Organism.getOrganism(plantId).toShortString()));
+        Log.logln("当前: %s".formatted(Organism.getOrganism(plantId).toShortString()));
         for (int i = 0; i < thispath.size(); i++) {
             String path = getPath(plantId, thispath.get(i));
             Log.log("route %d ".formatted(thispath.get(i)));
