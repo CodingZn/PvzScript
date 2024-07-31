@@ -23,7 +23,7 @@ public class Warehouse {
     private static Document warehouseDoc = null;
 
     public static boolean loadWarehouse() {
-        Log.logln("同步仓库信息...");
+        Log.logln("%s同步仓库信息...".formatted(User.getMeStr()));
         byte[] response = Request.sendGetRequest(Warehouse.getPath());
         Document document = Util.parseXml(response);
         if (document == null){
@@ -50,7 +50,7 @@ public class Warehouse {
             Element wareEle = (Element)(warehouseDoc.getElementsByTagName("warehouse").item(0));
             now_grid_num = Integer.parseInt(wareEle.getAttribute("organism_grid_amount"));
         }
-        Log.log("当前格子数: %d\n".formatted(now_grid_num));
+        Log.logln("当前格子数: %d".formatted(now_grid_num));
         if (now_grid_num>=goal) return true;
         do {
             byte[] response = Request.sendGetRequest(path);

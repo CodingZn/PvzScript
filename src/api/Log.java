@@ -8,10 +8,9 @@ import java.nio.file.Path;
 public class Log {
 
     private static String addLogInfo(String content){
-        User me = User.getMe();
         String timeStr = Util.dateFormatNow("HH:mm:ss.SSS");
-        String meStr = me==null?"":"<"+me.toString()+"> ";
-        return "%s %s%s".formatted(timeStr,meStr,content);
+        String meStr = User.getMeStr();
+        return "%s <%s>%s".formatted(timeStr,meStr,content);
     }
 
     public static void flog(String str){

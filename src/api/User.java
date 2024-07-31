@@ -97,7 +97,7 @@ public class User {
     public void changeTreeDone(boolean new_done){ tree_done=new_done;doCallback(); }
 
     public int getCaveCha(){ return cave_cha_amount; }
-    public void changeCaveCha(int amount){ 
+    public synchronized void changeCaveCha(int amount){ 
         cave_cha_amount+=amount; 
         doCallback();
     }
@@ -133,6 +133,11 @@ public class User {
         return me;
     }
 
+    /** 不加载，可能为空字符串 */
+    public static String getMeStr(){
+        return me==null?"":me.toString();
+    }
+
     /** 懒加载 */
     public static User getUser(){
         if (me==null){
@@ -140,6 +145,7 @@ public class User {
         }
         else return me;
     }
+
 
     public static void clear(){
         me=null;

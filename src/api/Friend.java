@@ -75,7 +75,7 @@ public class Friend {
     /** 请求函数 */
     public static byte[] getMyFriends(int index){
         String path = "/pvz/index.php/user/friends/page/%d/sig/807a46a7269ca3d84a1b980f9d47265a?4068335279559=".formatted(index);
-        Log.logln("远程获取好友列表...");
+        Log.logln("%s远程获取好友列表...".formatted(User.getMeStr()));
         return Request.sendGetRequest(path);
     }
 
