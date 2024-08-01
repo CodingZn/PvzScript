@@ -83,6 +83,9 @@ public class Warehouse {
     };
 
     public static boolean useTool(int toolid, int amount){
+        return useTool(toolid, amount, false);
+    }
+    public static boolean useTool(int toolid, int amount, boolean blind){
         if (amount==0) return true;
         Object[] value = new Object[]{toolid, amount};
         byte[] req = Util.encodeAMF("api.tool.useOf", "/1", value);
@@ -93,8 +96,12 @@ public class Warehouse {
             return false;
         }
         else{
-            MyTool.getTool(toolid).changeAmount(-amount);
+            if (!blind) MyTool.getTool(toolid).changeAmount(-amount);
             ASObject asObj = (ASObject) body.getValue();
+            if (asObj==null) {
+                Log.println("成功！");
+                return true;
+            }
             int msgidx = obj2int(asObj.get("name"));
             int effect = obj2int(asObj.get("effect"));
             Log.println(TOOL_USE_MSG[msgidx].formatted(effect));
