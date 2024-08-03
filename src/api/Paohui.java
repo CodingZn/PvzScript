@@ -36,4 +36,10 @@ public class Paohui {
         decimal_predicate = new Random().nextInt(10);
     }
 
+    public void update(){
+        Organism org = Organism.getOrganism(plant_id);
+        grade_predicate = org.grade;
+        decimal_predicate = new Random().nextInt(10);
+    }
+
 }
