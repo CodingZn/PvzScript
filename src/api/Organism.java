@@ -213,7 +213,7 @@ public class Organism {
         organismMap.put(id, plant);
     }
 
-    private static LinkedHashMap<Integer, Organism> getOrganisms(){
+    public static LinkedHashMap<Integer, Organism> getOrganisms(){
         if (isEmpty()){
             Warehouse.loadWarehouse();
         }
