@@ -181,4 +181,11 @@ public class PaohuiPool {
             return false;
         });
     }
+
+    /** 从organism更新所有炮灰 */
+    public synchronized void updateAll(){
+        for (Paohui pao : this.pool) {
+            pao.update();
+        }
+    }
 }
