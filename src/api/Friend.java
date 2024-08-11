@@ -153,7 +153,7 @@ public class Friend {
     /** 将某页好友信息加载到friendMap中。reload==true时，清空并自动加自己 */
     private static boolean resolveFriends(Document document, boolean reload){
         if (reload) {
-            friendMap.clear();
+            friendMap =new LinkedHashMap<>();
             User me = User.getUser();
             friendMap.put(me.id, new Friend(me.id,me.user_id,me.grade,me.name));
         }
