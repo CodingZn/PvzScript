@@ -113,7 +113,7 @@ public class User {
     /** 加载最新用户信息 */
     public static User loadUser(){
         String url = "/pvz/index.php/default/user/sig/e5bf533f2151a47642b38ba33ae21953?"+Long.toString(new Date().getTime());
-        Log.logln("加载用户信息...");
+        Log.log("加载用户信息...");
         byte[] response = Request.sendGetRequest(url);
         Document document = Util.parseXml(response);
         if (document == null) {
@@ -121,8 +121,10 @@ public class User {
         }
         try {
             me = new User(document);
+            Log.println("成功！");
         } catch (Exception e) {
             // e.printStackTrace();
+            Log.println("失败！");
             me=null;
         }
         return me;

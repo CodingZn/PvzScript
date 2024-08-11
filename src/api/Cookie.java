@@ -31,11 +31,12 @@ public class Cookie {
 
     private static void setCookieValue(String str){
         if (isValidCookie(str)){
+            str=str.replaceAll("\\n", "");
             if (!str.equals(currCookie)) {
                 User.clear();
+                currCookie = str;
+                User.getUser();
             }
-            str=str.replaceAll("\\n", "");
-            currCookie = str;
         }
         else{
             if (!isValidCookie(currCookie)){
