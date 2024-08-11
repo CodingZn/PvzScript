@@ -135,7 +135,7 @@ public class User {
 
     /** 不加载，可能为空字符串 */
     public static String getMeStr(){
-        return me==null?"":me.toString();
+        return me==null?"":"<%s>".formatted(me.toString());
     }
 
     /** 懒加载 */

@@ -10,7 +10,7 @@ public class Log {
     private static String addLogInfo(String content){
         String timeStr = Util.dateFormatNow("HH:mm:ss.SSS");
         String meStr = User.getMeStr();
-        return "%s <%s>%s".formatted(timeStr,meStr,content);
+        return "%s %s%s".formatted(timeStr,meStr,content);
     }
 
     public static void flog(String str){
