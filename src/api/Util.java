@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +40,13 @@ import lib.MyAMF0Serializer;
 import lib.MyAMF0Deserializer;
 
 public class Util {
+
+    public static final Scanner scanner;
+
+    static{
+        scanner=new Scanner(System.in);
+    }
+
     public static void printBytes(byte[] bytes){
         printBytes(bytes, System.out);
     }
@@ -546,6 +554,14 @@ public class Util {
             return null;
         }
         return str.substring(begin+bg.length(), end);
+    }
+
+    /** 回车确认 */
+    public static boolean confirm(){
+        if (!scanner.nextLine().equals("")){
+            return false;
+        }
+        return true;
     }
 
 }

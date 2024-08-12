@@ -9,7 +9,8 @@ public class Log {
 
     private static String addLogInfo(String content){
         String timeStr = Util.dateFormatNow("HH:mm:ss.SSS");
-        String meStr = User.getMeStr();
+        // String meStr = User.getMeStr();
+        String meStr = "";
         return "%s %s%s".formatted(timeStr,meStr,content);
     }
 

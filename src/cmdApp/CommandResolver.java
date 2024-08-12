@@ -15,6 +15,7 @@ import src.api.Cave;
 import src.api.Control;
 import src.api.Cookie;
 import src.api.DailyReward;
+import src.api.Eat;
 import src.api.EvolRoute;
 import src.api.Evolution;
 import src.api.Friend;
@@ -151,6 +152,10 @@ public class CommandResolver {
             }
             case "territory"->{
                 Territory.main(args);
+                return;
+            }
+            case "eat"->{
+                Eat.main(args);
                 return;
             }
             case "shop"->{

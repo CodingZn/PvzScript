@@ -3,8 +3,6 @@ package src.api;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static src.api.Util.obj2long;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +25,7 @@ public class Organism {
         this.orid = Orid.getOrid(pid);
         this.attack = new BigInteger(element.getAttribute("at"));
         this.hujia = new BigInteger(element.getAttribute("mi"));
-        this.speed = obj2long(element.getAttribute("sp"));
+        this.speed = new BigInteger(element.getAttribute("sp"));
         this.hp_now = new BigInteger(element.getAttribute("hp"));
         this.hp_max = new BigInteger(element.getAttribute("hm"));
         this.grade = Integer.parseInt(element.getAttribute("gr"));
@@ -119,38 +117,87 @@ public class Organism {
         }
     }
 
+    /** 获取值 */
+    protected BigInteger getProperty(Eat.EatType t){
+        return increaseProperty(t, "0", "0");
+    }
+
+    /** 合成后增加值 */
+    protected BigInteger increaseProperty(Eat.EatType t, String v, String fight){
+        BigInteger value =new BigInteger(v);
+        BigInteger fivalue=new BigInteger(fight);
+        switch (t) {
+            case HP->{
+                this.hp_max=this.hp_max.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.hp_max;
+            }
+            case ATTACK->{
+                this.attack=this.attack.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.attack;
+            }
+            case HUJIA->{
+                this.hujia=this.hujia.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.hujia;
+            }
+            case CHUANTOU->{
+                this.chuantou=this.chuantou.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.chuantou;
+            }
+            case SHANBI->{
+                this.miss=this.miss.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.miss;
+            }
+            case MINGZHONG->{
+                this.precision=this.precision.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.precision;
+            }
+            case SPEED->{
+                this.speed=this.speed.add(value);
+                this.fight=this.fight.add(fivalue);
+                return this.speed;
+            }
+        }
+        return BigInteger.ZERO;
+    }
+
     /** 植物id */
     public final int id;
     /** 原型id */
-    public final int pid;
-    public final Orid orid;
+    public int pid;
+    public Orid orid;
     /** 攻击 */
-    public final BigInteger attack;
+    public BigInteger attack;
     /** 护甲 */
-    public final BigInteger hujia;
+    public BigInteger hujia;
     /** 速度 */
-    public final long speed;
+    public BigInteger speed;
     /** 当前血量 */
     public BigInteger hp_now;
     /** 满血量 */
-    public final BigInteger hp_max;
+    public BigInteger hp_max;
     /** 等级 */
-    public final int grade;
+    public int grade;
     /** 预测等级 */
     public int grade_pre;
 
     /** 穿透 */
-    public final BigInteger chuantou;
+    public BigInteger chuantou;
     /** 闪避 */
-    public final BigInteger miss;
+    public BigInteger miss;
     /** 命中 */
-    public final BigInteger precision;
+    public BigInteger precision;
     /** 品质字符串 */
     public String quality;
     /** 品质等级 */
     public Integer qualityLevel;
     /** 战斗力 */
-    public final BigInteger fight;
+    public BigInteger fight;
 
     public final List<Skill> skills;
 

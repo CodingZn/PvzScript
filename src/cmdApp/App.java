@@ -3,13 +3,14 @@ package src.cmdApp;
 import java.util.Scanner;
 
 import src.api.Log;
+import src.api.Util;
 
 public class App {
 
     private static final String RELEASE_TYPE = "public";
 
-    private static final String APP_VERSION = "1.4.1";
-    private static final String RELEASE_DATE = "2024.8.11";
+    private static final String APP_VERSION = "1.5.0";
+    private static final String RELEASE_DATE = "2024.8.12";
 
     /**
      * mode 0: command mode
@@ -32,7 +33,7 @@ public class App {
     private static void interact(){
         printInfo();
         System.out.println("Command Mode:");
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = Util.scanner;
         while (true){
             printPrompt();
             String cmd = scanner.nextLine();
