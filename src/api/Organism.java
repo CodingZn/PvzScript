@@ -116,9 +116,14 @@ public class Organism {
             this.qualityLevel = l;
         }
     }
-    
+
     public void setNowHp(String newHp){
         this.hp_now=new BigInteger(newHp);
+    }
+
+    public void setOrid(int newPid){
+        this.pid=newPid;
+        this.orid=Orid.getOrid(newPid);
     }
 
     /** 获取值 */

@@ -65,6 +65,7 @@ public class Evolution implements Serializable{
             else{
                 Element oridEle = (Element)(document.getElementsByTagName("picid").item(0));
                 int orid = Integer.parseInt(oridEle.getTextContent());
+                Organism.getOrganism(plantId).setOrid(orid);
                 Log.println("-->%s".formatted(Orid.getOrid(orid).toShortString()));
             }
         }
