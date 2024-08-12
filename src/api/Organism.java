@@ -116,6 +116,10 @@ public class Organism {
             this.qualityLevel = l;
         }
     }
+    
+    public void setNowHp(String newHp){
+        this.hp_now=new BigInteger(newHp);
+    }
 
     /** 获取值 */
     protected BigInteger getProperty(Eat.EatType t){

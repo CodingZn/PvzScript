@@ -94,6 +94,7 @@ public class BuXie {
             if (obj instanceof String){
                 Log.println(" hp=%s".formatted(obj));
                 MyTool.getTool(xiepingId).changeAmount(-1);
+                Organism.getOrganism(plantId).setNowHp((String)obj);
                 return true;
             }
             else return false;
