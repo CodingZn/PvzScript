@@ -2,7 +2,7 @@ package src.api;
 
 import java.util.Map;
 import java.util.function.Predicate;
-
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +55,12 @@ public class Organism {
         else{
             return "Lv.%d %s%s(%d)".formatted(this.grade, this.orid.name,flag, this.id);
         }
+    }
+
+    public String toShortString(PropType type){
+        String flag=this.gardenId==0?"":"*";
+        return "Lv%d %s%s(%d){%s}".formatted(this.grade_pre, this.orid.name,flag, this.id,
+        Util.bigInt2String(this.getProperty(type)));
     }
 
     @Override
@@ -127,12 +133,12 @@ public class Organism {
     }
 
     /** 获取值 */
-    protected BigInteger getProperty(Eat.EatType t){
+    protected BigInteger getProperty(PropType t){
         return increaseProperty(t, "0", "0");
     }
 
     /** 合成后增加值 */
-    protected BigInteger increaseProperty(Eat.EatType t, String v, String fight){
+    protected BigInteger increaseProperty(PropType t, String v, String fight){
         BigInteger value =new BigInteger(v);
         BigInteger fivalue=new BigInteger(fight);
         switch (t) {
@@ -175,6 +181,47 @@ public class Organism {
         return BigInteger.ZERO;
     }
 
+    /** 传承后改变值 */
+    protected void changeProperty(PropType t, String v, String fight){
+        BigInteger value =new BigInteger(v);
+        BigInteger fivalue=new BigInteger(fight);
+        switch (t) {
+            case HP->{
+                this.hp_max=value;
+                this.fight=fivalue;
+            }
+            case ATTACK->{
+                this.attack=value;
+                this.fight=fivalue;
+            }
+            case HUJIA->{
+                this.hujia=value;
+                this.fight=fivalue;
+            }
+            case CHUANTOU->{
+                this.chuantou=value;
+                this.fight=fivalue;
+            }
+            case SHANBI->{
+                this.miss=value;
+                this.fight=fivalue;
+            }
+            case MINGZHONG->{
+                this.precision=value;
+                this.fight=fivalue;
+            }
+            case SPEED->{
+                this.speed=value;
+                this.fight=fivalue;
+            }
+            default->{
+                return;
+            }
+        }
+        this.hp_now = this.hp_max;
+    }
+
+    
     /** 植物id */
     public final int id;
     /** 原型id */
@@ -518,7 +565,29 @@ public class Organism {
                     break;
                 }
                     
-            
+                case "pr":{
+                    String value2=condi.substring(2);
+                    String prname = value2.substring(0,2);
+                    PropType type = PropType.get(prname);
+                    if (type==null) return null;
+                    String operator=value2.substring(2,3);
+                    String prv = value2.substring(3);
+                    System.out.println(prv);
+                    BigInteger bgv = new BigDecimal(prv).toBigInteger();
+                    res = res.and(new Predicate<Organism>() {
+                        @Override
+                        public boolean test(Organism t) {
+                            if (operator.equals(">")){
+                                return t.getProperty(type).compareTo(bgv)>0;
+                            }else if (operator.equals("<")){
+                                return t.getProperty(type).compareTo(bgv)<0;
+                            }else {
+                                return t.getProperty(type).compareTo(bgv)==0;
+                            }
+                        }
+                    });
+                    return res;
+                }
                 default:{
                     return null;
                 }
@@ -583,6 +652,7 @@ public class Organism {
             try {
                 predicate = resolveFilter(Arrays.copyOfRange(args, 1,args.length));
             } catch (Exception e) {
+                e.printStackTrace();
                 predicate=null;
             }
             
@@ -639,6 +709,7 @@ public class Organism {
         System.out.println("filters: gr == <= >= << >> != <value>");
         System.out.println("filters: id == <= >= << >> != <value>");
         System.out.println("filters: ql == <= >= << >> != <stringvalue>");
+        System.out.println("filters: pr<property> > < <value>");
         System.out.println("or  : save <group_no> <filename>");
         System.out.println("or  : showf <filename>");
     }
