@@ -132,7 +132,7 @@ public class Eat {
             }
             // 不允许传承
             else{
-                if (checkThreshold(type, fu)) {
+                if (!checkThreshold(type, fu)) {
                     Log.logln("属性已达到阈值！");
                     Evolution.evolve(baoId, fnevoRoute);
                     return true;
