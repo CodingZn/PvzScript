@@ -153,7 +153,7 @@ public class Eat {
     public static final BigInteger BASE_11 = new BigInteger("10000000000000000000");
 
     private static BigInteger gunHPThreshold = new BigInteger("360000000000000000000");
-    private static BigInteger gunGJThreshold = new BigInteger("97751710000000000000");
+    private static BigInteger gunGJThreshold = new BigInteger("9999999999999999999");
     private static BigInteger gunOTThreshold = new BigInteger("500000000000000000000");
 
     public static void setHPThresh(double input){
@@ -330,7 +330,7 @@ public class Eat {
         System.out.println("or  : confirm on|off");
         System.out.println("or  : chuancheng on|off|auto");
         System.out.println("or  : gunth hp|gj|ot <value>");
-        System.out.println("value: float, unit=10^12亿(except 攻击) or 10^11亿(攻击)");
+        System.out.println("value: float, unit=10^12亿(except 攻击) or 10^11亿(攻击)，大于阈值采取操作");
         System.out.println("or  : fnevo 0|1|2|3|4");
         System.out.println("fnevo: 0：不进化 1：绿叶飞飞 2：火龙果美女 3：旋风火龙果 4：周瑜蕉弩 ");
     }
