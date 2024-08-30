@@ -169,7 +169,7 @@ public class PaohuiPool {
         return validPaohuiCount>0;
     }
 
-    protected void removePaohui(Collection<Integer> toRemove){
+    private void removePaohui(Collection<Integer> toRemove){
         for (Integer integer : toRemove) {
             Organism.getOrganism(integer).hp_now=BigInteger.ZERO;
         }

@@ -238,8 +238,6 @@ public class Battle {
             else{
                 SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, zhuli, paohui);
                 res = BuXie.blindBuxie(attacked.getKey(), attacked.getValue())&&res;
-                // 若没有启用补血，则丢弃所有被攻击的炮灰
-                paohuiPool.removePaohui(attacked.getValue());
                 paohuiPool.updateExcept(paohui_actual, attacked.getValue());
             }
             
