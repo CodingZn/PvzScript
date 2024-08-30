@@ -44,7 +44,7 @@ public class Battle {
         return maxLevel;
     }
 
-    /** 可带级炮灰无法填满时，是否使用带级完成的炮灰填满战斗格子 */
+    /** 仅为带级打洞 */
     protected static boolean pausePh = false;
     public static boolean setPausePh(boolean f){
         pausePh = f;
