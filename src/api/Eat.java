@@ -19,15 +19,17 @@ public class Eat {
     public static int getChuancheng(){return chuancheng;}
     public static void setChuancheng(int v){chuancheng=v;}
 
+    /** 确保baoid植物存在
+     * 植物小于等于目标且小于等于2倍阈值
+     */
+    private static boolean underTarget(PropType type, Organism fu){
+        return fu.getProperty(type).compareTo(target)<=0 && 
+        fu.getProperty(type).compareTo(threshold.multiply(new BigInteger("2")))<=0;
+    }
+
     /** 确保baoid植物存在 */
-    private static boolean checkThreshold(PropType type, Organism fu){
-        if (type==PropType.HP) {
-            return fu.hp_max.compareTo(gunHPThreshold) <=0;
-        }else if (type==PropType.ATTACK) {
-            return fu.attack.compareTo(gunGJThreshold) <=0;
-        }else {
-            return fu.getProperty(type).compareTo(gunOTThreshold) <=0;
-        }
+    private static boolean underThreshold(PropType type, Organism fu){
+        return fu.getProperty(type).compareTo(threshold)<=0;
     }
 
     public static boolean eatPlant(int zhuId, int fuId, PropType type, int zengqiang){
@@ -85,33 +87,26 @@ public class Eat {
             // 超过阈值，允许传承滚包
             if (chuan>=1){
                 BigInteger prop = fu.getProperty(type);
-                int jz;
-                if (type==PropType.HP){
-                    jz = computeChuan(prop, getHPTh());
-                }else if (type==PropType.ATTACK){
-                    jz = computeChuan(prop, getGJTh());
-                }else {
-                    jz = computeChuan(prop, getOTTh());
-                }
-                
-                if (jz==-1){
-                    Evolution.evolve(baoId, fnevoRoute);
-                    if (chuan==2){
-                        Log.logln("副植物%s属性达到阈值2倍！分成2个。".formatted(fu.toShortString(type)));
-                        if (!chuanCheng(baoId, zhuid, type, 5)){
-                            Log.logln("分裂失败！".formatted(baoId));
-                            return false;
-                        }
-                        foods.remove(zhuid);
-                        // 将传入植物滚到阈值
-                        if (!gunXueQiu(zhuid, foods, type, 1)) return false;
-                        // 将传出植物继续滚
-                        continue;
-                    }
-                    else{
+                int jz = computeChuan(prop, getThresh());
+                if (chuan==1){
+                    if (jz==-1 || !underTarget(type, fu)){
                         Log.logln("副植物%s属性超限！".formatted(fu.toShortString(type)));
+                        Evolution.evolve(baoId, fnevoRoute);
                         return true;
                     }
+                } 
+                else if (jz==-1){ // 传承=2
+                    Evolution.evolve(baoId, fnevoRoute);
+                    Log.logln("副植物%s属性达到阈值2倍！分成2个。".formatted(fu.toShortString(type)));
+                    if (!chuanCheng(baoId, zhuid, type, 5)){
+                        Log.logln("分裂失败！".formatted(baoId));
+                        return false;
+                    }
+                    foods.remove(zhuid);
+                    // 将传入植物滚到阈值
+                    if (!gunXueQiu(zhuid, foods, type, 1)) return false;
+                    // 将传出植物继续滚
+                    continue;
                 }
 
                 // 传承一些值给主植物
@@ -132,7 +127,7 @@ public class Eat {
             }
             // 不允许传承
             else{
-                if (!checkThreshold(type, fu)) {
+                if (!underThreshold(type, fu)) {
                     Log.logln("属性已达到阈值！");
                     Evolution.evolve(baoId, fnevoRoute);
                     return true;
@@ -152,28 +147,28 @@ public class Eat {
     public static final BigInteger BASE_12 = new BigInteger("100000000000000000000");
     public static final BigInteger BASE_11 = new BigInteger("10000000000000000000");
 
-    private static BigInteger gunHPThreshold = new BigInteger("360000000000000000000");
+    private static BigInteger threshold = new BigInteger("360000000000000000000");
     private static BigInteger gunGJThreshold = new BigInteger("9999999999999999999");
-    private static BigInteger gunOTThreshold = new BigInteger("500000000000000000000");
+    private static BigInteger target = new BigInteger("520000000000000000000");
 
-    public static void setHPThresh(double input){
+    public static void setThreshold(double input){
         long vv = (long) input*100;
         BigInteger mtvv=BigInteger.valueOf(vv);
-        gunHPThreshold=BASE_12.multiply(mtvv).divide(BigInteger.valueOf(100));
+        threshold=BASE_12.multiply(mtvv).divide(BigInteger.valueOf(100));
     }
     public static void setGJThresh(double input){
         long vv = (long) input*100;
         BigInteger mtvv=BigInteger.valueOf(vv);
         gunGJThreshold=BASE_11.multiply(mtvv).divide(BigInteger.valueOf(100));
     }
-    public static void setOTThresh(double input){
+    public static void setTarget(double input){
         long vv = (long) input*100;
         BigInteger mtvv=BigInteger.valueOf(vv);
-        gunOTThreshold=BASE_12.multiply(mtvv).divide(BigInteger.valueOf(100));
+        target=BASE_12.multiply(mtvv).divide(BigInteger.valueOf(100));
     }
-    public static BigInteger getHPTh(){return gunHPThreshold;}
+    public static BigInteger getThresh(){return threshold;}
     public static BigInteger getGJTh(){return gunGJThreshold;}
-    public static BigInteger getOTTh(){return gunOTThreshold;}
+    public static BigInteger getTarget(){return target;}
 
     private static List<Integer> fnevoRoute=new ArrayList<>();
 
@@ -307,17 +302,13 @@ public class Eat {
                 return;
             }
         }
-        else if(args.length==3 && args[0].equals("gunth")){
-            if (args[1].equals("hp")) {
-                setHPThresh(Double.parseDouble(args[2]));
-                return;
-            }else if (args[1].equals("gj")) {
-                setGJThresh(Double.parseDouble(args[2]));
-                return;
-            }else if (args[1].equals("ot")){
-                setOTThresh(Double.parseDouble(args[2]));
-                return;
-            }
+        else if(args.length==2 && args[0].equals("thresh")){
+            setThreshold(Double.parseDouble(args[1]));
+            return;
+        }
+        else if(args.length==2 && args[0].equals("target")){
+            setTarget(Double.parseDouble(args[1]));
+            return;
         }
         else if(args.length==2 && args[0].equals("fnevo")){
             if (args[1].length()==1&&"01234".contains(args[1])){
@@ -329,7 +320,8 @@ public class Eat {
         System.out.println("type: hp gj hj ct sb mz sd");
         System.out.println("or  : confirm on|off");
         System.out.println("or  : chuancheng on|off|auto");
-        System.out.println("or  : gunth hp|gj|ot <value>");
+        System.out.println("or  : target <value>");
+        System.out.println("or  : thresh <value>");
         System.out.println("value: float, unit=10^12亿(except 攻击) or 10^11亿(攻击)，大于阈值采取操作");
         System.out.println("or  : fnevo 0|1|2|3|4");
         System.out.println("fnevo: 0：不进化 1：绿叶飞飞 2：火龙果美女 3：旋风火龙果 4：周瑜蕉弩 ");
