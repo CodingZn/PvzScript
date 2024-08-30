@@ -63,6 +63,7 @@ public class BuXie {
     public static void setEnable(boolean enable_){
         enable=enable_;
     }
+    /** enable = 非v4 */
     public static boolean isEnabled(){return enable;}
 
     /** type: 1|2|3 or 13|14|15 */

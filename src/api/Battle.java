@@ -45,10 +45,10 @@ public class Battle {
     }
 
     /** 可带级炮灰无法填满时，是否使用带级完成的炮灰填满战斗格子 */
-    protected static boolean kpFull = true;
-    public static boolean setKeepFull(boolean f){
-        kpFull = f;
-        return kpFull;
+    protected static boolean pausePh = false;
+    public static boolean setPausePh(boolean f){
+        pausePh = f;
+        return pausePh;
     }
 
     /** 无挑战次数时自动使用挑战书的个数。
@@ -186,14 +186,14 @@ public class Battle {
         }
         List<Integer> paohui_actual;
 
-        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
+        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel);
         for (int ci=0; ci<caves.size(); ci++) {
             Cave c = caves.get(ci);
             boolean res = true;
             // 获取炮灰信息
             paohui_actual = paohuiPool.getChosenPaohuis();
-            // 仅开启补血时，会对炮灰进行有效带级
-            if (BuXie.isEnabled() && !paohuiPool.hasValidPaohui()) {
+            // 根据选项判断无炮灰时是否继续打
+            if (pausePh && !paohuiPool.hasValidPaohui()) {
                 Log.logln("炮灰均带级完成！");
                 return false;
             }
@@ -232,14 +232,14 @@ public class Battle {
             if (Battle.updateFreq!=0 && blindCount >= Battle.updateFreq){
                 blindCount=0;
                 res = BuXie.buxie(zhuli, paohui, true)&&res;
-                paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel, kpFull);
+                paohuiPool = new PaohuiPool(zhuli, paohui, maxLevel);
             }
             // 继续盲打
             else{
                 SimpleEntry<Set<Integer>, Set<Integer>> attacked = BuXie.getAttacked(resObj, zhuli, paohui);
                 res = BuXie.blindBuxie(attacked.getKey(), attacked.getValue())&&res;
                 // 若没有启用补血，则丢弃所有被攻击的炮灰
-                if (!BuXie.isEnabled()) paohuiPool.removePaohui(attacked.getValue());
+                paohuiPool.removePaohui(attacked.getValue());
                 paohuiPool.updateExcept(paohui_actual, attacked.getValue());
             }
             
@@ -300,12 +300,12 @@ public class Battle {
             Log.log("new maxLevel: %d\n".formatted(maxLevel));
             return;
         }
-        else if (args.length == 2 && args[0].equals("kpfull")){
+        else if (args.length == 2 && args[0].equals("pauseph")){
             if (args[1].equals("on")) {
-                setKeepFull(true);
+                setPausePh(true);
                 return;
             }else if (args[1].equals("off")) {
-                setKeepFull(false);
+                setPausePh(false);
                 return;
             }
         }
@@ -341,7 +341,7 @@ public class Battle {
         System.out.println("args: <cave_file> <hard_level> <zhuli_file> [<paohui_file>]");
         System.out.println("or  : repeat <count> <cave_id> <hard_level> <zhuli_file> [<paohui_file>]");
         System.out.println("or  : maxlevel <grade>");
-        System.out.println("or  : kpfull on|off");
+        System.out.println("or  : pauseph on|off");
         System.out.println("or  : updatefreq <freq>");
         System.out.println("or  : advbook <amount>");
         System.out.println("or  : book <amount>|full");

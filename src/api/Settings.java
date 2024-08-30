@@ -16,7 +16,7 @@ public class Settings implements Serializable {
     public int wait302Time;
 
     // Battle
-    public boolean kpfull;
+    public boolean pausePh;
     public int max_level;
     public int auto_book;
     public int auto_advbook;
@@ -55,7 +55,7 @@ public class Settings implements Serializable {
         Request.setTimeout(data.timeout);
         Request.set302Wait(data.wait302Time);
 
-        Battle.setKeepFull(data.kpfull);
+        Battle.setPausePh(data.pausePh);
         Battle.setMaxLevel(data.max_level);
         Battle.setAutoBook(data.auto_book);
         Battle.setAutoAdvBook(data.auto_advbook);
@@ -85,7 +85,7 @@ public class Settings implements Serializable {
         res.timeout=Request.timeout;
         res.wait302Time=Request.wait302Time;
 
-        res.kpfull=Battle.kpFull;
+        res.pausePh=Battle.pausePh;
         res.max_level=Battle.maxLevel;
         res.auto_book=Battle.autobook;
         res.auto_advbook=Battle.autoAdvBook;

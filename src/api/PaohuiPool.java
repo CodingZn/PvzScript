@@ -96,9 +96,9 @@ public class PaohuiPool {
     }
     
     /** 构建炮灰池，支持-1 */
-    public PaohuiPool(Collection<Integer> zhuli, Collection<Integer> paohui, int max_level, boolean kpFull){
+    public PaohuiPool(Collection<Integer> zhuli, Collection<Integer> paohui, int max_level){
         int level_limit = max_level;
-        keepFull = kpFull;
+        keepFull = false;
         if (level_limit==-1){
             space=999;
             paohuiIdList = new ArrayList<Integer>(paohui);
@@ -163,7 +163,7 @@ public class PaohuiPool {
     }
 
     public boolean hasValidPaohui(){
-        if (maxLevel==-1){
+        if (maxLevel==-1 || maxLevel==0){
             return true;
         }
         return validPaohuiCount>0;

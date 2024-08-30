@@ -53,7 +53,7 @@ public class StoneBattle {
             }
         }
         boolean res = true;
-        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, 0, true);
+        PaohuiPool paohuiPool = new PaohuiPool(zhuli, paohui, 0);
         List<Integer> paohui_actual;
         Collection<Integer> died = new HashSet<>();
         for (int i = 0; i < n; i++) {
