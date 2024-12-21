@@ -21,7 +21,10 @@ public class Cookie {
         Util.writeText(filename, currCookie, true);
     }
 
-    public static boolean setCookie(String newCookie){
+    /**
+     * cookie改变时，会自动加载用户！要先设置区服！ 
+     * */
+    public static boolean applyCookie(String newCookie){
         if (!newCookie.equals(currCookie)) {
             setCookieValue(newCookie);
             return true;
@@ -54,7 +57,7 @@ public class Cookie {
                 return;
             }
             else if (args[0].equals("set")){
-                Cookie.setCookie(args[1]);
+                Cookie.applyCookie(args[1]);
                 return;
             }
             
@@ -62,4 +65,5 @@ public class Cookie {
         System.out.println("args: load <filename>");
         System.out.println("or  : set <cookieString>");
     }
+
 }

@@ -27,6 +27,7 @@ import src.api.Organism;
 import src.api.Orid;
 import src.api.Quality;
 import src.api.Request;
+import src.api.Seed;
 import src.api.ServerBattle;
 import src.api.Shop;
 import src.api.Skill;
@@ -56,6 +57,10 @@ public class CommandResolver {
                 else 
                     cookieArgs = strs[1].split(" ", 2);
                 Cookie.resolver(cookieArgs);
+                return;
+            }
+            case "seed" ->{
+                Seed.resolve(args);
                 return;
             }
             case "log" ->{
